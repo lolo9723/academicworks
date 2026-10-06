@@ -1,0 +1,496 @@
+[
+  {
+    "Lemma": "yöntem",
+    "Pos": "Noun",
+    "Synonyms": [
+      "metot"
+    ],
+    "NearSynonyms": [],
+    "ForbiddenReplacements": [],
+    "AcademicAlternatives": [],
+    "Domain": "genel",
+    "Confidence": 0.97,
+    "Examples": [],
+    "Technical": false
+  },
+  {
+    "Lemma": "metot",
+    "Pos": "Noun",
+    "Synonyms": [
+      "yöntem"
+    ],
+    "NearSynonyms": [],
+    "ForbiddenReplacements": [],
+    "AcademicAlternatives": [],
+    "Domain": "genel",
+    "Confidence": 0.97,
+    "Examples": [],
+    "Technical": false
+  },
+  {
+    "Lemma": "olanak",
+    "Pos": "Noun",
+    "Synonyms": [
+      "imkân"
+    ],
+    "NearSynonyms": [],
+    "ForbiddenReplacements": [],
+    "AcademicAlternatives": [],
+    "Domain": "genel",
+    "Confidence": 0.96,
+    "Examples": [],
+    "Technical": false
+  },
+  {
+    "Lemma": "imkân",
+    "Pos": "Noun",
+    "Synonyms": [
+      "olanak"
+    ],
+    "NearSynonyms": [],
+    "ForbiddenReplacements": [],
+    "AcademicAlternatives": [],
+    "Domain": "genel",
+    "Confidence": 0.96,
+    "Examples": [],
+    "Technical": false
+  },
+  {
+    "Lemma": "ölçüt",
+    "Pos": "Noun",
+    "Synonyms": [
+      "kriter"
+    ],
+    "NearSynonyms": [],
+    "ForbiddenReplacements": [],
+    "AcademicAlternatives": [],
+    "Domain": "genel",
+    "Confidence": 0.96,
+    "Examples": [],
+    "Technical": false
+  },
+  {
+    "Lemma": "kriter",
+    "Pos": "Noun",
+    "Synonyms": [
+      "ölçüt"
+    ],
+    "NearSynonyms": [],
+    "ForbiddenReplacements": [],
+    "AcademicAlternatives": [],
+    "Domain": "genel",
+    "Confidence": 0.96,
+    "Examples": [],
+    "Technical": false
+  },
+  {
+    "Lemma": "alanyazın",
+    "Pos": "Noun",
+    "Synonyms": [
+      "literatür"
+    ],
+    "NearSynonyms": [],
+    "ForbiddenReplacements": [],
+    "AcademicAlternatives": [],
+    "Domain": "genel",
+    "Confidence": 0.97,
+    "Examples": [],
+    "Technical": false
+  },
+  {
+    "Lemma": "literatür",
+    "Pos": "Noun",
+    "Synonyms": [
+      "alanyazın"
+    ],
+    "NearSynonyms": [],
+    "ForbiddenReplacements": [],
+    "AcademicAlternatives": [],
+    "Domain": "genel",
+    "Confidence": 0.97,
+    "Examples": [],
+    "Technical": false
+  },
+  {
+    "Lemma": "birey",
+    "Pos": "Noun",
+    "Synonyms": [
+      "kişi"
+    ],
+    "NearSynonyms": [],
+    "ForbiddenReplacements": [],
+    "AcademicAlternatives": [],
+    "Domain": "genel",
+    "Confidence": 0.93,
+    "Examples": [],
+    "Technical": false
+  },
+  {
+    "Lemma": "sebep",
+    "Pos": "Noun",
+    "Synonyms": [
+      "neden"
+    ],
+    "NearSynonyms": [],
+    "ForbiddenReplacements": [],
+    "AcademicAlternatives": [],
+    "Domain": "genel",
+    "Confidence": 0.96,
+    "Examples": [],
+    "Technical": false
+  },
+  {
+    "Lemma": "neden",
+    "Pos": "Noun",
+    "Synonyms": [
+      "sebep"
+    ],
+    "NearSynonyms": [],
+    "ForbiddenReplacements": [],
+    "AcademicAlternatives": [],
+    "Domain": "genel",
+    "Confidence": 0.96,
+    "Examples": [],
+    "Technical": false
+  },
+  {
+    "Lemma": "amaç",
+    "Pos": "Noun",
+    "Synonyms": [
+      "hedef"
+    ],
+    "NearSynonyms": [],
+    "ForbiddenReplacements": [],
+    "AcademicAlternatives": [],
+    "Domain": "genel",
+    "Confidence": 0.93,
+    "Examples": [],
+    "Technical": false
+  },
+  {
+    "Lemma": "benzer",
+    "Pos": "Adjective",
+    "Synonyms": [
+      "benzeşen"
+    ],
+    "NearSynonyms": [],
+    "ForbiddenReplacements": [],
+    "AcademicAlternatives": [],
+    "Domain": "genel",
+    "Confidence": 0.91,
+    "Examples": [],
+    "Technical": false
+  },
+  {
+    "Lemma": "destinasyon",
+    "Pos": "Noun",
+    "Synonyms": [],
+    "NearSynonyms": [],
+    "ForbiddenReplacements": [],
+    "AcademicAlternatives": [],
+    "Domain": "turizm",
+    "Confidence": 1.0,
+    "Examples": [],
+    "Technical": true
+  },
+  {
+    "Lemma": "sürdürülebilir turizm",
+    "Pos": "Noun",
+    "Synonyms": [],
+    "NearSynonyms": [],
+    "ForbiddenReplacements": [],
+    "AcademicAlternatives": [],
+    "Domain": "turizm",
+    "Confidence": 1.0,
+    "Examples": [],
+    "Technical": true
+  },
+  {
+    "Lemma": "turizm talebi",
+    "Pos": "Noun",
+    "Synonyms": [],
+    "NearSynonyms": [],
+    "ForbiddenReplacements": [],
+    "AcademicAlternatives": [],
+    "Domain": "turizm",
+    "Confidence": 1.0,
+    "Examples": [],
+    "Technical": true
+  },
+  {
+    "Lemma": "turist deneyimi",
+    "Pos": "Noun",
+    "Synonyms": [],
+    "NearSynonyms": [],
+    "ForbiddenReplacements": [],
+    "AcademicAlternatives": [],
+    "Domain": "turizm",
+    "Confidence": 1.0,
+    "Examples": [],
+    "Technical": true
+  },
+  {
+    "Lemma": "boş zaman",
+    "Pos": "Noun",
+    "Synonyms": [],
+    "NearSynonyms": [],
+    "ForbiddenReplacements": [],
+    "AcademicAlternatives": [],
+    "Domain": "rekreasyon",
+    "Confidence": 1.0,
+    "Examples": [],
+    "Technical": true
+  },
+  {
+    "Lemma": "rekreasyon",
+    "Pos": "Noun",
+    "Synonyms": [],
+    "NearSynonyms": [],
+    "ForbiddenReplacements": [],
+    "AcademicAlternatives": [],
+    "Domain": "rekreasyon",
+    "Confidence": 1.0,
+    "Examples": [],
+    "Technical": true
+  },
+  {
+    "Lemma": "etkinlik doyumu",
+    "Pos": "Noun",
+    "Synonyms": [],
+    "NearSynonyms": [],
+    "ForbiddenReplacements": [],
+    "AcademicAlternatives": [],
+    "Domain": "rekreasyon",
+    "Confidence": 1.0,
+    "Examples": [],
+    "Technical": true
+  },
+  {
+    "Lemma": "öznel zindelik",
+    "Pos": "Noun",
+    "Synonyms": [],
+    "NearSynonyms": [],
+    "ForbiddenReplacements": [],
+    "AcademicAlternatives": [],
+    "Domain": "psikoloji",
+    "Confidence": 1.0,
+    "Examples": [],
+    "Technical": true
+  },
+  {
+    "Lemma": "öznel iyi oluş",
+    "Pos": "Noun",
+    "Synonyms": [],
+    "NearSynonyms": [],
+    "ForbiddenReplacements": [],
+    "AcademicAlternatives": [],
+    "Domain": "psikoloji",
+    "Confidence": 1.0,
+    "Examples": [],
+    "Technical": true
+  },
+  {
+    "Lemma": "öz yeterlik",
+    "Pos": "Noun",
+    "Synonyms": [],
+    "NearSynonyms": [],
+    "ForbiddenReplacements": [],
+    "AcademicAlternatives": [],
+    "Domain": "psikoloji",
+    "Confidence": 1.0,
+    "Examples": [],
+    "Technical": true
+  },
+  {
+    "Lemma": "Cronbach alfa",
+    "Pos": "Noun",
+    "Synonyms": [],
+    "NearSynonyms": [],
+    "ForbiddenReplacements": [],
+    "AcademicAlternatives": [],
+    "Domain": "psikoloji",
+    "Confidence": 1.0,
+    "Examples": [],
+    "Technical": true
+  },
+  {
+    "Lemma": "standart sapma",
+    "Pos": "Noun",
+    "Synonyms": [],
+    "NearSynonyms": [],
+    "ForbiddenReplacements": [],
+    "AcademicAlternatives": [],
+    "Domain": "psikoloji",
+    "Confidence": 1.0,
+    "Examples": [],
+    "Technical": true
+  },
+  {
+    "Lemma": "doğayla ilişki",
+    "Pos": "Noun",
+    "Synonyms": [],
+    "NearSynonyms": [],
+    "ForbiddenReplacements": [],
+    "AcademicAlternatives": [],
+    "Domain": "psikoloji",
+    "Confidence": 1.0,
+    "Examples": [],
+    "Technical": true
+  },
+  {
+    "Lemma": "öğrenme çıktısı",
+    "Pos": "Noun",
+    "Synonyms": [],
+    "NearSynonyms": [],
+    "ForbiddenReplacements": [],
+    "AcademicAlternatives": [],
+    "Domain": "eğitim",
+    "Confidence": 1.0,
+    "Examples": [],
+    "Technical": true
+  },
+  {
+    "Lemma": "ölçek geçerliği",
+    "Pos": "Noun",
+    "Synonyms": [],
+    "NearSynonyms": [],
+    "ForbiddenReplacements": [],
+    "AcademicAlternatives": [],
+    "Domain": "eğitim",
+    "Confidence": 1.0,
+    "Examples": [],
+    "Technical": true
+  },
+  {
+    "Lemma": "güvenirlik",
+    "Pos": "Noun",
+    "Synonyms": [],
+    "NearSynonyms": [],
+    "ForbiddenReplacements": [],
+    "AcademicAlternatives": [],
+    "Domain": "eğitim",
+    "Confidence": 1.0,
+    "Examples": [],
+    "Technical": true
+  },
+  {
+    "Lemma": "örgütsel bağlılık",
+    "Pos": "Noun",
+    "Synonyms": [],
+    "NearSynonyms": [],
+    "ForbiddenReplacements": [],
+    "AcademicAlternatives": [],
+    "Domain": "işletme",
+    "Confidence": 1.0,
+    "Examples": [],
+    "Technical": true
+  },
+  {
+    "Lemma": "iş doyumu",
+    "Pos": "Noun",
+    "Synonyms": [],
+    "NearSynonyms": [],
+    "ForbiddenReplacements": [],
+    "AcademicAlternatives": [],
+    "Domain": "işletme",
+    "Confidence": 1.0,
+    "Examples": [],
+    "Technical": true
+  },
+  {
+    "Lemma": "pazar payı",
+    "Pos": "Noun",
+    "Synonyms": [],
+    "NearSynonyms": [],
+    "ForbiddenReplacements": [],
+    "AcademicAlternatives": [],
+    "Domain": "işletme",
+    "Confidence": 1.0,
+    "Examples": [],
+    "Technical": true
+  },
+  {
+    "Lemma": "liderlik",
+    "Pos": "Noun",
+    "Synonyms": [],
+    "NearSynonyms": [],
+    "ForbiddenReplacements": [],
+    "AcademicAlternatives": [],
+    "Domain": "yönetim",
+    "Confidence": 1.0,
+    "Examples": [],
+    "Technical": true
+  },
+  {
+    "Lemma": "yönetsel etkinlik",
+    "Pos": "Noun",
+    "Synonyms": [],
+    "NearSynonyms": [],
+    "ForbiddenReplacements": [],
+    "AcademicAlternatives": [],
+    "Domain": "yönetim",
+    "Confidence": 1.0,
+    "Examples": [],
+    "Technical": true
+  },
+  {
+    "Lemma": "bağımlı değişken",
+    "Pos": "Noun",
+    "Synonyms": [],
+    "NearSynonyms": [],
+    "ForbiddenReplacements": [],
+    "AcademicAlternatives": [],
+    "Domain": "sosyal bilimler",
+    "Confidence": 1.0,
+    "Examples": [],
+    "Technical": true
+  },
+  {
+    "Lemma": "bağımsız değişken",
+    "Pos": "Noun",
+    "Synonyms": [],
+    "NearSynonyms": [],
+    "ForbiddenReplacements": [],
+    "AcademicAlternatives": [],
+    "Domain": "sosyal bilimler",
+    "Confidence": 1.0,
+    "Examples": [],
+    "Technical": true
+  },
+  {
+    "Lemma": "regresyon",
+    "Pos": "Noun",
+    "Synonyms": [],
+    "NearSynonyms": [],
+    "ForbiddenReplacements": [],
+    "AcademicAlternatives": [],
+    "Domain": "sosyal bilimler",
+    "Confidence": 1.0,
+    "Examples": [],
+    "Technical": true
+  },
+  {
+    "Lemma": "korelasyon",
+    "Pos": "Noun",
+    "Synonyms": [],
+    "NearSynonyms": [],
+    "ForbiddenReplacements": [],
+    "AcademicAlternatives": [],
+    "Domain": "sosyal bilimler",
+    "Confidence": 1.0,
+    "Examples": [],
+    "Technical": true
+  },
+  {
+    "Lemma": "etki büyüklüğü",
+    "Pos": "Noun",
+    "Synonyms": [],
+    "NearSynonyms": [],
+    "ForbiddenReplacements": [],
+    "AcademicAlternatives": [],
+    "Domain": "sosyal bilimler",
+    "Confidence": 1.0,
+    "Examples": [],
+    "Technical": true
+  }
+]

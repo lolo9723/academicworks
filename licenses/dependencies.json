@@ -1,0 +1,469 @@
+{
+  "nuget": [
+    {
+      "name": "HtmlAgilityPack",
+      "version": "1.11.71",
+      "license": "MIT",
+      "licenseUrl": "https://licenses.nuget.org/MIT",
+      "files": [],
+      "nuspec": "licenses/nuget/HtmlAgilityPack-1.11.71/metadata.nuspec"
+    },
+    {
+      "name": "Microsoft.CodeCoverage",
+      "version": "17.11.1",
+      "license": "MIT",
+      "licenseUrl": "https://licenses.nuget.org/MIT",
+      "files": [
+        "licenses/nuget/Microsoft.CodeCoverage-17.11.1/ThirdPartyNotices.txt",
+        "licenses/nuget/Microsoft.CodeCoverage-17.11.1/build__netstandard2.0__ThirdPartyNotices.txt"
+      ],
+      "nuspec": "licenses/nuget/Microsoft.CodeCoverage-17.11.1/metadata.nuspec"
+    },
+    {
+      "name": "Microsoft.Data.Sqlite.Core",
+      "version": "8.0.11",
+      "license": "MIT",
+      "licenseUrl": "https://licenses.nuget.org/MIT",
+      "files": [],
+      "nuspec": "licenses/nuget/Microsoft.Data.Sqlite.Core-8.0.11/metadata.nuspec"
+    },
+    {
+      "name": "Microsoft.Data.Sqlite",
+      "version": "8.0.11",
+      "license": "MIT",
+      "licenseUrl": "https://licenses.nuget.org/MIT",
+      "files": [],
+      "nuspec": "licenses/nuget/Microsoft.Data.Sqlite-8.0.11/metadata.nuspec"
+    },
+    {
+      "name": "Microsoft.NET.Test.Sdk",
+      "version": "17.11.1",
+      "license": "MIT",
+      "licenseUrl": "https://licenses.nuget.org/MIT",
+      "files": [],
+      "nuspec": "licenses/nuget/Microsoft.NET.Test.Sdk-17.11.1/metadata.nuspec"
+    },
+    {
+      "name": "Microsoft.NETCore.Platforms",
+      "version": "1.1.0",
+      "license": null,
+      "licenseUrl": "http://go.microsoft.com/fwlink/?LinkId=329770",
+      "files": [
+        "licenses/nuget/Microsoft.NETCore.Platforms-1.1.0/dotnet_library_license.txt",
+        "licenses/nuget/Microsoft.NETCore.Platforms-1.1.0/ThirdPartyNotices.txt"
+      ],
+      "nuspec": "licenses/nuget/Microsoft.NETCore.Platforms-1.1.0/metadata.nuspec"
+    },
+    {
+      "name": "Microsoft.NETFramework.ReferenceAssemblies.net48",
+      "version": "1.0.3",
+      "license": null,
+      "licenseUrl": "https://github.com/Microsoft/dotnet/blob/master/LICENSE",
+      "files": [],
+      "nuspec": "licenses/nuget/Microsoft.NETFramework.ReferenceAssemblies.net48-1.0.3/metadata.nuspec"
+    },
+    {
+      "name": "Microsoft.NETFramework.ReferenceAssemblies",
+      "version": "1.0.3",
+      "license": null,
+      "licenseUrl": "https://github.com/Microsoft/dotnet/blob/master/LICENSE",
+      "files": [],
+      "nuspec": "licenses/nuget/Microsoft.NETFramework.ReferenceAssemblies-1.0.3/metadata.nuspec"
+    },
+    {
+      "name": "Microsoft.Office.Interop.Word",
+      "version": "15.0.4797.1004",
+      "license": null,
+      "licenseUrl": null,
+      "files": [],
+      "nuspec": "licenses/nuget/Microsoft.Office.Interop.Word-15.0.4797.1004/metadata.nuspec"
+    },
+    {
+      "name": "Microsoft.TestPlatform.ObjectModel",
+      "version": "17.11.1",
+      "license": "MIT",
+      "licenseUrl": "https://licenses.nuget.org/MIT",
+      "files": [],
+      "nuspec": "licenses/nuget/Microsoft.TestPlatform.ObjectModel-17.11.1/metadata.nuspec"
+    },
+    {
+      "name": "Microsoft.TestPlatform.TestHost",
+      "version": "17.11.1",
+      "license": "MIT",
+      "licenseUrl": "https://licenses.nuget.org/MIT",
+      "files": [
+        "licenses/nuget/Microsoft.TestPlatform.TestHost-17.11.1/ThirdPartyNotices.txt"
+      ],
+      "nuspec": "licenses/nuget/Microsoft.TestPlatform.TestHost-17.11.1/metadata.nuspec"
+    },
+    {
+      "name": "NETStandard.Library",
+      "version": "2.0.3",
+      "license": null,
+      "licenseUrl": "https://github.com/dotnet/standard/blob/master/LICENSE.TXT",
+      "files": [
+        "licenses/nuget/NETStandard.Library-2.0.3/LICENSE.TXT",
+        "licenses/nuget/NETStandard.Library-2.0.3/THIRD-PARTY-NOTICES.TXT"
+      ],
+      "nuspec": "licenses/nuget/NETStandard.Library-2.0.3/metadata.nuspec"
+    },
+    {
+      "name": "Newtonsoft.Json",
+      "version": "13.0.3",
+      "license": "MIT",
+      "licenseUrl": "https://licenses.nuget.org/MIT",
+      "files": [
+        "licenses/nuget/Newtonsoft.Json-13.0.3/LICENSE.md"
+      ],
+      "nuspec": "licenses/nuget/Newtonsoft.Json-13.0.3/metadata.nuspec"
+    },
+    {
+      "name": "SQLitePCLRaw.bundle_e_sqlite3",
+      "version": "2.1.13",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://licenses.nuget.org/Apache-2.0",
+      "files": [],
+      "nuspec": "licenses/nuget/SQLitePCLRaw.bundle_e_sqlite3-2.1.13/metadata.nuspec"
+    },
+    {
+      "name": "SQLitePCLRaw.core",
+      "version": "2.1.13",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://licenses.nuget.org/Apache-2.0",
+      "files": [],
+      "nuspec": "licenses/nuget/SQLitePCLRaw.core-2.1.13/metadata.nuspec"
+    },
+    {
+      "name": "SQLitePCLRaw.lib.e_sqlite3",
+      "version": "2.1.13",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://licenses.nuget.org/Apache-2.0",
+      "files": [],
+      "nuspec": "licenses/nuget/SQLitePCLRaw.lib.e_sqlite3-2.1.13/metadata.nuspec"
+    },
+    {
+      "name": "SQLitePCLRaw.provider.dynamic_cdecl",
+      "version": "2.1.13",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://licenses.nuget.org/Apache-2.0",
+      "files": [],
+      "nuspec": "licenses/nuget/SQLitePCLRaw.provider.dynamic_cdecl-2.1.13/metadata.nuspec"
+    },
+    {
+      "name": "SQLitePCLRaw.provider.e_sqlite3",
+      "version": "2.1.13",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://licenses.nuget.org/Apache-2.0",
+      "files": [],
+      "nuspec": "licenses/nuget/SQLitePCLRaw.provider.e_sqlite3-2.1.13/metadata.nuspec"
+    },
+    {
+      "name": "System.Buffers",
+      "version": "4.4.0",
+      "license": null,
+      "licenseUrl": "https://github.com/dotnet/corefx/blob/master/LICENSE.TXT",
+      "files": [
+        "licenses/nuget/System.Buffers-4.4.0/LICENSE.TXT",
+        "licenses/nuget/System.Buffers-4.4.0/THIRD-PARTY-NOTICES.TXT"
+      ],
+      "nuspec": "licenses/nuget/System.Buffers-4.4.0/metadata.nuspec"
+    },
+    {
+      "name": "System.Buffers",
+      "version": "4.5.1",
+      "license": null,
+      "licenseUrl": "https://github.com/dotnet/corefx/blob/master/LICENSE.TXT",
+      "files": [
+        "licenses/nuget/System.Buffers-4.5.1/LICENSE.TXT",
+        "licenses/nuget/System.Buffers-4.5.1/THIRD-PARTY-NOTICES.TXT"
+      ],
+      "nuspec": "licenses/nuget/System.Buffers-4.5.1/metadata.nuspec"
+    },
+    {
+      "name": "System.Memory",
+      "version": "4.5.3",
+      "license": null,
+      "licenseUrl": "https://github.com/dotnet/corefx/blob/master/LICENSE.TXT",
+      "files": [
+        "licenses/nuget/System.Memory-4.5.3/LICENSE.TXT",
+        "licenses/nuget/System.Memory-4.5.3/THIRD-PARTY-NOTICES.TXT"
+      ],
+      "nuspec": "licenses/nuget/System.Memory-4.5.3/metadata.nuspec"
+    },
+    {
+      "name": "System.Memory",
+      "version": "4.5.5",
+      "license": null,
+      "licenseUrl": "https://github.com/dotnet/corefx/blob/master/LICENSE.TXT",
+      "files": [
+        "licenses/nuget/System.Memory-4.5.5/LICENSE.TXT",
+        "licenses/nuget/System.Memory-4.5.5/THIRD-PARTY-NOTICES.TXT"
+      ],
+      "nuspec": "licenses/nuget/System.Memory-4.5.5/metadata.nuspec"
+    },
+    {
+      "name": "System.Numerics.Vectors",
+      "version": "4.4.0",
+      "license": null,
+      "licenseUrl": "https://github.com/dotnet/corefx/blob/master/LICENSE.TXT",
+      "files": [
+        "licenses/nuget/System.Numerics.Vectors-4.4.0/LICENSE.TXT",
+        "licenses/nuget/System.Numerics.Vectors-4.4.0/THIRD-PARTY-NOTICES.TXT"
+      ],
+      "nuspec": "licenses/nuget/System.Numerics.Vectors-4.4.0/metadata.nuspec"
+    },
+    {
+      "name": "System.Reflection.Metadata",
+      "version": "1.6.0",
+      "license": null,
+      "licenseUrl": "https://github.com/dotnet/corefx/blob/master/LICENSE.TXT",
+      "files": [
+        "licenses/nuget/System.Reflection.Metadata-1.6.0/LICENSE.TXT",
+        "licenses/nuget/System.Reflection.Metadata-1.6.0/THIRD-PARTY-NOTICES.TXT"
+      ],
+      "nuspec": "licenses/nuget/System.Reflection.Metadata-1.6.0/metadata.nuspec"
+    },
+    {
+      "name": "System.Runtime.CompilerServices.Unsafe",
+      "version": "4.5.2",
+      "license": null,
+      "licenseUrl": "https://github.com/dotnet/corefx/blob/master/LICENSE.TXT",
+      "files": [
+        "licenses/nuget/System.Runtime.CompilerServices.Unsafe-4.5.2/LICENSE.TXT",
+        "licenses/nuget/System.Runtime.CompilerServices.Unsafe-4.5.2/THIRD-PARTY-NOTICES.TXT"
+      ],
+      "nuspec": "licenses/nuget/System.Runtime.CompilerServices.Unsafe-4.5.2/metadata.nuspec"
+    },
+    {
+      "name": "System.Runtime.CompilerServices.Unsafe",
+      "version": "4.5.3",
+      "license": null,
+      "licenseUrl": "https://github.com/dotnet/corefx/blob/master/LICENSE.TXT",
+      "files": [
+        "licenses/nuget/System.Runtime.CompilerServices.Unsafe-4.5.3/LICENSE.TXT",
+        "licenses/nuget/System.Runtime.CompilerServices.Unsafe-4.5.3/THIRD-PARTY-NOTICES.TXT"
+      ],
+      "nuspec": "licenses/nuget/System.Runtime.CompilerServices.Unsafe-4.5.3/metadata.nuspec"
+    },
+    {
+      "name": "System.Security.Cryptography.ProtectedData",
+      "version": "8.0.0",
+      "license": "MIT",
+      "licenseUrl": "https://licenses.nuget.org/MIT",
+      "files": [
+        "licenses/nuget/System.Security.Cryptography.ProtectedData-8.0.0/LICENSE.TXT",
+        "licenses/nuget/System.Security.Cryptography.ProtectedData-8.0.0/THIRD-PARTY-NOTICES.TXT"
+      ],
+      "nuspec": "licenses/nuget/System.Security.Cryptography.ProtectedData-8.0.0/metadata.nuspec"
+    },
+    {
+      "name": "xunit.abstractions",
+      "version": "2.0.3",
+      "license": null,
+      "licenseUrl": "https://raw.githubusercontent.com/xunit/xunit/master/license.txt",
+      "files": [],
+      "nuspec": "licenses/nuget/xunit.abstractions-2.0.3/metadata.nuspec"
+    },
+    {
+      "name": "xunit.analyzers",
+      "version": "1.16.0",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://licenses.nuget.org/Apache-2.0",
+      "files": [],
+      "nuspec": "licenses/nuget/xunit.analyzers-1.16.0/metadata.nuspec"
+    },
+    {
+      "name": "xunit.assert",
+      "version": "2.9.2",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://licenses.nuget.org/Apache-2.0",
+      "files": [],
+      "nuspec": "licenses/nuget/xunit.assert-2.9.2/metadata.nuspec"
+    },
+    {
+      "name": "xunit.core",
+      "version": "2.9.2",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://licenses.nuget.org/Apache-2.0",
+      "files": [],
+      "nuspec": "licenses/nuget/xunit.core-2.9.2/metadata.nuspec"
+    },
+    {
+      "name": "xunit.extensibility.core",
+      "version": "2.9.2",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://licenses.nuget.org/Apache-2.0",
+      "files": [],
+      "nuspec": "licenses/nuget/xunit.extensibility.core-2.9.2/metadata.nuspec"
+    },
+    {
+      "name": "xunit.extensibility.execution",
+      "version": "2.9.2",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://licenses.nuget.org/Apache-2.0",
+      "files": [],
+      "nuspec": "licenses/nuget/xunit.extensibility.execution-2.9.2/metadata.nuspec"
+    },
+    {
+      "name": "xunit.runner.visualstudio",
+      "version": "2.8.2",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://licenses.nuget.org/Apache-2.0",
+      "files": [],
+      "nuspec": "licenses/nuget/xunit.runner.visualstudio-2.8.2/metadata.nuspec"
+    },
+    {
+      "name": "xunit",
+      "version": "2.9.2",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://licenses.nuget.org/Apache-2.0",
+      "files": [],
+      "nuspec": "licenses/nuget/xunit-2.9.2/metadata.nuspec"
+    }
+  ],
+  "java": [
+    {
+      "group": "zemberek-nlp",
+      "artifact": "zemberek-morphology",
+      "version": "0.17.1",
+      "licenses": [],
+      "files": []
+    },
+    {
+      "group": "zemberek-nlp",
+      "artifact": "zemberek-core",
+      "version": "0.17.1",
+      "licenses": [],
+      "files": []
+    },
+    {
+      "group": "zemberek-nlp",
+      "artifact": "zemberek-tokenization",
+      "version": "0.17.1",
+      "licenses": [],
+      "files": []
+    },
+    {
+      "group": "org.antlr",
+      "artifact": "antlr4-runtime",
+      "version": "4.7",
+      "licenses": [],
+      "files": []
+    },
+    {
+      "group": "zemberek-nlp",
+      "artifact": "zemberek-lm",
+      "version": "0.17.1",
+      "licenses": [],
+      "files": []
+    },
+    {
+      "group": "com.google.code.gson",
+      "artifact": "gson",
+      "version": "2.11.0",
+      "licenses": [
+        {
+          "name": "Apache-2.0",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0.txt"
+        }
+      ],
+      "files": []
+    },
+    {
+      "group": "com.google.errorprone",
+      "artifact": "error_prone_annotations",
+      "version": "2.27.0",
+      "licenses": [
+        {
+          "name": "Apache 2.0",
+          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
+        }
+      ],
+      "files": []
+    },
+    {
+      "group": "com.google.guava",
+      "artifact": "guava",
+      "version": "33.4.8-jre",
+      "licenses": [],
+      "files": [
+        "licenses/java/guava-33.4.8-jre/META-INF__LICENSE"
+      ]
+    },
+    {
+      "group": "com.google.guava",
+      "artifact": "failureaccess",
+      "version": "1.0.3",
+      "licenses": [],
+      "files": [
+        "licenses/java/failureaccess-1.0.3/META-INF__LICENSE"
+      ]
+    },
+    {
+      "group": "com.google.guava",
+      "artifact": "listenablefuture",
+      "version": "9999.0-empty-to-avoid-conflict-with-guava",
+      "licenses": [],
+      "files": []
+    },
+    {
+      "group": "org.jspecify",
+      "artifact": "jspecify",
+      "version": "1.0.0",
+      "licenses": [
+        {
+          "name": "The Apache License, Version 2.0",
+          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
+        }
+      ],
+      "files": []
+    },
+    {
+      "group": "com.google.j2objc",
+      "artifact": "j2objc-annotations",
+      "version": "3.0.0",
+      "licenses": [
+        {
+          "name": "Apache License, Version 2.0",
+          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
+        }
+      ],
+      "files": []
+    },
+    {
+      "group": "com.google.protobuf",
+      "artifact": "protobuf-java",
+      "version": "3.25.8",
+      "licenses": [],
+      "files": []
+    },
+    {
+      "group": "com.github.ben-manes.caffeine",
+      "artifact": "caffeine",
+      "version": "2.9.3",
+      "licenses": [
+        {
+          "name": "Apache License, Version 2.0",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0.txt"
+        }
+      ],
+      "files": [
+        "licenses/java/caffeine-2.9.3/META-INF__LICENSE"
+      ]
+    },
+    {
+      "group": "org.checkerframework",
+      "artifact": "checker-qual",
+      "version": "3.19.0",
+      "licenses": [
+        {
+          "name": "The MIT License",
+          "url": "http://opensource.org/licenses/MIT"
+        }
+      ],
+      "files": [
+        "licenses/java/checker-qual-3.19.0/META-INF__LICENSE.txt"
+      ]
+    }
+  ]
+}

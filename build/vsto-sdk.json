@@ -1,0 +1,8 @@
+{
+  "version": "17.10.35724.1",
+  "url": "https://download.visualstudio.microsoft.com/download/pr/a598ff6d-373f-45b1-bee0-d0518ea3b9d3/e30855fc503450c77316be751071721093e9f760e016077cb2c66f819dec5dbf/Microsoft.VisualStudio.Vsto.BuildTools.vsix",
+  "sha256": "e30855fc503450c77316be751071721093e9f760e016077cb2c66f819dec5dbf",
+  "fileName": "Microsoft.VisualStudio.Vsto.BuildTools.vsix",
+  "referencePath": "Contents/Common7/IDE/ReferenceAssemblies/v4.0",
+  "source": "Microsoft Visual Studio 2022 release channel catalog"
+}

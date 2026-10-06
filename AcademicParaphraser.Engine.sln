@@ -1,0 +1,59 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{DCC58FB6-6507-4F9E-8921-8962FC7881D6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AcademicParaphraser.Core", "src\AcademicParaphraser.Core\AcademicParaphraser.Core.csproj", "{ED55EC59-165B-4FA3-8A03-044EBA9D902F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AcademicParaphraser.Infrastructure", "src\AcademicParaphraser.Infrastructure\AcademicParaphraser.Infrastructure.csproj", "{2AADAFB8-F806-4E46-8A8E-D7966DB398DD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AcademicParaphraser.WordHost", "src\AcademicParaphraser.WordHost\AcademicParaphraser.WordHost.csproj", "{F3056134-5F21-4CB2-AA1E-34469E8DBAFD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{17F49A62-660F-4CAA-8CF1-B4096BC1C21F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AcademicParaphraser.Tests", "tests\AcademicParaphraser.Tests\AcademicParaphraser.Tests.csproj", "{2E968F10-9574-4925-9AFB-C61E7561129E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{C6139747-1AA7-446D-8A51-0273FA2FFFBE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AcademicParaphraser.Verify", "tools\AcademicParaphraser.Verify\AcademicParaphraser.Verify.csproj", "{5BA93919-89E4-4784-93D3-6AF440CCD495}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ED55EC59-165B-4FA3-8A03-044EBA9D902F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED55EC59-165B-4FA3-8A03-044EBA9D902F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED55EC59-165B-4FA3-8A03-044EBA9D902F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED55EC59-165B-4FA3-8A03-044EBA9D902F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2AADAFB8-F806-4E46-8A8E-D7966DB398DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2AADAFB8-F806-4E46-8A8E-D7966DB398DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2AADAFB8-F806-4E46-8A8E-D7966DB398DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2AADAFB8-F806-4E46-8A8E-D7966DB398DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3056134-5F21-4CB2-AA1E-34469E8DBAFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3056134-5F21-4CB2-AA1E-34469E8DBAFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3056134-5F21-4CB2-AA1E-34469E8DBAFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3056134-5F21-4CB2-AA1E-34469E8DBAFD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E968F10-9574-4925-9AFB-C61E7561129E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E968F10-9574-4925-9AFB-C61E7561129E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E968F10-9574-4925-9AFB-C61E7561129E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E968F10-9574-4925-9AFB-C61E7561129E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5BA93919-89E4-4784-93D3-6AF440CCD495}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5BA93919-89E4-4784-93D3-6AF440CCD495}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5BA93919-89E4-4784-93D3-6AF440CCD495}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5BA93919-89E4-4784-93D3-6AF440CCD495}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{ED55EC59-165B-4FA3-8A03-044EBA9D902F} = {DCC58FB6-6507-4F9E-8921-8962FC7881D6}
+		{2AADAFB8-F806-4E46-8A8E-D7966DB398DD} = {DCC58FB6-6507-4F9E-8921-8962FC7881D6}
+		{F3056134-5F21-4CB2-AA1E-34469E8DBAFD} = {DCC58FB6-6507-4F9E-8921-8962FC7881D6}
+		{2E968F10-9574-4925-9AFB-C61E7561129E} = {17F49A62-660F-4CAA-8CF1-B4096BC1C21F}
+		{5BA93919-89E4-4784-93D3-6AF440CCD495} = {C6139747-1AA7-446D-8A51-0273FA2FFFBE}
+	EndGlobalSection
+EndGlobal
