@@ -7,8 +7,8 @@
 - [x] Visual Studio 2022 OfficeTools ve .NET 4.8 Developer Pack bulunan Windows makinesinde Build-Windows.ps1 tamamlandı.
 - [x] Debug/Release motor testleri gerçek bundled Windows Java ile geçti.
 - [x] WordAddin.dll, dll.manifest ve .vsto üretildi, kriptografik XML imzaları ve dosya özetleri doğrulandı.
-- [x] Gerçek payload/config ile .NET Framework x86/x64: SQLite migration, önizleme, sözlük sağlayıcıları ve bundled Java/Zemberek bileşen açılışları geçti. Word COM çalıştırılmadı.
-- [x] Payload içinde managed NuGet bağımlılıkları, SQLite x86/x64, Zemberek JAR ve Java runtime/legal dosyaları var.
+- [x] Gerçek payload/config ile .NET Framework x86/x64: SQLite migration, önizleme, geniş KeNet verisi, sözlük sağlayıcıları ve bundled Java/Zemberek bileşen açılışları geçti. Word COM çalıştırılmadı.
+- [x] Payload içinde managed NuGet bağımlılıkları, SQLite x86/x64, Zemberek JAR, KeNet SQLite/CC BY-SA atıf bildirimi ve Java runtime/legal dosyaları var.
 - [x] Inno Setup 6.3+ gerçek Setup.exe oluşturdu; örnek dosyayla installer üretimi kabul sayılmadı.
 - [ ] Temiz Windows + Word 32 bit üzerinde kullanıcı başına kuruldu; AKADEMİK PARAFRAZ sekmesi göründü.
 - [ ] Temiz Windows + Word 64 bit üzerinde kuruldu; native SQLite doğru bitness ile yüklendi.
@@ -75,7 +75,7 @@ Her denemede önce/sonra metin, ilgili OOXML ve URL hedefleri karşılaştırıl
 - [ ] Hafif/Orta/Güçlü, gerçek farklı alternatifler, sonraki/önceki ve Apply/Cancel çalıştı.
 - [ ] Ayar/sözlük/kurallar/terim kilidi/yedek import-export tanılama ekranları çalıştı.
 - [ ] Ağ kapalı/offline modda parafraz sırasında hiç HTTP isteği yoktu.
-- [ ] İsteğe bağlı sözlükte yalnızca yazılan tek kelime dışarı gitti; provider kesintisi parafrazı durdurmadı.
+- [ ] İsteğe bağlı sözlükte yalnızca tek kelime kökü dışarı gitti; otomatik destek açıkken en fazla üç kök/süre sınırı korundu; provider kesintisi parafrazı durdurmadı.
 - [ ] SQL history blob'ları DPAPI ile şifreli; uygulama loglarında seçilmiş akademik metin yok.
 - [ ] Alan uzmanı, kuralları farklı akademik metinlerde anlam/olumsuzluk/kip/çatı/özne uyumu için değerlendirdi; güven puanı başarı oranı olarak raporlanmadı.
 

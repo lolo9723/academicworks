@@ -8,7 +8,7 @@ Kütüphane/proje sürümü 1.0.2'dir; bu numara Windows/Word kabul sertifikası
 
 ## Veri ve bağımlılık akışı
 
-`AddinController` Word UI adaptörü ile engine/repository/NLP/provider bağımlılıklarını bağlayan composition root'tur. Core Word veya WinForms referansı almaz. Engine `IRuleCatalog` ve `ITurkishNlp`, dictionary servisi `IDictionaryProvider`, history repository `ITextProtector` arayüzleri kullanır. Ana ürün DPAPI kullanır; cross-platform testlerde rastgele anahtarlı AES-CBC/HMAC sağlayıcısı gerçek şifreleme kontrolü için kullanılır.
+`AddinController` Word UI adaptörü ile engine/repository/NLP/provider bağımlılıklarını bağlayan composition root'tur. Core Word veya WinForms referansı almaz. Engine `IRuleCatalog`, `ITurkishNlp` ve isteğe bağlı `ILexicalSource`, dictionary servisi `IDictionaryProvider`, history repository `ITextProtector` arayüzleri kullanır. Ana ürün DPAPI kullanır; cross-platform testlerde rastgele anahtarlı AES-CBC/HMAC sağlayıcısı gerçek şifreleme kontrolü için kullanılır.
 
 1. Word UI thread'inde seçim, görünür metin ve OOXML snapshot alınır.
 2. Korumalar regex, kullanıcı terimleri, OOXML ve native alanlar üzerinden oluşturulur.
@@ -33,7 +33,7 @@ Native Word davranışı özellikle Undo/Track Changes, field result yazma, fark
 
 ## Kural ekleme
 
-Son kullanıcı Sözlük > Dönüşüm kuralları ekranından kayıt ekler. Geliştirici varsayılan veri için `Core/Data/rules.json` dosyasını değiştirir. Varsayılan kayıtlar ilk kullanımda SQLite'a eklenir. Mevcut DB'de aynı ID değiştirilmez; yayımlanmış bir seed değişikliği için migration gerekir.
+Son kullanıcı Sözlük > Dönüşüm kuralları ekranından kayıt ekler. Geliştirici temel veri için `Core/Data/rules.json`, genişletilmiş çekim/kalıp tabloları için `Core/Data/rule-templates.json` dosyasını değiştirir. Core derleme hedefi `build/Expand-AcademicRules.py` ile 61 temel kurala ek olarak 1.191 kural üretir; çıktısı `artifacts/rules/rules.extended.json` gömülü kaynak olarak derlenir. Üretimde Python çalıştırılmaz. Varsayılan kayıtlar ilk kullanımda SQLite'a eklenir. Mevcut DB'de aynı ID değiştirilmez; yayımlanmış bir seed değişikliği için migration gerekir.
 
 Örnek kayıt:
 
@@ -81,7 +81,7 @@ Infrastructure/InternetDictionaryProviders altında `IDictionaryProvider` uygula
 
 Yeni sağlayıcıyı composition root'taki listeye ekleyin. Belge metni sağlayıcıya verilmez. DictionaryService offline/internet ayarını provider çağrısından önce kontrol eder, 30 günlük cache'i okur ve isteğe bağlı kaydeder. Bir provider diğerlerinden bağımsızdır. Sağlayıcının döndürdüğü açıklamalar kendiliğinden güvenli parafraz kuralı olmaz.
 
-Mevcut sağlayıcılar sitenin HTML sayfasını scraping yapmaz; açık MediaWiki parse arayüzünün JSON içindeki sözlük içeriğini ayrıştırır. API anahtarı yoktur. Kaynak içeriği farklı lisanslı alt unsurlar barındırabilir; sonuçta kaynak URL ve CC BY-SA yönlendirmesi korunur. Otomatik geniş çaplı sözlük indirmesi uygulanmaz.
+Mevcut sağlayıcılar sitenin HTML sayfasını scraping yapmaz; açık MediaWiki parse arayüzünün JSON içindeki sözlük içeriğini ayrıştırır. API anahtarı yoktur. Kaynak içeriği farklı lisanslı alt unsurlar barındırabilir; sonuçta kaynak URL ve CC BY-SA yönlendirmesi korunur. Çalışma sırasında geniş çaplı sözlük indirmesi uygulanmaz. Derleme sırasında ayrı ve SHA256 ile sabitlenmiş KeNet verisi hazırlanır; belge metni bu hazırlığa karışmaz.
 
 ## SQLite, migration ve yedekleme
 
@@ -112,3 +112,13 @@ VSTO, yönetilen DLL’leri .NET Framework önbelleğinden yükleyebilir. `Assem
 `Probe-Startup.ps1 -ShadowCopy -SkipNativeBootstrap`, düzeltme olmadan gerçek Framework önbelleği koşulunu sınar. `-ShadowCopy -Strict`, aynı koşulda ürünün gerçek başlangıç kodunu çalıştırır. `assemblyStorage: SHADOW` kontrolü, DLL’nin gerçekten önbellekten yüklendiğini doğrular. CI x86 ve x64, doğrudan ve önbellek yüklemesini ayrı Windows PowerShell süreçlerinde çalıştırır. `Tanila.cmd` geçici önbellekte tanılar; Word’ü açmaz. Bu test Word COM/Ribbon/biçim kabulü değildir.
 
 Açılış tanısı hata aşaması, exception tipi, HRESULT, Word işlem mimarisi ve yalnızca ilk method’un adıyla sınırlıdır. Exception mesajı, dosya yolları, tam stack trace ve belge metni loglanmaz.
+
+## 1.1.0 geniş sözlük ve korumalı cümle değişimleri
+
+`python build/Prepare-LexicalData.py`, `build/lexical-data.json` içindeki sabit KeNet commit ve kaynak SHA256 değerini doğrular; kendi XML ayrıştırıcımızla `artifacts/lexical-data/kenet.sqlite` oluşturur. CC BY-SA 4.0 veri ve atıf bildirimi payload'a eklenir. Upstream GPL kodu kullanılmaz. Gerçek veride 78.327 anlam kümesi, 110.259 üyelik ve 82.155 farklı madde vardır. Paketlediğimiz indeksli SQLite yaklaşık 19,4 MB'dır. Kişisel veritabanından ayrı, salt okunur, 4 MiB SQLite sayfa önbelleği ile açılır; bütün sözlük belleğe alınmaz.
+
+`WordNetLexicalSource`, tür ve anlam kümesini kontrol eder; çok anlamlı kaynak için tanım-bağlam örtüşmesi gerekir. Otomatik hedefler akademik kayıt filtresinden ve tek-anlam koşulundan geçer. Bu, tam semantik doğrulama veya bütün 82.155 sözcük için otomatik dönüşüm kapsamı değildir. Terimler ve özel isimler geniş sözlük sorgusundan önce çıkarılır; kullanıcının sözlük kayıtları önceliklidir. İnternet açıkken en fazla üç tek-sözcük kökü için toplam sekiz saniye bütçesiyle açık sözlük denenir; yerel anlam kümesine uymayan web karşılığı uygulanmaz.
+
+`AnchoredRuleEdits`, kalıp içinde korunan sayı/terim/alan metnini sabit tutup çevresindeki değişimleri bölünmez bir öneri halinde üretir. Eksik/değişmiş veya sınırı aşan koruma tüm kalıbı reddeder. `CandidateIntegrity`, Word eşlemesinde her değişim uygulanabilir değilse tüm alternatifi reddeder; tekil edit silerek başka bir önizleme metnini uygulamaz.
+
+Test için gerçek `ACADEMIC_JAVA`, `ACADEMIC_NLP_JAR` ve `ACADEMIC_WORDNET` yolları gereklidir. `tools/AcademicParaphraser.QualityProbe` dört argüman alır: KeNet SQLite, Java, JAR ve çıktı klasörü. Sentetik altı cümle/10 paragraf için gerçek dönüşüm metni ve süreç çalışma belleği raporlanır; Word açılmaz, metin örneğinin değişim sayısı genel doğruluk yüzdesi olarak yorumlanmaz.

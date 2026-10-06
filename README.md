@@ -4,9 +4,11 @@ Windows masaüstü Microsoft Word için C#/.NET Framework 4.8 ve VSTO mimarisind
 
 ## Teslim durumu
 
+**1.1.0 geniş motor:** 82.155 maddelik indeksli KeNet verisi, toplam 1.252 kural, cümle/amaç/neden/yöntem dönüşümleri ve bölünmez korumalı edit önerileri eklendi. [Gerçek paragraf çıktısı, Windows ölçümleri ve kurulum](docs/Expanded-Engine-1.1.0.md). Geniş veri bütün maddeler için otomatik değiştirme garantisi değildir.
+
 **1.0.2 açılış düzeltmesi:** Gerçek Windows Framework DLL önbelleğinde SQLite yükleme hatası yeniden oluşturuldu. Word işleminin mimarisine uygun native SQLite hazırlığı ve gerçek kurulum yolu çözümü eklendi. Önbellek ve doğrudan yükleme x86/x64 kontrolleri geçti. [Bulgu, test kanıtları ve kurulum](docs/Startup-Fix-1.0.2.md). Canlı Word sonucu henüz doğrulanmadı.
 
-Gerçek Windows CI üzerinde Core, Infrastructure, .NET Framework WordHost ve VSTO WordAddin projeleri Debug/Release derlenmiş; gerçek SQLite ve Zemberek ile **64/64 motor testi her iki yapılandırmada geçmiştir**. `.vsto` ve `.dll.manifest` dosyaları imzalanmış, Inno Setup ile gerçek `AkademikParafraz-1.0.2-Setup.exe` üretilmiştir. Güncel doğrulanmış Windows koşusu: [37454118096](https://github.com/lolo9723/academicworks/actions/runs/37454118096). Windows DPAPI, native mimariler, VSTO XML imzaları/dosya özetleri ve eksik Word installer testi de geçti.
+Gerçek Windows CI üzerinde Core, Infrastructure, .NET Framework WordHost ve VSTO WordAddin projeleri Debug/Release derlenmiş; gerçek SQLite ve Zemberek ile **89/89 motor testi her iki yapılandırmada geçmiştir**. `.vsto` ve `.dll.manifest` dosyaları imzalanmış, Inno Setup ile gerçek `AkademikParafraz-1.1.0-Setup.exe` üretilmiştir. Güncel doğrulanmış Windows koşusu: [37464862615](https://github.com/lolo9723/academicworks/actions/runs/37464862615). Windows DPAPI, native mimariler, VSTO XML imzaları/dosya özetleri ve eksik Word installer testi de geçti.
 
 **Gerçek Word üzerinde kurulum, Ribbon yükleme, biçim/bağlantı/Undo/Track Changes kabulü henüz çalıştırılmamıştır.** Windows CI makinesinde Word yoktur. Bu ilk paket geliştirme yayıncı sertifikası kullanır; installer EXE için üretim Authenticode sertifikası sağlanmamıştır. Üretim kabulü tamamlanmış gibi sunulmaz. Son kullanıcı kılavuzu [UsersGuide.md](docs/UsersGuide.md), çalıştırılan kontroller [Verification.md](docs/Verification.md) ve canlı Word matrisi [Windows-Acceptance.md](docs/Windows-Acceptance.md) içindedir.
 
@@ -39,6 +41,7 @@ Ribbon; alternatif üretme/gezinme, önizleme, atıf/sayı/özel isim/teknik ter
 | Core / CitationProtection | Atıf, sayı, tanımlayıcı, özel isim ve kilit koruması |
 | Core / DocumentProtection | OOXML metin/run eşleme, biçim/alan/bağlantı sınırları |
 | Infrastructure / TurkishNlp | Otomatik Java sidecar yönetimi, iptal/zaman aşımı, UTF-8 stdio protokolü |
+| Infrastructure / LexicalKnowledge | Ayrı salt okunur KeNet indeksi, tür/anlam kümesi ve akademik kayıt filtresi |
 | Infrastructure / Persistence | SQLite migration, kural/sözlük/ayarlar, cache, şifreli geçmiş |
 | Infrastructure / InternetDictionaryProviders | Anahtarsız açık sözlük sağlayıcıları, hata yalıtımı, offline cache |
 | Infrastructure / Diagnostics | Metinsiz hata kodları ve günlük rotasyonu |
@@ -50,7 +53,7 @@ Ribbon; alternatif üretme/gezinme, önizleme, atıf/sayı/özel isim/teknik ter
 
 ## Belge koruma yaklaşımı ve sınırlar
 
-Seçim metni ve `WordOpenXML` birlikte yakalanır. OOXML run'ları, biçim ve yapısal konteyner sınırlarıyla eşlenir. Field kodları, kaynakça/citation alanları, yer işaretleri, içerik denetimleri, mevcut revisions ve nesne metinleri korumaya alınır. Dönüşüm ancak eşleme tekil ve değişecek aralığın biçimi aynıysa kabul edilir.
+Seçim metni ve `WordOpenXML` birlikte yakalanır. OOXML run'ları, biçim ve yapısal konteyner sınırlarıyla eşlenir. Field kodları, kaynakça/citation alanları, yer işaretleri, içerik denetimleri, mevcut revisions ve nesne metinleri korumaya alınır. Dönüşüm ancak eşleme tekil ve değişecek aralığın biçimi aynıysa kabul edilir. Birden fazla küçük edit içeren bir cümle alternatifi, editlerin tamamı bu denetimden geçerse uygulanabilir; biri reddedilirse tüm alternatif elenir.
 
 Bütün seçimi `Range.Text` ile değiştirmek yerine yalnızca doğrulanmış küçük değişim aralıkları ters sırada düzenlenir. Font bilgisi saklanıp bu aralıklara uygulanır; paragraf sonları ve tablo hücresi işaretleri dönüşüme sokulmaz. Word COM işlemleri yalnızca yakalandıkları UI/STA iş parçacığında yapılır; morfoloji ve kural üretimi arka planda çalışır. En fazla 80.000 karakterlik seçim ve 16 MB OOXML sınırı vardır.
 
@@ -60,19 +63,19 @@ Sayı/atıf tespiti kapsamlı regex ve yerel morfoloji kullanır; yeni atıf bi�
 
 ## Kural ve sözlük kapsamı
 
-Başlangıç verisi `src/AcademicParaphraser.Core/Data` altında **61 kural ve 39 sözlük kaydıdır**. Sözlükte 13 morfolojik alternatif kaydı ve 26 teknik terim vardır. Sözlük/kural yöneticisi bu kayıtları SQLite üzerinde düzenler. Genel akademik Türkçe kuralları ile turizm, rekreasyon, sosyal bilimler, eğitim, psikoloji, işletme ve yönetim alan etiketleri/teknik terimleri bulunur; her alan için kapsamlı bir dil modeli veya uzmanlık korpusu bulunmaz.
+1.1.0 başlangıç verisi **1.252 dönüşüm kuralı**, 39 yönetilebilir kişisel/teknik sözlük başlangıç kaydı ve ayrı, salt okunur **82.155 maddelik KeNet sözlük verisidir**. 61 temel kural korunmuş, `rule-templates.json` tablosundan 1.191 ek çekim ve cümle kalıbı üretilmiştir. Bu sayı 1.252 bağımsız sentaks ailesi veya bütün sözlük maddelerini otomatik değiştirme yeteneği demek değildir. Sözlükte 13 morfolojik alternatif kaydı ve 26 teknik terim vardır. Sözlük/kural yöneticisi bu kayıtları SQLite üzerinde düzenler. Genel akademik Türkçe kuralları ile turizm, rekreasyon, sosyal bilimler, eğitim, psikoloji, işletme ve yönetim alan etiketleri/teknik terimleri bulunur; her alan için kapsamlı bir dil modeli veya uzmanlık korpusu bulunmaz.
 
 Motor kalıp/fiil/yüklem dönüşümleri, açık öznesi bulunan etken-edilgen dönüşümleri, isim-fiil, isim tamlaması, yan cümle, sıfat-fiil, zarf-fiil, bağlayıcı ifadeler, güvenli sıralama, bulgu/yöntem/literatür/karşılaştırma/sonuç kalıplarını işler. Bunlar sınırlı ve açıkça tanımlı kalıplardır; genel Türkçe sentaksının tamamını dönüştüren bir parser değildir. Özne uydurulmaz; tanınmayan veya belirsiz yapı bırakılır.
 
 Hafif mod küçük/lexical kalıpları, Orta ilave sentaktik kalıpları, Güçlü tanımlı yeniden sıralamaları açar. Güçlü modda da korumalar geçerlidir. Gereken çekim Zemberek'in gerçek analiz ve üretimiyle elde edilir; uyumlu çözümlemeler tek bir biçimde uzlaşmazsa sözcük değişmez. Yakın anlamlı kayıtlar otomatik eş anlamlı kabul edilmez.
 
-Güven puanları kural/sözlük uzman tahminleri ve yapısal fark sezgisidir. Ölçülmüş doğruluk yüzdesi veya matematiksel anlam eşdeğerliği kanıtı değildir. İnsani/akademik kalite açısından nihai öneri kullanıcı tarafından okunmalıdır. Güvenli değişim yoksa metin bırakılır. Alternatif sayısı hedeftir; yeterince farklı ve güvenli aday yoksa daha az öneri gösterilir.
+İç güven puanları kural/sözlük uzman tahminleri ve yapısal fark sezgisidir; önizleme bunları bir anlam doğruluğu yüzdesi olarak göstermez. Ölçülmüş doğruluk yüzdesi veya matematiksel anlam eşdeğerliği kanıtı değildir. İnsani/akademik kalite açısından nihai öneri kullanıcı tarafından okunmalıdır. Güvenli değişim yoksa metin bırakılır. Alternatif sayısı hedeftir; yeterince farklı ve güvenli aday yoksa daha az öneri gösterilir.
 
 ## Gizlilik ve isteğe bağlı internet
 
 Varsayılan ayarlar: internet kapalı, offline açık, korumalar açık, Orta düzey, üç alternatif, minimum kural güveni 0,92. Parafraz için internet gerekmez.
 
-Sözlük ekranından kullanıcı tarafından girilen **tek kelime** isteğe bağlı olarak Türkçe Vikisözlük ve İngilizce Wiktionary'nin açık MediaWiki arayüzüne sorgulanabilir. API anahtarı/hesap gerekmez. Seçim metni otomatik alınmaz ve dışarı gönderilmez. Sözcük bilgisi panelde kaynağıyla gösterilir; internetteki bilgi körlemesine otomatik dönüşüm kuralı yapılmaz. Kullanıcı uygun karşılığı yerel sözlüğe ekleyebilir.
+Sözlük ekranından kullanıcı tarafından girilen **tek kelime** isteğe bağlı olarak Türkçe Vikisözlük ve İngilizce Wiktionary'nin açık MediaWiki arayüzüne sorgulanabilir. API anahtarı/hesap gerekmez. Paragraf dışarı gönderilmez. Kullanıcı interneti açıp offline modu kapatırsa dönüşüm sırasında en fazla üç farklı kök kelime için toplam sekiz saniye bütçesiyle otomatik sözlük desteği denenir; karşılık yerel anlam kümesi ve akademik kayıt filtresinden geçmeden uygulanmaz. Sözcük bilgisi panelde kaynağıyla gösterilir; internetteki bilgi körlemesine otomatik dönüşüm kuralı yapılmaz. Kullanıcı uygun karşılığı yerel sözlüğe ekleyebilir.
 
 İnternet açık olsa bile offline mod açıkken ağ isteği yapılmaz. Cache 30 gün geçerlidir. Tek bir sağlayıcının hata vermesi parafrazı durdurmaz. İnternette bulunma, ücretsiz erişim ve sağlayıcının gelecekteki sürekliliği garanti değildir.
 
@@ -82,7 +85,7 @@ Geçmişte yalnızca uygulanan dönüşümler, Windows kullanıcısına bağlı 
 
 - Windows 10/11 x64, masaüstü Word 2016 veya daha yeni / Microsoft 365; 32 ve 64 bit Office için AnyCPU tasarımı. Gerçek bitness matrisi henüz test edilmedi.
 - Visual Studio 2022, **Office/SharePoint development** workload / VSTO bileşeni (`Microsoft.VisualStudio.Component.TeamOffice`) ve .NET Framework 4.8 Developer Pack. Build Tools için karşılık `Microsoft.VisualStudio.Component.TeamOffice.BuildTools`dur.
-- .NET SDK 8, Maven 3.9+, Java **JDK 17+**; `dotnet`, `mvn`, `java` PATH içinde ve `JAVA_HOME` JDK'yı göstermeli.
+- Python 3.9+ (yalnızca derlemede veri ve kural hazırlığı), .NET SDK 8, Maven 3.9+, Java **JDK 17+**; `dotnet`, `mvn`, `java` PATH içinde ve `JAVA_HOME` JDK'yı göstermeli.
 - Inno Setup **6.3+** (`ArchitecturesAllowed=x64compatible` kullanımı için).
 - Microsoft VSTO Runtime. [Microsoft indirme](https://www.microsoft.com/en-us/download/details.aspx?id=105522).
 
@@ -96,7 +99,7 @@ Geliştirici PowerShell oturumunda, Word kapalıyken:
 .\build\Build-Windows.ps1
 ```
 
-Betik NLP JAR'ını derler, `build/java-runtime.json` içindeki sabit Temurin Windows JRE arşivini indirip SHA256 doğrular, motor solution'ını restore eder, Debug/Release uyarısız derleme ve testleri çalıştırır, VSTO başlangıç projesini MSBuild ile derleyip manifest imzalar, native SQLite x86/x64 ve Java dosyalarını doğrular, payload'ı Inno Setup ile paketler.
+Betik NLP JAR'ını derler, sabitlenmiş KeNet verisini kaynak SHA256 ile doğrulayıp indeksli SQLite'a dönüştürür, `build/java-runtime.json` içindeki sabit Temurin Windows JRE arşivini indirip SHA256 doğrular, motor solution'ını restore eder, Debug/Release uyarısız derleme ve testleri çalıştırır, VSTO başlangıç projesini MSBuild ile derleyip manifest imzalar, native SQLite x86/x64 ve Java dosyalarını doğrular, payload'ı Inno Setup ile paketler.
 
 Üretim yayıncı sertifikası mevcutsa:
 
@@ -106,11 +109,11 @@ Betik NLP JAR'ını derler, `build/java-runtime.json` içindeki sabit Temurin Wi
 
 Sertifika verilmezse geliştirme code-signing sertifikası oluşturulur. Kendinden imzalı geliştirme sertifikası otomatik güvenilir yapılmaz. VSTO'nun yayıncı/güven uyarısı çıkabilir; kurum politikasının bloklaması derleme ile çözülmüş sayılmaz. Setup.exe üretim Authenticode imzası bu teslimde üretilmemiştir. VSTO manifest imzası, installer exe imzasının yerine geçmez.
 
-Başarı çıktısı: `artifacts/installer/AkademikParafraz-1.0.2-Setup.exe`. **Bu dosya gerçek Windows CI koşusunda oluşturulmuştur.** VSTO hedefleri olmayan sistemde tam WordAddin derlemesi geçmez. Betik eksik artefaktları atlayıp başarı bildirmez.
+Başarı çıktısı: `artifacts/installer/AkademikParafraz-1.1.0-Setup.exe`. **Bu dosya gerçek Windows CI koşusunda oluşturulmuştur.** VSTO hedefleri olmayan sistemde tam WordAddin derlemesi geçmez. Betik eksik artefaktları atlayıp başarı bildirmez.
 
 ## Windows otomatik derleme
 
-`.github/workflows/windows-build.yml` her push veya manuel çalıştırmada `windows-2022` üzerinde çalışır. Gerçek Visual Studio VSTO bileşenini `Prepare-WindowsCI.ps1` ile tamamlar; Zemberek, motor ve VSTO projelerini Debug/Release derleyip test eder, manifestleri geliştirme sertifikasıyla imzalar, Inno Setup installer üretir. Başarılı koşu `AkademikParafraz-1.0.2-Windows-Setup` artefaktını, SHA256 dosyasını ve yayıncı açık sertifikasını sunar. İmzalama özel anahtarı artefakta dahil edilmez.
+`.github/workflows/windows-build.yml` her push veya manuel çalıştırmada `windows-2022` üzerinde çalışır. Gerçek Visual Studio VSTO bileşenini `Prepare-WindowsCI.ps1` ile tamamlar; Zemberek, motor ve VSTO projelerini Debug/Release derleyip test eder, manifestleri geliştirme sertifikasıyla imzalar, Inno Setup installer üretir. Başarılı koşu `AkademikParafraz-1.1.0-Windows-Setup` artefaktını, SHA256 dosyasını ve yayıncı açık sertifikasını sunar. İmzalama özel anahtarı artefakta dahil edilmez.
 
 GitHub Windows runner’da masaüstü Word yoktur; başarılı CI çalışması Word kabul testlerinin yerine geçmez. CI, installer üretiminden önce gerçek VSTO ve bütün bağımlılık çıktıları bulunmadığında başarısız olur. Action sürümleri commit SHA ile sabitlenmiştir; NuGet restore kilit dosyaları kullanır.
 
@@ -131,6 +134,8 @@ Betik Microsoft’un `build/vsto-sdk.json` içindeki resmi VSIX paketini indirip
 mvn -f nlp/pom.xml clean package
 export ACADEMIC_JAVA="/absolute/path/to/java"
 export ACADEMIC_NLP_JAR="$PWD/nlp/target/turkish-nlp-1.0.0.jar"
+python build/Prepare-LexicalData.py
+export ACADEMIC_WORDNET="$PWD/artifacts/lexical-data/kenet.sqlite"
 bash build/Test-Local.sh
 ```
 
@@ -140,12 +145,14 @@ Windows PowerShell karşılığı:
 mvn -f nlp/pom.xml clean package
 $env:ACADEMIC_JAVA = 'C:\JDK\bin\java.exe'
 $env:ACADEMIC_NLP_JAR = "$PWD\nlp\target\turkish-nlp-1.0.0.jar"
+python build/Prepare-LexicalData.py
+$env:ACADEMIC_WORDNET = "$PWD\artifacts\lexical-data\kenet.sqlite"
 dotnet restore AcademicParaphraser.Engine.sln
 dotnet build AcademicParaphraser.Engine.sln -c Release -warnaserror
 dotnet test tests/AcademicParaphraser.Tests -c Release --no-build
 ```
 
-`ACADEMIC_JAVA` ve `ACADEMIC_NLP_JAR` gerçek dosyalara işaret etmezse testler hata verir; sahte NLP ile sessiz başarı yoktur. Linux'ta derlenen WordHost DLL'i canlı Word'ün çalıştırıldığı anlamına gelmez.
+`ACADEMIC_JAVA`, `ACADEMIC_NLP_JAR` ve `ACADEMIC_WORDNET` gerçek dosyalara işaret etmezse testler hata verir; sahte NLP ile sessiz başarı yoktur. Linux'ta derlenen WordHost DLL'i canlı Word'ün çalıştırıldığı anlamına gelmez.
 
 ```bash
 dotnet run --project tools/AcademicParaphraser.Verify -c Release --no-build
@@ -165,6 +172,6 @@ Installer tanımı kullanıcı başına `%LOCALAPPDATA%\Programs\AkademikParafra
 
 Word'de Ayarlar > Tanılama; Word sürümü, işlem bitness'i, eklenti sürümü, NLP/veritabanı/sözlük durumunu gösterir. Geliştirici, WordAddin projesini Visual Studio'da açıp Word'e debug ile bağlanabilir. Loglar `%LOCALAPPDATA%\AkademikParafraz\logs` altındadır. Protected/salt okunur belge, boş/görsel seçim veya güvenle eşlenemeyen alan kullanıcıya açıklanır; stack trace gösterilmez.
 
-SQLite migration 1; settings, rules, lexicon, locked_terms, dictionary_cache, history ve migrations tablolarını oluşturur. Parametreli SQL, transaction ile atomik import ve yeni şema sürümünün açılmasını engelleme vardır. Başlangıç verileri mevcut kullanıcı kaydının üstüne yazılmaz. Yeni migration ve seed güncelleme politikası geliştirici belgesinde açıklanmıştır.
+SQLite migration 1; settings, rules, lexicon, locked_terms, dictionary_cache, history ve migrations tablolarını oluşturur. Parametreli SQL, transaction ile atomik import ve yeni şema sürümünün açılmasını engelleme vardır. Başlangıç verileri mevcut kullanıcı kaydının üstüne yazılmaz; yeni genişletilmiş kural ID'leri INSERT OR IGNORE ile mevcut kurulumlara da eklenir. Yeni migration ve seed güncelleme politikası geliştirici belgesinde açıklanmıştır.
 
 Yeni kural/sözlük/provider eklemek, morphology protokolü, koruma sınırları ve versiyon değişiklikleri için [Developer.md](docs/Developer.md) dosyasını kullanın. Üçüncü taraf bileşen ve lisansları [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) içinde listelenmiştir.

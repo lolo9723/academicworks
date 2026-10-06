@@ -1,3 +1,5 @@
+Güncel 1.1.0 geniş motor: [Expanded-Engine-1.1.0.md](Expanded-Engine-1.1.0.md). Windows Debug/Release 89/89 test, KeNet verisi ve gerçek paragraf/bellek raporu bu kayıttadır; aşağıdaki temel sonuçlar tarihsel olarak korunur.
+
 # Akademik Parafraz — doğrulama raporu
 
 Bu belge 1.0.0 temel doğrulama kaydını saklar. Güncel 1.0.2 Windows/SQLite önbellek düzeltmesi ve kanıtları: [Startup-Fix-1.0.2.md](Startup-Fix-1.0.2.md).
