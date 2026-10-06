@@ -7,7 +7,7 @@
 [Setup]
 AppId={{482D00C1-39AE-45A9-AB33-1253584ED67B}
 AppName=Akademik Parafraz
-AppVersion=1.0.0
+AppVersion=1.0.1
 AppPublisher=Akademik Parafraz
 DefaultDirName={localappdata}\Programs\AkademikParafraz
 PrivilegesRequired=lowest
@@ -15,7 +15,7 @@ ArchitecturesAllowed=x64compatible
 MinVersion=10.0
 DisableProgramGroupPage=yes
 OutputDir={#OutputDir}
-OutputBaseFilename=AkademikParafraz-1.0.0-Setup
+OutputBaseFilename=AkademikParafraz-1.0.1-Setup
 Compression=lzma2
 SolidCompression=yes
 UninstallDisplayName=Akademik Parafraz
