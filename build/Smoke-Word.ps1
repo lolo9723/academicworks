@@ -1,8 +1,20 @@
-﻿$ErrorActionPreference='Stop'
+﻿param([string]$ReportPath=(Join-Path $PSScriptRoot 'Word-Acceptance-Report.json'))
+$ErrorActionPreference='Stop'
 if(Get-Process WINWORD -ErrorAction SilentlyContinue){throw 'Bu test yeni bir Word oturumu açar. Önce açık Word belgelerinizi kaydedip Wordü kapatın.'}
 $word=New-Object -ComObject Word.Application
 $word.Visible=$true
 $doc=$null;$api=$null;$originalTracking=$false;$originalLinks=$true;$originalStrength=2
+$report=[ordered]@{ utc=(Get-Date).ToUniversalTime().ToString('o'); wordVersion=$word.Version; productVersion='1.0.0'; passed=$false; checks=@(); error=$null }
+function Read-Format($range) {
+ $font=$range.Font;$paragraph=$range.ParagraphFormat
+ [ordered]@{ name=$font.Name; size=$font.Size; bold=$font.Bold; italic=$font.Italic; underline=$font.Underline; color=$font.Color; superscript=$font.Superscript; subscript=$font.Subscript; alignment=$paragraph.Alignment; firstLineIndent=$paragraph.FirstLineIndent; leftIndent=$paragraph.LeftIndent; rightIndent=$paragraph.RightIndent; spaceBefore=$paragraph.SpaceBefore; spaceAfter=$paragraph.SpaceAfter; lineSpacing=$paragraph.LineSpacing; lineSpacingRule=$paragraph.LineSpacingRule }
+}
+function Wait-Proposals {
+ $deadline=(Get-Date).AddSeconds(120)
+ while($api.State -eq 'busy' -and (Get-Date) -lt $deadline){Start-Sleep -Milliseconds 200}
+ if($api.State -eq 'busy'){throw 'Yerel NLP işlemi 120 saniye sınırını aştı.'}
+}
+
 try{
  $addin=$word.COMAddIns.Item('AcademicParaphraser.WordAddin')
  $addin.Connect=$true
@@ -22,11 +34,11 @@ try{
  $selection.Font.Name='Arial';$selection.Font.Size=12;$selection.Font.Italic=1
  $paragraph=$selection.ParagraphFormat
  $paragraph.Alignment=3;$paragraph.FirstLineIndent=18;$paragraph.SpaceAfter=6
+ $formatBefore=Read-Format $selection | ConvertTo-Json -Compress
  $selection.Select()
  $before=$doc.Content.Text
  $api.SetTracking($false);$api.Generate(2)
- $deadline=(Get-Date).AddSeconds(120)
- while($api.State -eq 'busy' -and (Get-Date) -lt $deadline){Start-Sleep -Milliseconds 200}
+ Wait-Proposals
  if($api.State -ne 'ready'){throw "Öneri üretilmedi: $($api.State)"}
  if($api.Apply() -ne 'applied'){throw 'Öneri uygulanamadı.'}
  $after=$doc.Content.Text
@@ -34,29 +46,41 @@ try{
  if($after -eq $before){throw 'Metin dönüşmedi.'}
  foreach($protected in @('(Yılmaz & Demir, 2024; β=.43, p<.001)','öznel zindelik','Önem arz etmektedir.')){if(-not $after.Contains($protected)){throw "Korunan bölüm değişti: $protected"}}
  $r=$doc.Paragraphs.Item(1).Range
- if($r.Font.Name -ne 'Arial' -or $r.Font.Size -ne 12 -or $r.Font.Italic -ne 1 -or $r.ParagraphFormat.Alignment -ne 3){throw 'Word biçimi değişti.'}
+ # The paragraph mark was never assigned the selected text's font.
+ $r.End=$r.End-1
+ $formatAfter=Read-Format $r | ConvertTo-Json -Compress
+ if($formatAfter -ne $formatBefore){throw 'Word font/paragraf biçimi değişti.'}
+ $report.checks+=@('citation-number-term-outside-selection','font-paragraph-properties','protected-link-target')
  $doc.Undo(1) | Out-Null
  if($doc.Content.Text -ne $before){throw 'Tek Undo ilk metni geri getirmedi.'}
+ $report.checks+='single-undo'
  $doc.Range(0,$source.Length).Select();$api.SetTracking($true);$api.Generate(2)
- $deadline=(Get-Date).AddSeconds(120)
- while($api.State -eq 'busy' -and (Get-Date) -lt $deadline){Start-Sleep -Milliseconds 200}
+ Wait-Proposals
  if($api.State -ne 'ready' -or $api.Apply() -ne 'applied'){throw 'Değişiklikleri İzle işlemi başarısız.'}
  if($doc.Revisions.Count -lt 1){throw 'Word doğal revisions üretmedi.'}
+ $report.checks+='native-track-changes'
  $doc.Undo(1) | Out-Null
  $doc.Hyperlinks.Item(1).Range.Select();$api.SetTracking($false);$api.Generate(2)
- $deadline=(Get-Date).AddSeconds(120)
- while($api.State -eq 'busy' -and (Get-Date) -lt $deadline){Start-Sleep -Milliseconds 200}
+ Wait-Proposals
  if($api.State -ne 'idle'){throw 'Varsayılan link koruması düzenlenebilir öneri üretti.'}
  $api.SetLinks($false);$doc.Hyperlinks.Item(1).Range.Select();$api.Generate(2)
- $deadline=(Get-Date).AddSeconds(120)
- while($api.State -eq 'busy' -and (Get-Date) -lt $deadline){Start-Sleep -Milliseconds 200}
+ Wait-Proposals
  if($api.State -ne 'ready' -or $api.Apply() -ne 'applied'){throw 'Hyperlink görünen metni değiştirilemedi.'}
  if($doc.Hyperlinks.Count -ne 1 -or $doc.Hyperlinks.Item(1).Address -ne $linkUrl -or $doc.Hyperlinks.Item(1).Range.Text -eq 'tespit edilmiştir'){throw 'Görünen link metni/URL kontrolü başarısız.'}
  $doc.Undo(1) | Out-Null
- Write-Host 'PASS: Word yükleme, metin/atıf/terim koruma, font/paragraf biçimi, hyperlink/URL, tek Undo ve Track Changes.' 
+ $report.checks+=@('link-protection','editable-link-visible-text-preserves-url')
+ $report.passed=$true
+}catch{
+ $report.error=$_.Exception.Message
+ throw
 }finally{
  try{if($api){$api.SetTracking($originalTracking);$api.SetLinks($originalLinks);$api.SetStrength($originalStrength)}}catch{}
- if($doc){$doc.Close(0)}
- $word.Quit()
- [Runtime.InteropServices.Marshal]::ReleaseComObject($word) | Out-Null
+ try{if($doc){$doc.Close(0)}}finally{
+  try{$word.Quit()}finally{
+   [Runtime.InteropServices.Marshal]::ReleaseComObject($word) | Out-Null
+   $report | ConvertTo-Json -Depth 5 | Set-Content -Path $ReportPath -Encoding UTF8
+  }
+ }
 }
+
+if($report.passed){Write-Host 'PASS: Word yükleme, atıf/terim/biçim/bağlantı koruma, tek Undo ve Track Changes.'}

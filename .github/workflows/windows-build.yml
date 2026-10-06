@@ -2,6 +2,11 @@ name: Windows VSTO build and installer
 
 on:
   push:
+    paths-ignore:
+      - 'docs/**'
+      - 'README.md'
+      - 'THIRD-PARTY-NOTICES.md'
+      - 'licenses/**'
   workflow_dispatch:
 
 permissions:
@@ -49,6 +54,7 @@ jobs:
           ayrıca yapılmalıdır. Bu paket üretim kabulünü tamamlamış sayılmaz.
           '@ | Set-Content -Encoding UTF8 artifacts\installer\KURULUMU-OKU.txt
           Copy-Item artifacts\payload\publisher.cer artifacts\installer
+          Copy-Item build\Smoke-Word.ps1,build\Verify-Word.cmd artifacts\installer
       - name: Installer artifact
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
@@ -65,5 +71,6 @@ jobs:
             artifacts/tests/*.trx
             artifacts/*.binlog
             artifacts/*.log
+            artifacts/payload-inventory.json
           if-no-files-found: warn
           retention-days: 30

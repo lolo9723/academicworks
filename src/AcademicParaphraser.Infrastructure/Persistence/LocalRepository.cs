@@ -75,22 +75,24 @@ namespace AcademicParaphraser.Infrastructure.Persistence
                     }
                     using (var tx = c.BeginTransaction())
                     {
-                        var cmd = c.CreateCommand();
-                        cmd.Transaction = tx;
-                        cmd.CommandText = "CREATE TABLE IF NOT EXISTS migrations(version INTEGER PRIMARY KEY); CREATE TABLE IF NOT EXISTS settings(id INTEGER PRIMARY KEY CHECK(id=1),json TEXT NOT NULL); CREATE TABLE IF NOT EXISTS rules(id TEXT PRIMARY KEY,json TEXT NOT NULL,user_defined INTEGER NOT NULL); CREATE TABLE IF NOT EXISTS lexicon(lemma TEXT PRIMARY KEY,json TEXT NOT NULL,user_defined INTEGER NOT NULL); CREATE TABLE IF NOT EXISTS locked_terms(term TEXT PRIMARY KEY); CREATE TABLE IF NOT EXISTS dictionary_cache(key TEXT PRIMARY KEY,json TEXT NOT NULL,expires TEXT NOT NULL); CREATE TABLE IF NOT EXISTS history(id INTEGER PRIMARY KEY AUTOINCREMENT,created TEXT NOT NULL,edits INTEGER NOT NULL,original BLOB NOT NULL,result BLOB NOT NULL); INSERT OR IGNORE INTO migrations VALUES(1);";
-                        cmd.ExecuteNonQuery();
+                        using (var cmd = c.CreateCommand())
+                        {
+                            cmd.Transaction = tx;
+                            cmd.CommandText = "CREATE TABLE IF NOT EXISTS migrations(version INTEGER PRIMARY KEY); CREATE TABLE IF NOT EXISTS settings(id INTEGER PRIMARY KEY CHECK(id=1),json TEXT NOT NULL); CREATE TABLE IF NOT EXISTS rules(id TEXT PRIMARY KEY,json TEXT NOT NULL,user_defined INTEGER NOT NULL); CREATE TABLE IF NOT EXISTS lexicon(lemma TEXT PRIMARY KEY,json TEXT NOT NULL,user_defined INTEGER NOT NULL); CREATE TABLE IF NOT EXISTS locked_terms(term TEXT PRIMARY KEY); CREATE TABLE IF NOT EXISTS dictionary_cache(key TEXT PRIMARY KEY,json TEXT NOT NULL,expires TEXT NOT NULL); CREATE TABLE IF NOT EXISTS history(id INTEGER PRIMARY KEY AUTOINCREMENT,created TEXT NOT NULL,edits INTEGER NOT NULL,original BLOB NOT NULL,result BLOB NOT NULL); INSERT OR IGNORE INTO migrations VALUES(1);";
+                            cmd.ExecuteNonQuery();
+                            cmd.CommandText = "SELECT MAX(version) FROM migrations";
+                            if (Convert.ToInt32(cmd.ExecuteScalar()) > 1)
+                                throw new InvalidOperationException("Veritabanı daha yeni bir sürüme ait; verileri korumak için açılmadı.");
+                        }
+                        // Seed and schema commit together: avoid a separate disk flush for every default rule.
+                        Seed<RuleDefinition>(c, tx, "rules", "rules.json", x => x.Id);
+                        Seed<LexiconEntry>(c, tx, "lexicon", "lexicon.json", x => x.Lemma);
                         tx.Commit();
                     }
-                    var version = c.CreateCommand();
-                    version.CommandText = "SELECT MAX(version) FROM migrations";
-                    if (Convert.ToInt32(version.ExecuteScalar()) > 1)
-                        throw new InvalidOperationException("Veritabanı daha yeni bir sürüme ait; verileri korumak için açılmadı.");
-                    Seed<RuleDefinition>(c, "rules", "rules.json", x => x.Id);
-                    Seed<LexiconEntry>(c, "lexicon", "lexicon.json", x => x.Lemma);
                 }
             }
         }
-        private static void Seed<T>(SqliteConnection c, string table, string resource, Func<T, string> key)
+        private static void Seed<T>(SqliteConnection c, SqliteTransaction tx, string table, string resource, Func<T, string> key)
         {
             using (var stream = typeof(UserSettings).Assembly.GetManifestResourceStream("AcademicParaphraser.Core.Data." + resource) ?? throw new InvalidOperationException("Başlangıç veri kaynağı bulunamadı."))
             using (var reader = new StreamReader(stream))
@@ -99,6 +101,7 @@ namespace AcademicParaphraser.Infrastructure.Persistence
                 {
                     using (var cmd = c.CreateCommand())
                     {
+                        cmd.Transaction = tx;
                         cmd.CommandText = "INSERT OR IGNORE INTO " + table + " VALUES($id,$json,0)";
                         cmd.Parameters.AddWithValue("$id", key(item));
                         cmd.Parameters.AddWithValue("$json", JsonConvert.SerializeObject(item));

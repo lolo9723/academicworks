@@ -352,6 +352,8 @@ namespace AcademicParaphraser.Tests
             string secret = "Akademik özel çalışma metni";
             repo.AddHistory(secret, "Yeni ifade", 1);
             Assert.Equal(secret, Assert.Single(repo.GetHistory()).Original);
+            // Windows disallows File.ReadAllBytes while a pooled SQLite write handle remains open.
+            Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
             Assert.DoesNotContain(secret, System.Text.Encoding.UTF8.GetString(File.ReadAllBytes(repo.DatabasePath)));
         }
         [Fact]

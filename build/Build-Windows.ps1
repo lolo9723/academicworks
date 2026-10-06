@@ -69,6 +69,10 @@ Copy-Item $output $payload -Recurse
 Copy-Item README.md,docs/Windows-Acceptance.md,THIRD-PARTY-NOTICES.md $payload
 Copy-Item licenses $payload -Recurse
 Export-Certificate -Cert $cert -FilePath (Join-Path $payload 'publisher.cer') | Out-Null
+$inventory=Get-ChildItem $payload -Recurse -File | ForEach-Object {
+ [ordered]@{ path=$_.FullName.Substring($payload.Length+1); bytes=$_.Length; sha256=(Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant() }
+}
+$inventory | ConvertTo-Json -Depth 3 | Set-Content artifacts/payload-inventory.json -Encoding UTF8
 $iscc=Get-Command ISCC.exe -ErrorAction SilentlyContinue
 if(-not $iscc){$candidate="${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe";if(Test-Path $candidate){$iscc=$candidate}else{throw 'Inno Setup 6 bulunamadı; installer derlenemedi.'}}
 $compiler=if($iscc -is [System.Management.Automation.CommandInfo]){$iscc.Source}else{$iscc}
