@@ -1,6 +1,8 @@
 # Akademik Parafraz — doğrulama raporu
 
-Tarih: 2026-10-06. Ürün/kaynak sürümü: 1.0.0.
+Bu belge 1.0.0 temel doğrulama kaydını saklar. Güncel 1.0.2 Windows/SQLite önbellek düzeltmesi ve kanıtları: [Startup-Fix-1.0.2.md](Startup-Fix-1.0.2.md).
+
+Tarih: 2026-10-06. Aşağıdaki tarihsel kayıtların ürün/kaynak sürümü: 1.0.0.
 
 ## Teslim durumu
 

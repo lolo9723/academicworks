@@ -4,7 +4,7 @@
 
 VSTO, Windows'taki Visual Studio OfficeTools MSBuild hedeflerini gerektirir. .NET SDK'nın Linux'ta .NET Framework reference assemblies ile WordHost'u derlemesi VSTO başlangıç projesi, native COM yükleme veya UI testi değildir. `AcademicParaphraser.sln` tam Windows solution'ıdır; `AcademicParaphraser.Engine.sln` bu host bağımlılığını ayırır. Windows betiği VSTO manifestleri ve Windows native dosyaları olmadan installer üretmeyi reddeder.
 
-Kütüphane/proje sürümü 1.0.0'dır; bu numara Windows kabul sertifikası anlamına gelmez. Sürüm değişiminde `Directory.Build.props`, WordAddin AssemblyInfo, VSTO ApplicationVersion, NLP pom/JAR dosya adı, Java çağrı yolları, Installer AppVersion/çıktı adı ve tanılama sürümü birlikte güncellenmelidir. Mevcut sürümde bu yerler 1.0.0 ile uyumludur.
+Kütüphane/proje sürümü 1.0.2'dir; bu numara Windows/Word kabul sertifikası anlamına gelmez. Ürün sürümü değişiminde `Directory.Build.props`, WordAddin AssemblyInfo, VSTO ApplicationVersion, Installer AppVersion/çıktı adı ve workflow artefakt adları birlikte güncellenir. NLP sidecar bağımsız sürümlenir; bu sürümde Maven/JAR ve Java çağrı yolları hâlâ `turkish-nlp-1.0.0.jar` kullanır.
 
 ## Veri ve bağımlılık akışı
 
@@ -102,3 +102,13 @@ Motor testleri citation, number, DOI/URL, kilit yumuşaması, gerçek çekim, be
 `Verify-WindowsRuntime.ps1`, Windows PowerShell/.NET Framework üzerinde paketlenen gerçek `WindowsTextProtector` sınıfını yükleyip CurrentUser DPAPI geri çözme ve bozulmuş blob reddini çalıştırır; SQLite/JRE native PE mimarilerini, VSTO XML imzalarını ve manifest dosya özetlerini kontrol eder. Bu Word COM testi değildir. `Test-InstallerPrerequisites.ps1`, Word bulunmayan Windows runner’da gerçek Setup.exe’yi sessiz çalıştırıp erken önkoşul reddini ve eklenti kayıtlarının değişmediğini kontrol eder. Testler ilgili JSON kanıtlarını `artifacts` altında yazar; başarılı sayılmaları gerçek CI çıktısına bağlıdır.
 
 Ürün kullanıcı kılavuzu installer’a dahil edilir; geliştirici README’si kaynakta kalır. `Smoke-Word.ps1`, gerçek Word sürümü/mimarisini PE başlığından okur ve kabul sonuçlarını JSON raporuna kaydeder. İnno önkoşul mesajları sessiz kurulumda da doğru sonuç koduyla durabilir.
+
+## Word DLL önbelleği ve SQLite başlangıcı
+
+VSTO, yönetilen DLL’leri .NET Framework önbelleğinden yükleyebilir. `Assembly.Location` bu durumda gerçek kurulum klasörü değildir. `InstallationDirectory`, dosya CodeBase’ini, kayıtlı yerel VSTO Manifest yolunu ve Location’ı denetleyerek Java/JAR içeren gerçek payload klasörünü bulur.
+
+`NativeSqliteBootstrap`, Word işleminin bitness’ine uygun `runtimes/win-x86` veya `win-x64` SQLite DLL’sinin PE başlığını kontrol eder. Native dosyayı SQLitePCLRaw.core’un gerçek yükleme klasörüne atomik kopyalar; SHA256 eşleşiyorsa yeniden yazmaz. SQLitePCLRaw 2.1.13 net461 yükleyicisi böylece `WHERE_ADJACENT` aramasıyla dosyayı bulur. Üçüncü taraf DLL’ler ve provider değiştirilmez. Kişisel SQLite veritabanına bu aşamada erişilmez.
+
+`Probe-Startup.ps1 -ShadowCopy -SkipNativeBootstrap`, düzeltme olmadan gerçek Framework önbelleği koşulunu sınar. `-ShadowCopy -Strict`, aynı koşulda ürünün gerçek başlangıç kodunu çalıştırır. `assemblyStorage: SHADOW` kontrolü, DLL’nin gerçekten önbellekten yüklendiğini doğrular. CI x86 ve x64, doğrudan ve önbellek yüklemesini ayrı Windows PowerShell süreçlerinde çalıştırır. `Tanila.cmd` geçici önbellekte tanılar; Word’ü açmaz. Bu test Word COM/Ribbon/biçim kabulü değildir.
+
+Açılış tanısı hata aşaması, exception tipi, HRESULT, Word işlem mimarisi ve yalnızca ilk method’un adıyla sınırlıdır. Exception mesajı, dosya yolları, tam stack trace ve belge metni loglanmaz.
