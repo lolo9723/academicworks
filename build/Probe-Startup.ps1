@@ -92,9 +92,12 @@ public sealed class AcademicStartupProbe : MarshalByRefObject
  $setup.ConfigurationFile=Join-Path $Payload 'AcademicParaphraser.WordAddin.dll.config'
  $domain=[AppDomain]::CreateDomain('AcademicStartupProbe',$null,$setup)
  $probeStage='HELPER_LOAD'
+ $helperAssembly=[Reflection.Assembly]::LoadFrom($helper)
+ $runner=$helperAssembly.GetType('AcademicStartupProbe').GetMethod('Run')
  $probe=$domain.CreateInstanceFromAndUnwrap($helper,'AcademicStartupProbe')
  $probeStage='COMPONENTS'
- $report.components=@($probe.Run($Payload,$temporary))
+ # Windows PowerShell adapts the transparent proxy as MarshalByRefObject; invoke its actual contract.
+ $report.components=@($runner.Invoke($probe,[object[]]@($Payload,$temporary)))
  $report.passed=(@($report.files | Where-Object {-not $_.exists}).Count -eq 0 -and @($report.components | Where-Object {$_ -match ':FAIL:'}).Count -eq 0 -and $report.components.Count -eq 6)
 }catch{
  $cause=$_.Exception.GetBaseException()
