@@ -85,6 +85,8 @@ namespace AcademicParaphraser.Core.RuleEngine
                     replacement = CaseLike(original, replacement);
                     if (replacement.Any(char.IsControl))
                         continue;
+                    if (!settings.EnableWordChoice && !rule.UserDefined && rule.Family != "cümle kuruluşu" &&
+                        !rule.Id.StartsWith("online-frame:", StringComparison.Ordinal) && !HasStructuralChange(original, replacement)) continue;
                     if (original != replacement)
                     {
                         var changes = AnchoredRuleEdits.Create(text, match.Index, match.Length, replacement, protectedSpans, rule);
@@ -193,6 +195,17 @@ namespace AcademicParaphraser.Core.RuleEngine
             var x = new HashSet<string>(Regex.Matches(a.ToLower(Turkish), @"\p{L}+").Cast<Match>().Select(m => m.Value));
             var y = new HashSet<string>(Regex.Matches(b.ToLower(Turkish), @"\p{L}+").Cast<Match>().Select(m => m.Value));
             return 1 - x.Intersect(y).Count() / (double)Math.Max(1, x.Union(y).Count());
+        }
+        private static bool HasStructuralChange(string original, string replacement)
+        {
+            var a = Regex.Matches(original.ToLower(Turkish), @"\p{L}+").Cast<Match>().Select(m => m.Value).ToArray();
+            var b = Regex.Matches(replacement.ToLower(Turkish), @"\p{L}+").Cast<Match>().Select(m => m.Value).ToArray();
+            int left = 0, right = 0;
+            while (left < a.Length && left < b.Length && a[left] == b[left]) left++;
+            while (right < a.Length - left && right < b.Length - left && a[a.Length - 1 - right] == b[b.Length - 1 - right]) right++;
+            // Old family labels also contain single-predicate synonyms. These are word choice,
+            // even when the literal pattern happens to include an unchanged sentence prefix.
+            return a.Length - left - right >= 2 && b.Length - left - right >= 2;
         }
         private static double OrderedDifference(string a, string b)
         {

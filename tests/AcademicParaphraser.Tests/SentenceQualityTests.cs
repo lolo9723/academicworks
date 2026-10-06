@@ -105,6 +105,13 @@ namespace AcademicParaphraser.Tests
             Assert.All(candidates, c => { Assert.Contains("hasta kayıtlarını", c.Text); Assert.Contains("(Beta, 2023)", c.Text); Assert.DoesNotContain(c.Edits, e => e.Start < linkStart + 17 && e.Start + e.Length > linkStart); });
         }
         [Fact]
+        public async Task LegacyFamilyLabelCannotDisguiseSingleWordReplacement()
+        {
+            const string source = "Sonuç olarak, araştırma alanı olarak belirlenmiştir.";
+            var candidates = await Rewrite(source);
+            Assert.All(candidates, c => { Assert.Equal(source, c.Text); Assert.Equal(0, c.RewrittenSentences); });
+        }
+        [Fact]
         public void LowercaseInstitutionNameIsProtected()
         {
             const string source = "diş hekimliği fakültesi tarafından hazırlanan form";
