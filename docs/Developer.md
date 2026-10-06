@@ -96,3 +96,9 @@ Export settings, lockedTerms, userDefined rules ve lexicon içerir. Import boyut
 SafeLog sadece allowlist biçimine uyan olay kodu ve exception türü yazar. Message/stack trace/makine yolu/metin yazmaz. Günlük dosya rotasyonu ve yedi günlük retention vardır. Regresyon fixture'ları açık test metinleridir; geliştirici doğrulama raporundaki girdiler kullanıcı Word belgesi değildir.
 
 Motor testleri citation, number, DOI/URL, kilit yumuşaması, gerçek çekim, belirsizlikte bırakma, alternatif/düzey/paragraf sınırları, OOXML run/biçim/field/link/tablo/story, DTD reddi, SQLite migration/atomik yedek/şifreleme/log/offline kontrollerini kapsar. Windows kabul betiği motor mock'u kullanmaz; yüklü VSTO COM automation nesnesine erişir ve gerçek Word belgesinde uygular. Linux'ta çalıştırılmış değildir.
+
+## Gerçek Windows dağıtım kontrolü
+
+`Verify-WindowsRuntime.ps1`, Windows PowerShell/.NET Framework üzerinde paketlenen gerçek `WindowsTextProtector` sınıfını yükleyip CurrentUser DPAPI geri çözme ve bozulmuş blob reddini çalıştırır; SQLite/JRE native PE mimarilerini, VSTO XML imzalarını ve manifest dosya özetlerini kontrol eder. Bu Word COM testi değildir. `Test-InstallerPrerequisites.ps1`, Word bulunmayan Windows runner’da gerçek Setup.exe’yi sessiz çalıştırıp erken önkoşul reddini ve eklenti kayıtlarının değişmediğini kontrol eder. Testler ilgili JSON kanıtlarını `artifacts` altında yazar; başarılı sayılmaları gerçek CI çıktısına bağlıdır.
+
+Ürün kullanıcı kılavuzu installer’a dahil edilir; geliştirici README’si kaynakta kalır. `Smoke-Word.ps1`, gerçek Word sürümü/mimarisini PE başlığından okur ve kabul sonuçlarını JSON raporuna kaydeder. İnno önkoşul mesajları sessiz kurulumda da doğru sonuç koduyla durabilir.

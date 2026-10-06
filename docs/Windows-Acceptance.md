@@ -1,14 +1,14 @@
 # Windows / Microsoft Word yayın kabulü
 
-**Durum: çalıştırılmadı.** Bu belge test sonucu değildir. Linux motor testlerini Windows kabulüyle karıştırmayın. Yayın için aşağıdaki canlı kontrollerin sonuçları Word build numarası, Windows sürümü, Office bitness, kullanılan sertifika ve installer SHA256 ile kaydedilmelidir.
+**Durum: Windows derleme, motor testleri ve installer üretimi geçti; canlı Word kabulü çalıştırılmadı.** Windows CI kanıtları doğrulama raporundadır. Word içindeki kabulü derleme sonuçlarıyla karıştırmayın. Yayın için aşağıdaki canlı kontrollerin sonuçları Word build numarası, Windows sürümü, Office bitness, kullanılan sertifika ve installer SHA256 ile kaydedilmelidir.
 
 ## Derleme ve kurulum
 
-- [ ] Visual Studio 2022 OfficeTools ve .NET 4.8 Developer Pack bulunan Windows makinesinde Build-Windows.ps1 tamamlandı.
-- [ ] Debug/Release motor testleri gerçek bundled Windows Java ile geçti.
+- [x] Visual Studio 2022 OfficeTools ve .NET 4.8 Developer Pack bulunan Windows makinesinde Build-Windows.ps1 tamamlandı.
+- [x] Debug/Release motor testleri gerçek bundled Windows Java ile geçti.
 - [ ] WordAddin.dll, dll.manifest ve .vsto üretildi, imzaları geçerli.
-- [ ] Payload içinde managed NuGet bağımlılıkları, SQLite x86/x64, Zemberek JAR ve Java runtime/legal dosyaları var.
-- [ ] Inno Setup 6.3+ gerçek Setup.exe oluşturdu; örnek dosyayla installer üretimi kabul sayılmadı.
+- [x] Payload içinde managed NuGet bağımlılıkları, SQLite x86/x64, Zemberek JAR ve Java runtime/legal dosyaları var.
+- [x] Inno Setup 6.3+ gerçek Setup.exe oluşturdu; örnek dosyayla installer üretimi kabul sayılmadı.
 - [ ] Temiz Windows + Word 32 bit üzerinde kullanıcı başına kuruldu; AKADEMİK PARAFRAZ sekmesi göründü.
 - [ ] Temiz Windows + Word 64 bit üzerinde kuruldu; native SQLite doğru bitness ile yüklendi.
 - [ ] Yönetici olmayan kullanıcı kurulumu çalıştı; yayıncı/VSTO güven politikası açıkça kaydedildi.
@@ -25,7 +25,7 @@ Kurulmuş eklenti bulunan test makinesinde açık Word belgelerini kaydedip Word
 .\build\Smoke-Word.ps1
 ```
 
-Betik Word'ü açar, yeni ve kaydedilmemiş bir belge oluşturur, gerçek eklentinin COM automation nesnesini çağırır; şartnamedeki cümleyi Orta düzeyde dönüştürür. Atıf/istatistik/teknik terim, başka paragraf, font/italik/paragraf hizası ve tek Undo kontrol edilir; ardından gerçek revisions üretimi ve link koruması açık/kapalı durumda hyperlink görünen metni/URL kontrol edilir. Belge kaydedilmeden kapanır. Bu betiğin PASS çıkması aşağıdaki geniş Word matrisi yerine geçmez. Test makinesi varsayılan kuralları kullanmalı; özel kurallar/ayarlar kaydedilip korunmalıdır.
+Betik Word'ü açar, yeni ve kaydedilmemiş bir belge oluşturur, gerçek eklentinin COM automation nesnesini çağırır; şartnamedeki cümleyi Orta düzeyde dönüştürür. Atıf/istatistik/teknik terim, başka paragraf, font/italik/paragraf hizası ve tek Undo kontrol edilir; ardından gerçek revisions üretimi ve link koruması açık/kapalı durumda hyperlink görünen metni/URL kontrol edilir. Belge kaydedilmeden kapanır. Word sürümü/mimarisi ve sonuçlar `Word-Acceptance-Report.json` dosyasına yazılır. `Verify-Word.cmd` aynı testi çift tıklamayla başlatır. Bu betiğin PASS çıkması aşağıdaki geniş Word matrisi yerine geçmez. Test makinesi varsayılan kuralları kullanmalı; özel kurallar/ayarlar kaydedilip korunmalıdır.
 
 - [ ] Smoke-Word.ps1 gerçek Word'de PASS verdi; konsol çıktısı ve test makinesi bilgileri saklandı.
 
@@ -77,4 +77,4 @@ Her denemede önce/sonra metin, ilgili OOXML ve URL hedefleri karşılaştırıl
 - [ ] SQL history blob'ları DPAPI ile şifreli; uygulama loglarında seçilmiş akademik metin yok.
 - [ ] Alan uzmanı, kuralları farklı akademik metinlerde anlam/olumsuzluk/kip/çatı/özne uyumu için değerlendirdi; güven puanı başarı oranı olarak raporlanmadı.
 
-Bütün bu kayıtlar olmadan “üretim kalitesinde, Windows'ta eksiksiz doğrulanmış” sonucu verilmemelidir. Şu anki teslimde yukarıdaki kutuların hiçbiri canlı Windows sonucu olarak işaretlenmemiştir.
+Bütün bu kayıtlar olmadan “üretim kalitesinde, Windows'ta eksiksiz doğrulanmış” sonucu verilmemelidir. Derleme/test/installer üretimi Windows CI ile doğrulanmıştır; Word içindeki kabul kutuları canlı Word çalıştırılmadan işaretlenmez.

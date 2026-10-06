@@ -4,9 +4,9 @@ Windows masaüstü Microsoft Word için C#/.NET Framework 4.8 ve VSTO mimarisind
 
 ## Teslim durumu
 
-Bu teslim **Windows üzerinde kurulup doğrulanmış bir ürün olarak sertifikalandırılmış değildir**. Geliştirme ortamı Linux'tur. C# motoru, veri katmanı, .NET Framework WordHost kütüphanesi ve gerçek Zemberek sidecar derlenmiştir. Otomatik testler gerçek SQLite ve gerçek Zemberek kullanır. VSTO başlangıç ve Ribbon C# kaynakları ayrıca Microsoft’un sabit SHA256 ile doğrulanan gerçek SDK referanslarıyla Debug/Release derlenmiştir; bu kontrol manifest üretimi değildir. Tam VSTO proje derlemesi, `.vsto` manifestleri, Windows installer üretimi ve canlı Word kabul testleri bu ortamda henüz doğrulanamamıştır. Tam VSTO derlemesi, OfficeTools MSBuild hedeflerinin Linux'ta bulunmaması nedeniyle başarısız olmuştur.
+Gerçek Windows CI üzerinde Core, Infrastructure, .NET Framework WordHost ve VSTO WordAddin projeleri Debug/Release derlenmiş; gerçek SQLite ve Zemberek ile **64/64 motor testi her iki yapılandırmada geçmiştir**. `.vsto` ve `.dll.manifest` dosyaları imzalanmış, Inno Setup ile gerçek `AkademikParafraz-1.0.0-Setup.exe` üretilmiştir. İlk başarılı Windows koşusu: [37419169212](https://github.com/lolo9723/academicworks/actions/runs/37419169212).
 
-Kaynak paketi, Windows derleme/paketleme betiği, installer tanımı, testler ve doğrulama kanıtları teslim edilir. **Kaynak ZIP'i bir kurulum dosyası değildir; bu teslimde hazır Setup.exe/MSI yoktur.** Gerçek Word yükleme, biçim, Undo ve Track Changes kontrolleri geçmeden üretim sürümü olarak dağıtılmamalıdır. Çalıştırılan ve çalıştırılmayan kontroller [doğrulama raporunda](docs/Verification.md) ayrılmıştır.
+**Gerçek Word üzerinde kurulum, Ribbon yükleme, biçim/bağlantı/Undo/Track Changes kabulü henüz çalıştırılmamıştır.** Windows CI makinesinde Word yoktur. Bu ilk paket geliştirme yayıncı sertifikası kullanır; installer EXE için üretim Authenticode sertifikası sağlanmamıştır. Üretim kabulü tamamlanmış gibi sunulmaz. Son kullanıcı kılavuzu [UsersGuide.md](docs/UsersGuide.md), çalıştırılan kontroller [Verification.md](docs/Verification.md) ve canlı Word matrisi [Windows-Acceptance.md](docs/Windows-Acceptance.md) içindedir.
 
 Bu sürümün kapsamı son şartnameye göre **akademik Türkçe parafrazdır**. İngilizce çeviri veya İngilizce parafraz motoru içermez. İngilizce Wiktionary sağlayıcısı sadece isteğe bağlı kelime bilgisi içindir. Kullanıcının kişisel üslubunu öğrenen bir model yoktur; kullanıcı sözlüğü ve kurallarıyla ifade tercihleri ayarlanır. Her metni baştan yazma veya kusursuz anlam eşdeğerliği garantisi verilmez.
 
@@ -102,9 +102,9 @@ Betik NLP JAR'ını derler, `build/java-runtime.json` içindeki sabit Temurin Wi
 .\build\Build-Windows.ps1 -SigningThumbprint 'KOD_IMZALAMA_SERTIFIKASININ_THUMBPRINT_DEGERI'
 ```
 
-Sertifika verilmezse geliştirme code-signing sertifikası oluşturulur. Kendinden imzalı geliştirme sertifikası otomatik güvenilir yapılmaz. VSTO'nun yayıncı/güven uyarısı çıkabilir; kurum politikasının bloklaması derleme ile çözülmüş sayılmaz. Setup.exe Authenticode imzası ve kurumsal dağıtım onayı bu teslimde üretilmemiştir. VSTO manifest imzası, installer exe imzasının yerine geçmez.
+Sertifika verilmezse geliştirme code-signing sertifikası oluşturulur. Kendinden imzalı geliştirme sertifikası otomatik güvenilir yapılmaz. VSTO'nun yayıncı/güven uyarısı çıkabilir; kurum politikasının bloklaması derleme ile çözülmüş sayılmaz. Setup.exe üretim Authenticode imzası bu teslimde üretilmemiştir. VSTO manifest imzası, installer exe imzasının yerine geçmez.
 
-Beklenen başarı çıktısı: `artifacts/installer/AkademikParafraz-1.0.0-Setup.exe`. **Bu dosya mevcut teslimde oluşturulmamıştır.** VSTO hedefleri olmayan sistemde tam WordAddin derlemesi geçmez. Betik eksik artefaktları atlayıp başarı bildirmez.
+Başarı çıktısı: `artifacts/installer/AkademikParafraz-1.0.0-Setup.exe`. **Bu dosya gerçek Windows CI koşusunda oluşturulmuştur.** VSTO hedefleri olmayan sistemde tam WordAddin derlemesi geçmez. Betik eksik artefaktları atlayıp başarı bildirmez.
 
 ## Windows otomatik derleme
 

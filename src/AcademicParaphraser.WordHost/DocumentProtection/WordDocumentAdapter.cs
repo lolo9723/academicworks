@@ -140,13 +140,19 @@ namespace AcademicParaphraser.WordHost.DocumentProtection
                 }
                 SelectionSnapshot.Release(documentFields);
                 var bookmarks = doc.Bookmarks;
-                for (int i = 1; i <= bookmarks.Count; i++)
+                bool hiddenBookmarks = bookmarks.ShowHidden;
+                try
                 {
-                    var bookmark = bookmarks[i];
-                    Protect(bookmark.Range.Duplicate, "yer işareti");
-                    SelectionSnapshot.Release(bookmark);
+                    // Word normally hides _Ref/_Toc bookmarks; a partial selection may omit their OOXML markers.
+                    bookmarks.ShowHidden = true;
+                    for (int i = 1; i <= bookmarks.Count; i++)
+                    {
+                        var bookmark = bookmarks[i];
+                        Protect(bookmark.Range.Duplicate, "yer işareti");
+                        SelectionSnapshot.Release(bookmark);
+                    }
                 }
-                SelectionSnapshot.Release(bookmarks);
+                finally { bookmarks.ShowHidden = hiddenBookmarks; SelectionSnapshot.Release(bookmarks); }
                 var controls = fullStory.ContentControls;
                 for (int i = 1; i <= controls.Count; i++)
                 {

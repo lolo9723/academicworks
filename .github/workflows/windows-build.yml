@@ -119,5 +119,8 @@ jobs:
             artifacts/*-verification.json
             artifacts/payload/*.vsto
             artifacts/payload/*.manifest
+            artifacts/installer/*.sha256
+            artifacts/installer/publisher.cer
+            artifacts/installer/KURULUMU-OKU.txt
           if-no-files-found: warn
           retention-days: 30
