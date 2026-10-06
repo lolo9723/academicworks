@@ -69,53 +69,75 @@ namespace AcademicParaphraser.Infrastructure.LexicalKnowledge
         }
         private static bool Word(string value) => value.Length >= 3 && value.Length <= 40 && value.All(char.IsLetter) && !Stop.Contains(value);
         private static int Overlap(string definition, HashSet<string> context) => Regex.Matches(definition.ToLower(Turkish), @"\p{L}{3,}").Cast<Match>().Select(m => m.Value).Distinct().Count(context.Contains);
-        public async Task<IReadOnlyList<LexiconEntry>> FindAsync(string text, IReadOnlyList<MorphToken> words, UserSettings settings, CancellationToken cancellation)
+        private static bool Neutral(IEnumerable<string> definitions) => !definitions.Any(d => Regex.IsMatch(d, @"\b(?:argo|eskimiş|eski dil|halk ağzı|hakaret|obsolete|archaic|slang|vulgar)\b", RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(100)));
+        public async Task<IReadOnlyList<LexiconEntry>> FindAsync(string text, IReadOnlyList<MorphToken> words, UserSettings settings, CancellationToken cancellation, EnrichmentContext? context = null)
         {
+            context = context ?? new EnrichmentContext();
+            var summary = context.Summary;
             var entries = new List<LexiconEntry>();
-            var contexts = words.Where(w => !Stop.Contains(w.Lemma)).GroupBy(w => ParagraphStart(text, w.Start)).ToDictionary(g => g.Key, g => new HashSet<string>(g.Select(w => w.Lemma.ToLower(Turkish)), StringComparer.Ordinal));
-            var pending = new List<(MorphToken Word, List<Sense> Senses)>();
+            var contexts = words.GroupBy(w => ParagraphStart(text, w.Start)).ToDictionary(g => g.Key, g => new HashSet<string>(g.Where(w => !Stop.Contains(w.Lemma)).Select(w => w.Lemma.ToLower(Turkish)), StringComparer.Ordinal));
             var locations = words.GroupBy(w => w.Lemma + "/" + w.Pos).ToDictionary(g => g.Key, g => g.Select(w => ParagraphStart(text, w.Start)).Distinct().Count());
+            var roots = words.Where(w => !w.Proper && w.Lemma.Length >= 2 && w.Lemma.Length <= 100 && w.Lemma.All(char.IsLetter)).GroupBy(w => w.Lemma + "/" + w.Pos).Select(g => g.First()).ToList();
+            summary.RootsTotal = roots.Count;
             using (var connection = Open())
             {
-                foreach (var word in words.Where(w => !w.Proper && Word(w.Lemma)).GroupBy(w => w.Lemma + "/" + w.Pos).Select(g => g.First()).Take(200))
+                var cache = new Dictionary<string, List<Sense>>(StringComparer.Ordinal);
+                List<Sense> Resolve(string lemma, string pos)
+                {
+                    string key = lemma.ToLower(Turkish) + "/" + pos;
+                    if (!cache.TryGetValue(key, out var value)) { value = Read(connection, lemma.ToLower(Turkish), pos); cache[key] = value; }
+                    return value;
+                }
+                foreach (var word in roots)
                 {
                     cancellation.ThrowIfCancellationRequested();
-                    var senses = Read(connection, word.Lemma.ToLower(Turkish), Pos(word.Pos));
-                    var context = contexts[ParagraphStart(text, word.Start)];
-                    var scored = senses.Select(s => new { Sense = s, Score = Overlap(s.Definition, context) }).OrderByDescending(s => s.Score).ThenBy(s => s.Sense.Id, StringComparer.Ordinal).ToList();
-                    Sense? chosen = senses.Count == 1 ? senses[0] : locations[word.Lemma + "/" + word.Pos] == 1 && scored.Count > 1 && scored[0].Score >= 2 && scored[0].Score - scored[1].Score >= 2 ? scored[0].Sense : null;
-                    if (chosen == null) { if (senses.Count > 0 && locations[word.Lemma + "/" + word.Pos] == 1) pending.Add((word, senses)); continue; }
-                    if (Regex.IsMatch(chosen.Definition, @"\b(?:argo|eskimiş|eski dil|halk ağzı|hakaret)\b", RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(100))) continue;
-                    var alternatives = chosen.Members.Where(v => v != word.Lemma.ToLower(Turkish) && Word(v) && Preferred.Contains(v))
-                        .Where(v => Read(connection, v, chosen.Pos).Count == 1).Take(3).ToList();
-                    if (alternatives.Count > 0) entries.Add(new LexiconEntry { Lemma = word.Lemma, Pos = word.Pos, Synonyms = alternatives, Domain = "genel", Confidence = senses.Count == 1 ? .94 : .93, Examples = new List<string> { chosen.Definition } });
-                }
-            }
-            // Explicitly enabled Internet enrichment asks only distinct lemma words, never paragraphs.
-            // A web synonym must also share an existing WordNet sense and have one unambiguous target sense.
-            if (online != null && settings.InternetEnabled && !settings.OfflineMode)
-            using (var budget = CancellationTokenSource.CreateLinkedTokenSource(cancellation))
-            {
-                budget.CancelAfter(TimeSpan.FromSeconds(8));
-                foreach (var item in pending.Take(3))
-                {
-                    try
+                    var senses = Resolve(word.Lemma, Pos(word.Pos));
+                    var paragraph = contexts[ParagraphStart(text, word.Start)];
+                    var scored = senses.Select(s => new { Sense = s, Score = Overlap(s.Definition, paragraph) }).OrderByDescending(s => s.Score).ThenBy(s => s.Sense.Id, StringComparer.Ordinal).ToList();
+                    bool oneContext = locations[word.Lemma + "/" + word.Pos] == 1;
+                    Sense? chosen = senses.Count == 1 ? senses[0] : oneContext && scored.Count > 1 && scored[0].Score >= 2 && scored[0].Score - scored[1].Score >= 2 ? scored[0].Sense : null;
+                    var alternatives = chosen != null && Word(word.Lemma) && Neutral(new[] { chosen.Definition })
+                        ? chosen.Members.Where(v => v != word.Lemma.ToLower(Turkish) && Word(v))
+                            .Where(v => Resolve(v, chosen.Pos).Count == 1 && Neutral(Resolve(v, chosen.Pos).Select(s => s.Definition)))
+                            .OrderByDescending(Preferred.Contains).ThenBy(v => v, StringComparer.Ordinal).Take(3).ToList()
+                        : new List<string>();
+                    bool found = senses.Count > 0;
+                    // No per-selection three-word or 200-root cutoff. Every eligible unresolved
+                    // root is examined; bounded requests, a circuit breaker and user cancel govern time.
+                    if (alternatives.Count == 0 && online != null && settings.InternetEnabled && !settings.OfflineMode)
                     {
-                        var results = await online.LookupAsync(item.Word.Lemma, settings, budget.Token).ConfigureAwait(false);
-                        var suggestions = results.Where(r => r.Error.Length == 0 && r.SingleSense).SelectMany(r => r.Synonyms).Distinct().Where(v => Word(v) && Preferred.Contains(v)).Take(6).ToList();
-                        if (suggestions.Count == 0) continue;
-                        using (var connection = Open())
+                        context.Report("İnternet sözlüğü: " + (summary.RootsChecked + 1) + "/" + roots.Count + " uygun kök · " + word.Lemma);
+                        summary.OnlineRootsQueried++;
+                        var results = await online.LookupAsync(word.Lemma, settings, cancellation).ConfigureAwait(false);
+                        summary.ProviderErrors += results.Count(r => r.Error.Length > 0 && !r.NotFound);
+                        var usable = results.Where(r => r.Error.Length == 0 && r.Content.Length > 0).ToList();
+                        if (usable.Count > 0) { summary.OnlineRootsFound++; found = true; }
+                        if (Word(word.Lemma) && oneContext)
+                        foreach (var result in usable.Where(r => r.SingleSense && r.PosTags.Count == 1 && r.PosTags[0] == word.Pos && r.Definitions.Count == 1 && Neutral(r.Definitions)))
+                        foreach (string value in result.Synonyms.Select(v => v.ToLower(Turkish)).Where(v => Word(v) && v != word.Lemma.ToLower(Turkish)).Distinct().Take(3))
                         {
-                            var validated = suggestions.Where(v => {
-                                var senses = Read(connection, v.ToLower(Turkish), Pos(item.Word.Pos));
-                                return senses.Count == 1 && item.Senses.Any(s => s.Id == senses[0].Id);
-                            }).Take(3).ToList();
-                            if (validated.Count > 0) entries.Add(new LexiconEntry { Lemma = item.Word.Lemma, Pos = item.Word.Pos, Synonyms = validated, Domain = "genel", Confidence = .93 });
+                            cancellation.ThrowIfCancellationRequested();
+                            var targets = Resolve(value, Pos(word.Pos));
+                            bool sameSense = targets.Count == 1 && senses.Any(s => s.Id == targets[0].Id) && Neutral(targets.Select(s => s.Definition));
+                            if (!sameSense && senses.Count == 0)
+                            {
+                                // Truly absent local word: require explicit reciprocal synonyms,
+                                // one meaning and matching POS from the reverse dictionary entry.
+                                var reverse = await online.LookupAsync(value, settings, cancellation).ConfigureAwait(false);
+                                summary.ProviderErrors += reverse.Count(r => r.Error.Length > 0 && !r.NotFound);
+                                sameSense = reverse.Any(r => r.Error.Length == 0 && r.SingleSense && r.PosTags.Count == 1 && r.PosTags[0] == word.Pos && r.Definitions.Count == 1 && Neutral(r.Definitions) && r.Synonyms.Any(v => v.ToLower(Turkish) == word.Lemma.ToLower(Turkish)));
+                            }
+                            if (sameSense && !alternatives.Contains(value)) alternatives.Add(value);
                         }
                     }
-                    catch (OperationCanceledException) when (!cancellation.IsCancellationRequested) { break; }
+                    if (alternatives.Count > 0)
+                        entries.Add(new LexiconEntry { Lemma = word.Lemma, Pos = word.Pos, Synonyms = alternatives.Take(3).ToList(), Domain = "genel", Confidence = chosen != null && senses.Count == 1 ? .94 : .93, Examples = chosen == null ? new List<string>() : new List<string> { chosen.Definition } });
+                    summary.RootsChecked++;
+                    if (found) summary.RootsFound++; else summary.RootsUnresolved++;
+                    context.Report("Sözlük taraması: " + summary.RootsChecked + "/" + roots.Count + " uygun kök · bulunan " + summary.RootsFound);
                 }
             }
+            summary.LexicalEntries = entries.Count;
             return entries;
         }
         private static int ParagraphStart(string text, int position)

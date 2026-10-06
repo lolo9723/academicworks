@@ -16,9 +16,21 @@ namespace AcademicParaphraser.Infrastructure.InternetDictionaryProviders
             {
                 if (node.Name == "h2") { turkish = node.InnerText.Contains("Türkçe") || node.InnerText.Contains("Turkish"); synonyms = false; }
                 else if ((node.Name == "h3" || node.Name == "h4" || node.Name == "h5") && turkish)
+                {
                     synonyms = node.InnerText.Contains("Eş anlamlı") || node.InnerText.Contains("Eşanlamlı") || node.InnerText.Contains("Synonyms");
+                    string heading = HtmlEntity.DeEntitize(node.InnerText).Replace("[edit]", "").Replace("[değiştir]", "").Trim();
+                    string pos = heading == "Noun" || heading == "Ad" || heading == "İsim" ? "Noun" : heading == "Verb" || heading == "Fiil" || heading == "Eylem" ? "Verb" : heading == "Adjective" || heading == "Sıfat" ? "Adjective" : heading == "Adverb" || heading == "Zarf" ? "Adverb" : "";
+                    if (pos.Length > 0) result.PosTags.Add(pos);
+                }
                 else if (turkish && node.Name == "ol" && !synonyms)
+                {
                     meanings += node.ChildNodes.Count(n => n.Name == "li");
+                    foreach (var meaning in node.ChildNodes.Where(n => n.Name == "li"))
+                    {
+                        string definition = HtmlEntity.DeEntitize(meaning.InnerText).Trim();
+                        result.Definitions.Add(definition.Substring(0, Math.Min(400, definition.Length)));
+                    }
+                }
                 else if (turkish && node.Name == "span" && node.GetAttributeValue("class", "").Split(' ').Contains("synonym"))
                 {
                     // Wiktionary also places explicit synonyms inside a definition's nyms span.
@@ -30,6 +42,7 @@ namespace AcademicParaphraser.Infrastructure.InternetDictionaryProviders
             }
             result.Synonyms = result.Synonyms.Distinct(StringComparer.Ordinal).ToList();
             result.SingleSense = meanings == 1;
+            result.PosTags = result.PosTags.Distinct(StringComparer.Ordinal).ToList();
             return result;
         }
         private static void Add(DictionaryResult result, HtmlNode link)

@@ -83,6 +83,7 @@ namespace AcademicParaphraser.Core
     }
     public sealed class Candidate
     {
+        public Rewriting.EnrichmentSummary? Enrichment { get; set; }
         public string Text { get; set; } = ""; public List<TextEdit> Edits { get; set; } = new List<TextEdit>(); public CandidateScore Score { get; set; } = new CandidateScore();
     }
     public sealed class RuleDefinition

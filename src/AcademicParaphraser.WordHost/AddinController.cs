@@ -21,6 +21,7 @@ namespace AcademicParaphraser.WordHost
     public sealed class AddinController : IDisposable
     {
         private readonly WordNetLexicalSource knowledge;
+        private readonly OnlineStructureSource structures;
         private readonly Word.Application app; private readonly WordDocumentAdapter adapter; private readonly LocalRepository repo; private readonly ZemberekProcess nlp; private readonly TransformationEngine engine; private readonly SafeLog log; private readonly DictionaryService dictionary; private readonly List<WiktionaryProvider> providers;
         private SelectionSnapshot? snapshot; private IReadOnlyList<Candidate> candidates = new List<Candidate>(); private int alternative; private CancellationTokenSource? operation; private bool busy, disposed;
         public PreviewPane Preview { get; } public Action? ShowPreview
@@ -46,7 +47,8 @@ namespace AcademicParaphraser.WordHost
             providers = new List<WiktionaryProvider> { new TurkishWiktionaryProvider(), new EnglishWiktionaryProvider() };
             dictionary = new DictionaryService(repo, providers);
             knowledge = new WordNetLexicalSource(Path.Combine(installDirectory, "data", "kenet.sqlite"), dictionary);
-            engine = new TransformationEngine(repo, nlp, knowledge);
+            structures = new OnlineStructureSource(repo);
+            engine = new TransformationEngine(repo, nlp, knowledge, structures);
             Preview.ApplyRequested += (s, e) => Guard(Apply);
             Preview.NextRequested += (s, e) => Guard(() => Next(1));
             Preview.CancelRequested += (s, e) => { operation?.Cancel(); candidates = new List<Candidate>(); Preview.ShowMessage("İşlem iptal edildi; belge değişmedi."); StateChanged?.Invoke(this, EventArgs.Empty); };
@@ -70,6 +72,16 @@ namespace AcademicParaphraser.WordHost
             settings.DefaultStrength = value;
             repo.SaveSettings(settings);
             StateChanged?.Invoke(this, EventArgs.Empty);
+        }
+        public Task GenerateOnlineAsync()
+        {
+            if (busy || disposed) return Task.CompletedTask;
+            var settings = Settings;
+            settings.InternetEnabled = true;
+            settings.OfflineMode = false;
+            settings.DefaultStrength = Strength.Strong;
+            repo.SaveSettings(settings);
+            return GenerateAsync();
         }
         public void SetOption(string id, bool value)
         {
@@ -117,7 +129,8 @@ namespace AcademicParaphraser.WordHost
                 var current = snapshot;
                 var settings = Settings;
                 var token = operation.Token;
-                var result = await Task.Run(() => engine.GenerateAsync(current.Text, settings, current.Protected, token), token);
+                var enrichment = new EnrichmentContext { Progress = new Progress<string>(message => { if (!disposed && busy && !token.IsCancellationRequested) Preview.ShowProgress(message); }) };
+                var result = await Task.Run(() => engine.GenerateAsync(current.Text, settings, current.Protected, token, enrichment), token);
                 if (disposed)
                     return;
                 token.ThrowIfCancellationRequested();
@@ -186,6 +199,7 @@ namespace AcademicParaphraser.WordHost
             operation?.Cancel();
             snapshot?.Dispose();
             nlp.Dispose();
+            structures.Dispose();
             foreach (var provider in providers)
                 provider.Dispose();
             Preview.Dispose();

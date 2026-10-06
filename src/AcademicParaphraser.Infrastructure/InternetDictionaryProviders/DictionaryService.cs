@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -22,6 +23,9 @@ namespace AcademicParaphraser.Infrastructure.InternetDictionaryProviders
         public string Error { get; set; } = "";
         public List<string> Synonyms { get; set; } = new List<string>();
         public bool SingleSense { get; set; }
+        public bool NotFound { get; set; }
+        public List<string> PosTags { get; set; } = new List<string>();
+        public List<string> Definitions { get; set; } = new List<string>();
     }
     public interface IDictionaryProvider
     {
@@ -38,7 +42,7 @@ namespace AcademicParaphraser.Infrastructure.InternetDictionaryProviders
         protected WiktionaryProvider(string language)
         {
             this.language = language;
-            http.DefaultRequestHeaders.UserAgent.ParseAdd("AkademikParafraz/1.0 (local Word dictionary; user-initiated lookup)");
+            http.DefaultRequestHeaders.UserAgent.ParseAdd("AkademikParafraz/1.2 (local Word dictionary; optional single-word lookup)");
         }
         public async Task<DictionaryResult> LookupAsync(string term, CancellationToken cancellation)
         {
@@ -70,7 +74,11 @@ namespace AcademicParaphraser.Infrastructure.InternetDictionaryProviders
                     timeout.Token.ThrowIfCancellationRequested();
                     var data = JObject.Parse(json);
                     if (data["error"] != null)
-                        return new DictionaryResult { Term = term, Source = Name, SourceUrl = source, Error = "Bu kaynakta kelime bulunamadı." };
+                    {
+                        string? code = data["error"]?.Value<string>("code");
+                        bool missing = code == "missingtitle" || code == "invalidtitle";
+                        return new DictionaryResult { Term = term, Source = Name, SourceUrl = source, NotFound = missing, Error = missing ? "Bu kaynakta kelime bulunamadı." : "Sözlük kaynağı bu isteği tamamlayamadı." };
+                    }
                     var html = new HtmlDocument();
                     html.LoadHtml(data["parse"]?.Value<string>("text") ?? "");
                     foreach (var n in html.DocumentNode.SelectNodes("//script|//style|//table|//sup") ?? new HtmlNodeCollection(null))
@@ -80,7 +88,7 @@ namespace AcademicParaphraser.Infrastructure.InternetDictionaryProviders
                     if (content.Length > 6000)
                         content = content.Substring(0, 6000);
                     var lexical = WikiLexicalParser.Parse(html);
-                    return new DictionaryResult { Term = term, Source = Name, SourceUrl = source, Content = content, Synonyms = lexical.Synonyms, SingleSense = lexical.SingleSense };
+                    return new DictionaryResult { Term = term, Source = Name, SourceUrl = source, Content = content, Synonyms = lexical.Synonyms, SingleSense = lexical.SingleSense, PosTags = lexical.PosTags, Definitions = lexical.Definitions };
                 }
             }
         }
@@ -97,6 +105,8 @@ namespace AcademicParaphraser.Infrastructure.InternetDictionaryProviders
     public sealed class DictionaryService
     {
         private readonly LocalRepository repository; private readonly IReadOnlyList<IDictionaryProvider> providers; private readonly SemaphoreSlim limiter = new SemaphoreSlim(1, 1);
+        private readonly ConcurrentDictionary<string, int> failures = new ConcurrentDictionary<string, int>();
+        private readonly ConcurrentDictionary<string, DateTime> unavailableUntil = new ConcurrentDictionary<string, DateTime>();
         public DictionaryService(LocalRepository repository, IReadOnlyList<IDictionaryProvider> providers)
         {
             this.repository = repository;
@@ -110,7 +120,8 @@ namespace AcademicParaphraser.Infrastructure.InternetDictionaryProviders
             var results = new List<DictionaryResult>();
             foreach (var provider in providers)
             {
-                string key = provider.Name + ":" + term;
+                cancellation.ThrowIfCancellationRequested();
+                string key = "v2:" + provider.Name + ":" + term;
                 string? cached = repository.GetCached(key);
                 if (cached != null)
                 {
@@ -127,18 +138,29 @@ namespace AcademicParaphraser.Infrastructure.InternetDictionaryProviders
                 await limiter.WaitAsync(cancellation).ConfigureAwait(false);
                 try
                 {
+                    if (unavailableUntil.TryGetValue(provider.Name, out var until) && until > DateTime.UtcNow)
+                    {
+                        results.Add(new DictionaryResult { Term = term, Source = provider.Name, Error = "Kaynak art arda hata verdi; beş dakika sonra yeniden denenecek." });
+                        continue;
+                    }
                     var result = await provider.LookupAsync(term, cancellation).ConfigureAwait(false);
                     results.Add(result);
-                    if (settings.CacheDictionary && result.Error.Length == 0)
-                        repository.Cache(key, JsonConvert.SerializeObject(result));
+                    if (result.Error.Length > 0 && !result.NotFound) Failed(provider.Name); else failures[provider.Name] = 0;
+                    if (settings.CacheDictionary && (result.Error.Length == 0 || result.NotFound))
+                        repository.Cache(key, JsonConvert.SerializeObject(result), result.NotFound ? TimeSpan.FromHours(1) : TimeSpan.FromDays(30));
                     await Task.Delay(250, cancellation).ConfigureAwait(false);
                 }
-                catch (OperationCanceledException) when (!cancellation.IsCancellationRequested) { results.Add(new DictionaryResult { Term = term, Source = provider.Name, Error = "Sözlük kaynağı zaman aşımına uğradı; yerel parafraz çalışmaya devam eder." }); }
+                catch (OperationCanceledException) when (!cancellation.IsCancellationRequested) { Failed(provider.Name); results.Add(new DictionaryResult { Term = term, Source = provider.Name, Error = "Sözlük kaynağı zaman aşımına uğradı; yerel parafraz çalışmaya devam eder." }); }
                 catch (OperationCanceledException) { throw; }
-                catch (Exception ex) when (ex is HttpRequestException || ex is IOException || ex is InvalidOperationException || ex is JsonException) { results.Add(new DictionaryResult { Term = term, Source = provider.Name, Error = "Sözlük kaynağına ulaşılamadı; yerel parafraz çalışmaya devam eder." }); }
+                catch (Exception ex) when (ex is HttpRequestException || ex is IOException || ex is InvalidOperationException || ex is JsonException) { Failed(provider.Name); results.Add(new DictionaryResult { Term = term, Source = provider.Name, Error = "Sözlük kaynağına ulaşılamadı; yerel parafraz çalışmaya devam eder." }); }
                 finally { limiter.Release(); }
             }
             return results;
+        }
+        private void Failed(string name)
+        {
+            if (failures.AddOrUpdate(name, 1, (key, count) => count + 1) >= 3)
+                unavailableUntil[name] = DateTime.UtcNow.AddMinutes(5);
         }
     }
 }

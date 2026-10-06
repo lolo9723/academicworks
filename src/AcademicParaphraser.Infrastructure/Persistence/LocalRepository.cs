@@ -257,7 +257,7 @@ namespace AcademicParaphraser.Infrastructure.Persistence
                 }
             }
         }
-        public void Cache(string key, string json) => Execute("INSERT OR REPLACE INTO dictionary_cache VALUES($key,$json,$expires)", ("$key", key), ("$json", json), ("$expires", DateTime.UtcNow.AddDays(30).ToString("O")));
+        public void Cache(string key, string json, TimeSpan? lifetime = null) => Execute("INSERT OR REPLACE INTO dictionary_cache VALUES($key,$json,$expires)", ("$key", key), ("$json", json), ("$expires", DateTime.UtcNow.Add(lifetime ?? TimeSpan.FromDays(30)).ToString("O")));
         public string Export()
         {
             return JsonConvert.SerializeObject(new UserBackup { Settings = GetSettings(), LockedTerms = GetLockedTerms().ToList(), Rules = GetRules().Where(r => r.UserDefined).ToList(), Lexicon = GetLexicon().Where(l => l.UserDefined).ToList() }, Formatting.Indented);

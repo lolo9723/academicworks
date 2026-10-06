@@ -13,17 +13,20 @@ namespace AcademicParaphraser.Core.RuleEngine
     public sealed class TransformationEngine
     {
         private readonly IRuleCatalog catalog; private readonly ITurkishNlp nlp; private readonly ILexicalSource? lexicalSource; private readonly ProtectionDetector detector = new ProtectionDetector();
+        private readonly IStructureSource? structureSource;
         private readonly ConcurrentDictionary<string, Regex> patterns = new ConcurrentDictionary<string, Regex>(StringComparer.Ordinal);
         private static readonly CultureInfo Turkish = CultureInfo.GetCultureInfo("tr-TR");
         private static readonly HashSet<string> StructuralFamilies = new HashSet<string>(new[] { "etken-edilgen", "edilgen-etken", "isim-fiil", "fiil-isim", "isim tamlaması", "yüklem", "yan cümlecik", "sıfat-fiil", "zarf-fiil", "güvenli sıralama", "yüklem merkezli", "neden-sonuç", "karşılaştırma", "yöntem", "sonuç" }, StringComparer.Ordinal);
-        public TransformationEngine(IRuleCatalog catalog, ITurkishNlp nlp, ILexicalSource? lexicalSource = null)
+        public TransformationEngine(IRuleCatalog catalog, ITurkishNlp nlp, ILexicalSource? lexicalSource = null, IStructureSource? structureSource = null)
         {
+            this.structureSource = structureSource;
             this.lexicalSource = lexicalSource;
             this.catalog = catalog;
             this.nlp = nlp;
         }
-        public async Task<IReadOnlyList<Candidate>> GenerateAsync(string text, UserSettings settings, IEnumerable<TextSpan>? external, CancellationToken token)
+        public async Task<IReadOnlyList<Candidate>> GenerateAsync(string text, UserSettings settings, IEnumerable<TextSpan>? external, CancellationToken token, EnrichmentContext? enrichment = null)
         {
+            enrichment = enrichment ?? new EnrichmentContext();
             if (string.IsNullOrWhiteSpace(text))
                 throw new ArgumentException("Önce bir metin seçin.");
             if (text.Length > 80000)
@@ -49,13 +52,16 @@ namespace AcademicParaphraser.Core.RuleEngine
             var lookup = lexicon.GroupBy(e => e.Lemma + "/" + e.Pos).ToDictionary(g => g.Key, g => g.First(), StringComparer.Ordinal);
             if (lexicalSource != null)
             {
-                var eligible = morphology.Where(t => !t.Proper && !protectedSpans.Any(p => p.Intersects(t.Start, t.Length)) && !lookup.ContainsKey(t.Lemma + "/" + t.Pos)).ToList();
-                foreach (var item in await lexicalSource.FindAsync(text, eligible, settings, token).ConfigureAwait(false))
+                var eligible = morphology.Where(t => !t.Proper && !protectedSpans.Any(p => p.Intersects(t.Start, t.Length))).ToList();
+                foreach (var item in await lexicalSource.FindAsync(text, eligible, settings, token, enrichment).ConfigureAwait(false))
                     if (!lookup.ContainsKey(item.Lemma + "/" + item.Pos)) lookup.Add(item.Lemma + "/" + item.Pos, item);
             }
             var candidates = new List<List<TextEdit>>();
             string lowered = text.ToLower(Turkish);
-            foreach (var rule in catalog.GetRules().Where(r => (int)r.Strength <= (int)settings.DefaultStrength && r.Confidence >= settings.MinimumConfidence && (r.Domain == "genel" || r.Domain == settings.Domain)))
+            var availableRules = catalog.GetRules().ToList();
+            if (structureSource != null) availableRules.AddRange(await structureSource.FindAsync(text, settings, token, enrichment).ConfigureAwait(false));
+            enrichment.Report("Cümle yapıları ve çekimler denetleniyor…");
+            foreach (var rule in availableRules.Where(r => (int)r.Strength <= (int)settings.DefaultStrength && r.Confidence >= settings.MinimumConfidence && (r.Domain == "genel" || r.Domain == settings.Domain)))
             {
                 token.ThrowIfCancellationRequested();
                 if (!rule.UserDefined && !string.IsNullOrEmpty(rule.RequiredText) && lowered.IndexOf(rule.RequiredText, StringComparison.Ordinal) < 0) continue;
@@ -107,7 +113,7 @@ namespace AcademicParaphraser.Core.RuleEngine
                 }
             }
             if (candidates.Count == 0)
-                return new[] { new Candidate { Text = text, Score = new CandidateScore { SemanticSafety = 1, GrammarConfidence = 1, AcademicStyle = 1 } } };
+                return new[] { new Candidate { Text = text, Enrichment = enrichment.Summary, Score = new CandidateScore { SemanticSafety = 1, GrammarConfidence = 1, AcademicStyle = 1 } } };
             var proposals = new List<Candidate>();
             var seen = new HashSet<string>(StringComparer.Ordinal);
             // Deterministic variants rotate competing rules, then reject duplicates and near-identical alternatives.
@@ -135,7 +141,7 @@ namespace AcademicParaphraser.Core.RuleEngine
                 if (proposals.Any(c => Difference(c.Text, result) < .04))
                     continue;
                 var score = new CandidateScore { SemanticSafety = edits.Count == 0 ? 1 : edits.Min(e => e.Confidence), GrammarConfidence = edits.Count == 0 ? 1 : edits.Min(e => e.Confidence), StructuralDifference = edits.Count(e => StructuralFamilies.Contains(e.Family)) / (double)Math.Max(1, edits.Count), LexicalDifference = Difference(text, result), AcademicStyle = edits.Count == 0 ? 1 : edits.Average(e => e.Confidence) };
-                proposals.Add(new Candidate { Text = result, Edits = edits, Score = score });
+                proposals.Add(new Candidate { Text = result, Edits = edits, Score = score, Enrichment = enrichment.Summary });
                 if (proposals.Count >= settings.Alternatives)
                     break;
             }

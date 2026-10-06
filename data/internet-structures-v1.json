@@ -1,0 +1,405 @@
+{
+  "formatVersion": 1,
+  "license": "MIT",
+  "description": "Reviewed Turkish passive reporting and purpose frames. Concrete combinations are counted separately; not independent grammar families.",
+  "intros": [
+    "bu",
+    "mevcut",
+    "sunulan",
+    "ilgili",
+    "söz konusu",
+    "eldeki"
+  ],
+  "locations": [
+    "çalışmada",
+    "araştırmada",
+    "incelemede",
+    "analizde"
+  ],
+  "subjects": [
+    "veriler",
+    "bulgular",
+    "sonuçlar",
+    "yanıtlar",
+    "görüşler",
+    "belgeler",
+    "yorumlar",
+    "gözlemler"
+  ],
+  "predicates": [
+    {
+      "source": "incelen",
+      "sourceEndings": [
+        "di",
+        "miştir",
+        "mektedir",
+        "miş",
+        "ir",
+        "ecektir",
+        "iyor",
+        "medi",
+        "memiştir",
+        "memektedir",
+        "mez",
+        "meyecektir",
+        "miyor"
+      ],
+      "target": "incelemeye tabi tutul",
+      "targetEndings": [
+        "du",
+        "muştur",
+        "maktadır",
+        "muş",
+        "ur",
+        "acaktır",
+        "uyor",
+        "madı",
+        "mamıştır",
+        "mamaktadır",
+        "maz",
+        "mayacaktır",
+        "muyor"
+      ]
+    },
+    {
+      "source": "analiz edil",
+      "sourceEndings": [
+        "di",
+        "miştir",
+        "mektedir",
+        "miş",
+        "ir",
+        "ecektir",
+        "iyor",
+        "medi",
+        "memiştir",
+        "memektedir",
+        "mez",
+        "meyecektir",
+        "miyor"
+      ],
+      "target": "çözümlen",
+      "targetEndings": [
+        "di",
+        "miştir",
+        "mektedir",
+        "miş",
+        "ir",
+        "ecektir",
+        "iyor",
+        "medi",
+        "memiştir",
+        "memektedir",
+        "mez",
+        "meyecektir",
+        "miyor"
+      ]
+    },
+    {
+      "source": "tespit edil",
+      "sourceEndings": [
+        "di",
+        "miştir",
+        "mektedir",
+        "miş",
+        "ir",
+        "ecektir",
+        "iyor",
+        "medi",
+        "memiştir",
+        "memektedir",
+        "mez",
+        "meyecektir",
+        "miyor"
+      ],
+      "target": "saptan",
+      "targetEndings": [
+        "dı",
+        "mıştır",
+        "maktadır",
+        "mış",
+        "ır",
+        "acaktır",
+        "ıyor",
+        "madı",
+        "mamıştır",
+        "mamaktadır",
+        "maz",
+        "mayacaktır",
+        "mıyor"
+      ]
+    },
+    {
+      "source": "belirlen",
+      "sourceEndings": [
+        "di",
+        "miştir",
+        "mektedir",
+        "miş",
+        "ir",
+        "ecektir",
+        "iyor",
+        "medi",
+        "memiştir",
+        "memektedir",
+        "mez",
+        "meyecektir",
+        "miyor"
+      ],
+      "target": "tespit edil",
+      "targetEndings": [
+        "di",
+        "miştir",
+        "mektedir",
+        "miş",
+        "ir",
+        "ecektir",
+        "iyor",
+        "medi",
+        "memiştir",
+        "memektedir",
+        "mez",
+        "meyecektir",
+        "miyor"
+      ]
+    },
+    {
+      "source": "saptan",
+      "sourceEndings": [
+        "dı",
+        "mıştır",
+        "maktadır",
+        "mış",
+        "ır",
+        "acaktır",
+        "ıyor",
+        "madı",
+        "mamıştır",
+        "mamaktadır",
+        "maz",
+        "mayacaktır",
+        "mıyor"
+      ],
+      "target": "belirlen",
+      "targetEndings": [
+        "di",
+        "miştir",
+        "mektedir",
+        "miş",
+        "ir",
+        "ecektir",
+        "iyor",
+        "medi",
+        "memiştir",
+        "memektedir",
+        "mez",
+        "meyecektir",
+        "miyor"
+      ]
+    },
+    {
+      "source": "ifade edil",
+      "sourceEndings": [
+        "di",
+        "miştir",
+        "mektedir",
+        "miş",
+        "ir",
+        "ecektir",
+        "iyor",
+        "medi",
+        "memiştir",
+        "memektedir",
+        "mez",
+        "meyecektir",
+        "miyor"
+      ],
+      "target": "dile getiril",
+      "targetEndings": [
+        "di",
+        "miştir",
+        "mektedir",
+        "miş",
+        "ir",
+        "ecektir",
+        "iyor",
+        "medi",
+        "memiştir",
+        "memektedir",
+        "mez",
+        "meyecektir",
+        "miyor"
+      ]
+    },
+    {
+      "source": "gerçekleştiril",
+      "sourceEndings": [
+        "di",
+        "miştir",
+        "mektedir",
+        "miş",
+        "ir",
+        "ecektir",
+        "iyor",
+        "medi",
+        "memiştir",
+        "memektedir",
+        "mez",
+        "meyecektir",
+        "miyor"
+      ],
+      "target": "yapıl",
+      "targetEndings": [
+        "dı",
+        "mıştır",
+        "maktadır",
+        "mış",
+        "ır",
+        "acaktır",
+        "ıyor",
+        "madı",
+        "mamıştır",
+        "mamaktadır",
+        "maz",
+        "mayacaktır",
+        "mıyor"
+      ]
+    },
+    {
+      "source": "ele alın",
+      "sourceEndings": [
+        "dı",
+        "mıştır",
+        "maktadır",
+        "mış",
+        "ır",
+        "acaktır",
+        "ıyor",
+        "madı",
+        "mamıştır",
+        "mamaktadır",
+        "maz",
+        "mayacaktır",
+        "mıyor"
+      ],
+      "target": "üzerinde durul",
+      "targetEndings": [
+        "du",
+        "muştur",
+        "maktadır",
+        "muş",
+        "ur",
+        "acaktır",
+        "uyor",
+        "madı",
+        "mamıştır",
+        "mamaktadır",
+        "maz",
+        "mayacaktır",
+        "muyor"
+      ]
+    },
+    {
+      "source": "araştırıl",
+      "sourceEndings": [
+        "dı",
+        "mıştır",
+        "maktadır",
+        "mış",
+        "ır",
+        "acaktır",
+        "ıyor",
+        "madı",
+        "mamıştır",
+        "mamaktadır",
+        "maz",
+        "mayacaktır",
+        "mıyor"
+      ],
+      "target": "araştırmaya konu edil",
+      "targetEndings": [
+        "di",
+        "miştir",
+        "mektedir",
+        "miş",
+        "ir",
+        "ecektir",
+        "iyor",
+        "medi",
+        "memiştir",
+        "memektedir",
+        "mez",
+        "meyecektir",
+        "miyor"
+      ]
+    },
+    {
+      "source": "kayıt altına alın",
+      "sourceEndings": [
+        "dı",
+        "mıştır",
+        "maktadır",
+        "mış",
+        "ır",
+        "acaktır",
+        "ıyor",
+        "madı",
+        "mamıştır",
+        "mamaktadır",
+        "maz",
+        "mayacaktır",
+        "mıyor"
+      ],
+      "target": "kaydedil",
+      "targetEndings": [
+        "di",
+        "miştir",
+        "mektedir",
+        "miş",
+        "ir",
+        "ecektir",
+        "iyor",
+        "medi",
+        "memiştir",
+        "memektedir",
+        "mez",
+        "meyecektir",
+        "miyor"
+      ]
+    }
+  ],
+  "purposes": [
+    {
+      "genitive": "çalışmanın",
+      "subject": "çalışma"
+    },
+    {
+      "genitive": "araştırmanın",
+      "subject": "araştırma"
+    },
+    {
+      "genitive": "incelemenin",
+      "subject": "inceleme"
+    },
+    {
+      "genitive": "analizin",
+      "subject": "analiz"
+    }
+  ],
+  "purposeNouns": [
+    "amacı",
+    "hedefi",
+    "temel amacı"
+  ],
+  "purposeEndings": [
+    {
+      "source": "maktır",
+      "target": "mayı"
+    },
+    {
+      "source": "mektir",
+      "target": "meyi"
+    }
+  ],
+  "inventory": 25104
+}

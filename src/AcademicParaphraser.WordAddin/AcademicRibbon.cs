@@ -64,6 +64,9 @@ namespace AcademicParaphraser.WordAddin
                 return;
             switch (control.Id)
             {
+                case "onlineParaphrase":
+                    await controller.GenerateOnlineAsync();
+                    break;
                 case "paraphrase":
                 case "alternatives":
                     await controller.GenerateAsync();

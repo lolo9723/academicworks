@@ -6,14 +6,43 @@ using AcademicParaphraser.Core.RuleEngine;
 using AcademicParaphraser.Infrastructure.LexicalKnowledge;
 using AcademicParaphraser.Infrastructure.Persistence;
 using AcademicParaphraser.Infrastructure.TurkishNlp;
+using AcademicParaphraser.Infrastructure.InternetDictionaryProviders;
+using AcademicParaphraser.Core.Rewriting;
 
-if(args.Length != 4) throw new ArgumentException("wordnet.sqlite java nlp.jar output-folder required");
+if(args.Length != 4 && !(args.Length == 5 && args[4] == "--online")) throw new ArgumentException("wordnet.sqlite java nlp.jar output-folder [--online] required");
 string output = Path.GetFullPath(args[3]); Directory.CreateDirectory(output);
 string temporary = Path.Combine(Path.GetTempPath(), "AcademicQuality-" + Guid.NewGuid().ToString("N"));
 Directory.CreateDirectory(temporary);
 try {
     var repo = new LocalRepository(Path.Combine(temporary, "probe.sqlite"), new AesTextProtector(RandomNumberGenerator.GetBytes(32)));
     using var nlp = new ZemberekProcess(Path.GetFullPath(args[1]), Path.GetFullPath(args[2]));
+    if (args.Length == 5)
+    {
+        using var turkish = new TurkishWiktionaryProvider();
+        using var english = new EnglishWiktionaryProvider();
+        var dictionary = new DictionaryService(repo, new IDictionaryProvider[] { turkish, english });
+        var settings = new UserSettings { InternetEnabled = true, OfflineMode = false, DefaultStrength = Strength.Strong };
+        var lookups = new List<object>(); int found = 0;
+        string[] terms = { "yöntem", "örneklem", "parafraz", "ontoloji", "metot" };
+        foreach (string term in terms)
+        {
+            var results = await dictionary.LookupAsync(term, settings, CancellationToken.None);
+            found += results.Count(r => r.Error.Length == 0 && r.Content.Length > 0);
+            lookups.AddRange(results.Select(r => new { term, r.Source, r.Error, r.NotFound, r.SingleSense, r.PosTags, r.Synonyms }));
+        }
+        var context = new EnrichmentContext();
+        var knowledgeOnline = new WordNetLexicalSource(Path.GetFullPath(args[0]), dictionary);
+        await knowledgeOnline.FindAsync("", terms.Select(t => new MorphToken { Lemma = t, Pos = "Noun" }).ToArray(), settings, CancellationToken.None, context);
+        using var structures = new OnlineStructureSource(repo);
+        const string original = "Mevcut incelemede yanıtlar analiz edilmemiştir (Alfa, 2022; N=120).";
+        var proposals = await new TransformationEngine(repo, nlp, null, structures).GenerateAsync(original, settings, null, CancellationToken.None);
+        bool rewritten = proposals.Any(c => c.Text == "Yanıtlar mevcut incelemede çözümlenmemiştir (Alfa, 2022; N=120)." && c.Edits.Any(e => e.RuleId.StartsWith("online-frame:")));
+        var onlineReport = new { sourceIsSynthetic = true, wordExecuted = false, apiKeyUsed = false, paragraphSent = false, dictionaryAvailable = found > 0, foundResponses = found, lookups, lexicalScan = context.Summary, structures = proposals[0].Enrichment, original, outputs = proposals.Select(c => c.Text), passed = rewritten && proposals[0].Enrichment!.StructureInventory == 25104 && context.Summary.RootsChecked == terms.Length };
+        File.WriteAllText(Path.Combine(output, "online-verification.json"), JsonSerializer.Serialize(onlineReport, new JsonSerializerOptions { WriteIndented = true }));
+        Console.WriteLine(JsonSerializer.Serialize(onlineReport));
+        if (!onlineReport.passed) throw new InvalidOperationException("Live verified structure retrieval/rewrite failed");
+        return;
+    }
     var knowledge = new WordNetLexicalSource(Path.GetFullPath(args[0]));
     var engine = new TransformationEngine(repo, nlp, knowledge);
     string source = "İçerik analizi, ziyaretçi deneyimlerini incelemenin en etkili yöntemlerinden biridir. Ziyaretçi deneyimlerini anlamayı mümkün kıldığı için bu araştırmada içerik analizi kullanılmıştır. Ziyaretçilerin çevrimiçi yorumları incelenmiştir. Araştırma alanı olarak 12 destinasyon belirlenmiştir. Bu yorumlarda deneyimlerin nasıl temsil edildiği analiz edilmiştir. Bu araştırmanın amacı, ziyaretçi deneyimlerini incelemektir (Alfa, 2022; N=120).";
