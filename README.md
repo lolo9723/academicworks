@@ -4,7 +4,7 @@ Windows masaüstü Microsoft Word için C#/.NET Framework 4.8 ve VSTO mimarisind
 
 ## Teslim durumu
 
-Gerçek Windows CI üzerinde Core, Infrastructure, .NET Framework WordHost ve VSTO WordAddin projeleri Debug/Release derlenmiş; gerçek SQLite ve Zemberek ile **64/64 motor testi her iki yapılandırmada geçmiştir**. `.vsto` ve `.dll.manifest` dosyaları imzalanmış, Inno Setup ile gerçek `AkademikParafraz-1.0.0-Setup.exe` üretilmiştir. İlk başarılı Windows koşusu: [37419169212](https://github.com/lolo9723/academicworks/actions/runs/37419169212).
+Gerçek Windows CI üzerinde Core, Infrastructure, .NET Framework WordHost ve VSTO WordAddin projeleri Debug/Release derlenmiş; gerçek SQLite ve Zemberek ile **64/64 motor testi her iki yapılandırmada geçmiştir**. `.vsto` ve `.dll.manifest` dosyaları imzalanmış, Inno Setup ile gerçek `AkademikParafraz-1.0.0-Setup.exe` üretilmiştir. Güncel doğrulanmış Windows koşusu: [37421601160](https://github.com/lolo9723/academicworks/actions/runs/37421601160). Windows DPAPI, native mimariler, VSTO XML imzaları/dosya özetleri ve eksik Word installer testi de geçti.
 
 **Gerçek Word üzerinde kurulum, Ribbon yükleme, biçim/bağlantı/Undo/Track Changes kabulü henüz çalıştırılmamıştır.** Windows CI makinesinde Word yoktur. Bu ilk paket geliştirme yayıncı sertifikası kullanır; installer EXE için üretim Authenticode sertifikası sağlanmamıştır. Üretim kabulü tamamlanmış gibi sunulmaz. Son kullanıcı kılavuzu [UsersGuide.md](docs/UsersGuide.md), çalıştırılan kontroller [Verification.md](docs/Verification.md) ve canlı Word matrisi [Windows-Acceptance.md](docs/Windows-Acceptance.md) içindedir.
 

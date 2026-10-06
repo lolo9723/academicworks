@@ -1,25 +1,42 @@
-# Akademik Parafraz — gerçek doğrulama raporu
+# Akademik Parafraz — doğrulama raporu
 
-Tarih: 2026-10-05T21:33:48.7574131Z
+Tarih: 2026-10-06. Ürün/kaynak sürümü: 1.0.0.
 
-Çalıştırılan ortam: Debian GNU/Linux 13 (trixie). .NET SDK 8.0.425, gerçek Java 17, Zemberek 0.17.1. Kütüphane/ürün kaynak sürümü 1.0.0. Bu rapor **Windows'ta kurulmuş ve üretim kabulünden geçmiş bir Word ürünü belgesi değildir**.
+## Teslim durumu
 
-## Gerçekten çalıştırılan kontroller
+Gerçek Windows 2022 / Visual Studio 2022 OfficeTools üzerinde tam VSTO eklentisi Debug ve Release derlendi, uygulama/deployment manifestleri imzalandı ve Inno Setup ile gerçek Windows Setup.exe üretildi. Canlı Microsoft Word bulunan bir makine bu oturuma bağlı olmadığından Word içinde kurulum, Ribbon, biçim, bağlantı, geri alma ve değişiklik izleme kabulü çalıştırılmadı. Üretim kabulü tamamlanmış olarak sunulmaz.
 
-`AcademicParaphraser.Engine.sln` restore edildi. Core, Infrastructure, .NET Framework 4.8 WordHost, test ve doğrulama projeleri Debug ve Release derlendi: sıfır compiler warning, sıfır error. WordHost'taki COM automation köprüsü de .NET Framework reference assemblies ile derlendi; Word COM çağrısı çalıştırılmadı.
+Son Windows CI koşusu: [37421601160](https://github.com/lolo9723/academicworks/actions/runs/37421601160) — **success**. Derlenen kaynak commit'i: `697af87861851ab68a563ea3e47087627e1bdfc6`.
 
-Java sidecar Maven ile derlendi ve testlerde gerçek süreç olarak otomatik başlatıldı. Testler gerçek SQLite dosyaları ve Zemberek analizi/çekim üretimi kullandı. Testlerde NLP mock'u veya sahte dönüştürme cevabı yoktur.
+Installer: `AkademikParafraz-1.0.0-Setup.exe` — 39,179,373 byte.
 
-| Yapılandırma | Toplam | Geçti | Başarısız | Atlandı |
+SHA256: `54cca46c444fb7ba17cf4e9fca0bf91193c4bd096d67eb488a9a62cf6ed75c8c`.
+
+İndirilen aktarım ZIP'leri GitHub artifact SHA256 özetleriyle; yeniden birleştirilen EXE, Windows'ta hesaplanmış EXE SHA256 özetiyle birebir doğrulandı. Teslim kurulum ZIP'i: `AkademikParafraz-1.0.0-Windows-kurulum.zip`, SHA256 `27af9bcece1d383762c6f60ba40feaffe71458c09337e44c8a7eeb64bc4b22d1`.
+
+Windows manifest kontrolü: uygulama manifestindeki **343 dosya** ve deployment manifestindeki **1 referans** hash karşılaştırmasından geçti. Her iki XML imzası geçerli. Windows DPAPI roundtrip ve değiştirilmiş ciphertext reddi geçti. Kanıt JSON'larında `wordExecuted: false` olarak kayıtlıdır.
+
+## Gerçek Windows kontrolleri
+
+- Tam `AcademicParaphraser.sln`: gerçek Microsoft OfficeTools/VSTO hedefleriyle Debug/Release, uyarılar hata sayılarak derlendi. Eksik SDK hedefi taklit edilmedi.
+- Gerçek Java 17 ve Zemberek 0.17.1 sidecar'ı, gerçek SQLite dosyalarıyla motor testleri her iki yapılandırmada çalıştı.
+- Gerçek .NET Framework 4.8 altında Windows CurrentUser DPAPI şifreleme/çözme ve değiştirilmiş ciphertext reddi geçti.
+- SQLite x86/x64 DLL'lerinin ve bundled Java x64 EXE'sinin gerçek PE mimarileri doğrulandı.
+- `.dll.manifest` ve `.vsto` XML RSA-SHA256 imzaları ve referans edilen dosyaların hashleri gerçek kriptografik kontrollerden geçti. Bu kontrol sertifikanın kullanıcının/kurumun Windows güven deposunda güvenilir olduğu anlamına gelmez.
+- Inno Setup 6.7.1 gerçek installer oluşturdu. Word bulunmayan Windows üzerinde gerçek EXE sessiz çalıştırıldı; eksik Word mesajıyla exit 1 verdi ve Word eklenti kaydı oluşturmadan durdu. Başarılı kurulum/kaldırma yolu canlı Word kabulüne tabidir.
+
+| Windows yapılandırması | Toplam | Geçti | Başarısız | Atlandı |
 | --- | ---: | ---: | ---: | ---: |
 | Debug | 64 | 64 | 0 | 0 |
 | Release | 64 | 64 | 0 | 0 |
 
-Kontroller; APA/Vancouver/anlatısal atıflar, DOI/URL/ISBN/ISSN/PMID, istatistikler/sayılar, kilitli terim ve yumuşama, gerçek Türkçe ek üretimi ve belirsizliği bırakma, büyük harf/noktalama, farklı düzey/alternatifler, bağımsız paragraf bağlamı, 10 paragraf, run/biçim/link sınırları, Zotero field, tablo sonları ve özellikleri, story paketleri, inline nesne işaretleri/şekil metni, DTD, migration, atomik yedek, NaN/null reddi, şifreli veri ve metinsiz log/offline davranışını kapsar. OOXML kontrolleri gerçek Word UI/COM testinin yerine geçmez.
+Testler atıf/istatistik/sayı/teknik terim koruması, gerçek Türkçe çekim üretimi, belirsizliği bırakma, farklı düzey/alternatifler, paragraf bağlamı, run/biçim/link sınırları, alanlar, tablo/story/nesne işaretleri, DTD reddi, migration, atomik yedek, geçersiz veri reddi, şifreli geçmiş ve offline davranışını kapsar. OOXML ve motor testleri canlı Word UI/COM davranışının yerine geçmez.
 
-Şifreleme testlerinde cross-platform AES-CBC/HMAC kullanıldı. Ana ürünün Windows DPAPI sağlayıcısı uygulanmış olsa da Windows üzerinde çalıştırılmadı.
+## Linux geliştirme kontrolleri
 
-Başlangıç verisi: **61 kural, 39 sözlük kaydı**. Bunlar sınırlı akademik kalıplardır; genel Türkçe sentaksını veya her akademik alanı bütünüyle kapsamıyor.
+Debian 13, .NET SDK 8.0.425 ve gerçek Java 17 ortamında motor/WordHost Debug/Release sıfır warning/error ve 64/64 test sonucu elde edildi. Resmi Microsoft VS2022 kataloğundan indirilen ve SHA256 doğrulanan VSTO SDK referanslarıyla WordAddin kaynak/API kontrolleri de geçti.
+
+İlk Linux tam VSTO denemesi OfficeTools hedefi bulunmadığından MSB4019 ile durmuştu. Bu tarihsel log kanıt arşivinde tutulmuştur; güncel Windows tam VSTO derlemesi başarıyla tamamlanmıştır.
 
 ## Şartnamedeki koruma örneği
 
@@ -55,37 +72,24 @@ Geliştirici doğrulama aracında yalnızca örnek **yöntem** kelimesi açık k
 
 Parafraz motoru internetten bağımsızdır. İnternet tamamen kapalı/offline ayarlarında ağ çağrısı yapılmadığı otomatik testte denetlendi.
 
-## Bağımlılık ve betik kontrolü
 
-NuGet'in güncel advisory kaynağıyla bütün motor/host/test projelerinin transitif paketleri sorgulandı; kayıtlı açık bildirilmedi. İlk denetimde SQLitePCLRaw 2.1.6 için bildirilen açık, bağımlılığı 2.1.13'e yükselterek giderildi. Bu sonuç yalnızca sorgulanan NuGet advisory kaynağının kapsamıdır; tam güvenlik denetimi değildir.
+## Kapsam ve açık kabul işleri
 
-Zemberek'in eski Guava/Protobuf/Caffeine transitif sürümleri sırasıyla 33.4.8-jre / 3.25.8 / 2.9.3 ile değiştirildi ve gerçek Zemberek regresyonları yeniden geçti. Java dependency ağacı ve üçüncü taraf lisans/metadata envanteri pakete eklendi. Java bağımlılıklarına ayrı bir tam CVE taraması çalıştırıldığı iddia edilmez.
+Bu sürüm yerel, deterministik akademik Türkçe parafrazdır. LLM/üretken model çağrısı ve ücretli API anahtarı gerektirmez. Başlangıç verisi 61 kural ve 39 sözlük kaydıdır; genel Türkçe sentaksının tamamını veya her akademik alanı kapsamaz. İngilizce çeviri/parafraz motoru ve kişisel üslup öğrenen model içermez. Güven puanları ölçülmüş doğruluk yüzdesi değildir.
 
-Build-Windows.ps1 ve Smoke-Word.ps1, PowerShell'in gerçek parser'ıyla sözdizimi kontrolünden geçti. Windows komutlarının çalıştırıldığı veya installer'ın derlendiği anlamına gelmez. PowerShell ve Inno kaynakları Türkçe karakterler için UTF-8 BOM ile saklanır.
+Aşağıdakiler hâlâ gerçek Word bulunan Windows üzerinde doğrulanmalıdır:
 
-Uygulama kaynaklarında TODO/FIXME/NotImplementedException/placeholder/mock ve LLM servis çağrıları için tarama yapıldı; uygulama kodunda bulunmadı. Build araçlarının ürettiği obj/placeholder metadata'sı uygulama kodu değildir ve kaynak arşivine alınmadı.
+- Kurulum/kaldırma, yayıncı güveni ve Word Ribbon/task pane yükleme.
+- Word 32/64 bit matrisi, kullanıcı başına yükleme ve upgrade.
+- Gerçek font/paragraf/tablo/stil/nesne/dipnot/sonnot/üstbilgi/altbilgi ve seçim dışı içerik koruması.
+- Gerçek hyperlink clickability/hedefi, gizli bookmark/REF ve Zotero/Mendeley/EndNote alanları.
+- Tek Ctrl+Z, rollback, Track Changes, iptal, kapanış ve UI tepki süresi.
+- Geniş akademik metin korpusunda uzman anlam/gramer/üslup değerlendirmesi.
 
-## Tamamlanamayan Windows doğrulaması
+Kurulum ZIP'inde `Verify-Word.cmd` ve `Smoke-Word.ps1` bulunur. Kurulumdan sonra Word kapalıyken CMD çift tıklanarak gerçek Word'de yeni, kaydedilmeyen bir belgeyle başlangıç kabulü çalıştırılabilir. Word sürümü ve işlem mimarisi `Word-Acceptance-Report.json` içinde kaydedilir. Bu başlangıç testi geniş kabul matrisinin tamamı değildir; ayrıntılar `Windows-Acceptance.md` içindedir.
 
-Tam `AcademicParaphraser.sln` restore edildi; tam derleme **MSB4019** ile başarısız oldu: Linux SDK'da `Microsoft.VisualStudio.Tools.Office.targets` yok. OfficeTools hedefi taklit edilerek sahte VSTO başarı sonucu üretilmedi.
+## Sertifika ve kanıtlar
 
-Bu nedenle aşağıdakiler henüz doğrulanmamıştır:
+VSTO manifestleri CI'de oluşturulan geliştirme code-signing sertifikasıyla imzalıdır. Açık sertifika `publisher.cer` teslim edilir; özel anahtar/PFX teslim edilmez. Installer EXE için üretim Authenticode sertifikası sağlanmamıştır. Kurulumda Windows/VSTO yayıncı veya güven uyarısı görülebilir.
 
-- WordAddin başlangıç projesinin tam VSTO derlemesi, uygulama/deployment manifestlerinin üretim ve imza kontrolü.
-- Gerçek Setup.exe/MSI üretimi ve Windows kurulum/kaldırması.
-- Gerçek Word'de Ribbon/task pane yükleme; font/paragraf/field/link/dipnot/sonnot ve nesne koruması.
-- Gerçek Word'de tek Ctrl+Z, rollback, Track Changes ve COM/UI responsive davranışı.
-- Windows Office 32/64 bit matrisi ve DPAPI çalışma davranışı.
-- Geniş akademik metin korpusunda uzman tarafından anlam/gramer/üslup değerlendirmesi.
-
-Kaynak ve derlenmiş motor paketi **doğrudan kurulabilir Word ürünü değildir**. Bu sürüm kusursuz parafraz veya eksiksiz belge koruma garantisi olarak sunulmuyor. İngilizce çeviri/parafraz motoru da içermez; son şartnameye göre akademik Türkçe kapsamındadır.
-
-## Kanıt dosyaları
-
-Arşivin `verification` dizininde Debug.trx, Release.trx, build-test.log, wordhost-debug.log, vsto-linux-build.log, powershell-parser.txt, nuget-audit.txt, maven-dependencies.txt ve verification.json bulunur. Kaynakta README, Developer.md, Windows-Acceptance.md, Build-Windows.ps1, Smoke-Word.ps1 ve installer tanımı vardır. Gerçek Windows kabulü tamamlanana kadar Windows-Acceptance.md kutuları çalıştırılmamış olarak kalır.
-
-## Devam çalışması: gerçek VSTO SDK kaynak kontrolü
-
-Microsoft Visual Studio 2022 release kataloğundaki VSTO BuildTools VSIX paketi indirildi, resmi SHA256 özeti doğrulandı. WordAddin başlangıç/Ribbon C# kodu proje dosyasındaki gerçek referanslar ile derlendi. Eksik `Microsoft.Office.Tools.Common.v4.0.Utilities` referansı eklendi; WordHost ile Word/Office interop gömme ayarları uyumlu hale getirildi. Yanlış OfficeTools bileşen kimliği yerine resmi TeamOffice/TeamOffice.BuildTools kullanıldı. Bu kaynak/API kontrolü tam VSTO MSBuild, manifest, installer veya canlı Word kabulü değildir. Kanıt `artifacts/sdk-compile-check/<Configuration>/evidence.json` içindedir.
-
-Windows GitHub Actions akışı eklendi. Gerçek Windows sonucu oluşmadan başarılı derleme/installer üretimi olarak raporlanmaz.
+Windows kanıtları: Debug/Release TRX, VSTO MSBuild binlogları, payload envanteri, `windows-runtime-verification.json`, `installer-prerequisite-verification.json`, gerçek VSTO manifestleri ve installer SHA256. Kaynak/motor arşivinde JSON/TRX/özet kayıtları; ayrı Windows kanıt ZIP'inde tam CI çıktıları bulunur. Kurulum ZIP'indeki EXE, Windows CI'nin SHA256 kaydıyla yerel aktarım sonrası yeniden doğrulanır.

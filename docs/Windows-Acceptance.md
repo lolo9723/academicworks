@@ -6,14 +6,15 @@
 
 - [x] Visual Studio 2022 OfficeTools ve .NET 4.8 Developer Pack bulunan Windows makinesinde Build-Windows.ps1 tamamlandı.
 - [x] Debug/Release motor testleri gerçek bundled Windows Java ile geçti.
-- [ ] WordAddin.dll, dll.manifest ve .vsto üretildi, imzaları geçerli.
+- [x] WordAddin.dll, dll.manifest ve .vsto üretildi, kriptografik XML imzaları ve dosya özetleri doğrulandı.
 - [x] Payload içinde managed NuGet bağımlılıkları, SQLite x86/x64, Zemberek JAR ve Java runtime/legal dosyaları var.
 - [x] Inno Setup 6.3+ gerçek Setup.exe oluşturdu; örnek dosyayla installer üretimi kabul sayılmadı.
 - [ ] Temiz Windows + Word 32 bit üzerinde kullanıcı başına kuruldu; AKADEMİK PARAFRAZ sekmesi göründü.
 - [ ] Temiz Windows + Word 64 bit üzerinde kuruldu; native SQLite doğru bitness ile yüklendi.
 - [ ] Yönetici olmayan kullanıcı kurulumu çalıştı; yayıncı/VSTO güven politikası açıkça kaydedildi.
 - [ ] Word kapalı değilken installer düzgün açıklama verdi, açık belgeyi zorla kapatmadı.
-- [ ] Eksik .NET/Word/VSTO Runtime kontrolleri doğru hata verdi; başarısız VSTO imza/güven adımı başarı gösterilmedi.
+- [x] Word bulunmayan Windows üzerinde gerçek installer exit 1 verdi, eklenti kaydı oluşturmadı.
+- [ ] Eksik .NET/VSTO Runtime ve desteklenmeyen Word sürümü kontrolleri doğru hata verdi; başarısız VSTO imza/güven adımı başarı gösterilmedi.
 - [ ] Standart kaldırma eklenti kaydını/kurulum dosyalarını temizledi, Word açılabildi; kullanıcı DB/yedekleri korundu.
 - [ ] Upgrade kişisel kuralları, sözlüğü, ayarları ve DPAPI geçmişi korudu.
 
