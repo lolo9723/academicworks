@@ -1,0 +1,10 @@
+{
+  "repository": "StarlangSoftware/TurkishWordNet",
+  "commit": "0a0ba225a2bc36ad3b415b6615a4454d85263a49",
+  "url": "https://raw.githubusercontent.com/StarlangSoftware/TurkishWordNet/0a0ba225a2bc36ad3b415b6615a4454d85263a49/src/main/resources/turkish_wordnet.xml",
+  "sha256": "afe256845a8e8d26ab097eb8efda9627aae61c8018cba69b566adc19699593f5",
+  "license": "CC-BY-SA-4.0",
+  "attribution": "KeNet — Starlang Software / Turkish WordNet contributors",
+  "licenseStatement": "https://github.com/StarlangSoftware/TurkishWordNet/blob/0a0ba225a2bc36ad3b415b6615a4454d85263a49/README.md#licensing",
+  "dataFile": "turkish_wordnet.xml"
+}

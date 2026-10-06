@@ -1,20 +1,24 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using AcademicParaphraser.Core.CitationProtection;
+using AcademicParaphraser.Core.Rewriting;
 namespace AcademicParaphraser.Core.RuleEngine
 {
     public sealed class TransformationEngine
     {
-        private readonly IRuleCatalog catalog; private readonly ITurkishNlp nlp; private readonly ProtectionDetector detector = new ProtectionDetector();
+        private readonly IRuleCatalog catalog; private readonly ITurkishNlp nlp; private readonly ILexicalSource? lexicalSource; private readonly ProtectionDetector detector = new ProtectionDetector();
+        private readonly ConcurrentDictionary<string, Regex> patterns = new ConcurrentDictionary<string, Regex>(StringComparer.Ordinal);
         private static readonly CultureInfo Turkish = CultureInfo.GetCultureInfo("tr-TR");
         private static readonly HashSet<string> StructuralFamilies = new HashSet<string>(new[] { "etken-edilgen", "edilgen-etken", "isim-fiil", "fiil-isim", "isim tamlaması", "yüklem", "yan cümlecik", "sıfat-fiil", "zarf-fiil", "güvenli sıralama", "yüklem merkezli", "neden-sonuç", "karşılaştırma", "yöntem", "sonuç" }, StringComparer.Ordinal);
-        public TransformationEngine(IRuleCatalog catalog, ITurkishNlp nlp)
+        public TransformationEngine(IRuleCatalog catalog, ITurkishNlp nlp, ILexicalSource? lexicalSource = null)
         {
+            this.lexicalSource = lexicalSource;
             this.catalog = catalog;
             this.nlp = nlp;
         }
@@ -41,14 +45,25 @@ namespace AcademicParaphraser.Core.RuleEngine
             }
             if (settings.PreserveNames)
                 protectedSpans.AddRange(morphology.Where(t => t.Proper).Select(t => new TextSpan { Start = t.Start, Length = t.Length, Reason = "morfolojik özel isim" }));
-            var candidates = new List<TextEdit>();
+            protectedSpans = ProtectionDetector.Merge(protectedSpans).ToList();
+            var lookup = lexicon.GroupBy(e => e.Lemma + "/" + e.Pos).ToDictionary(g => g.Key, g => g.First(), StringComparer.Ordinal);
+            if (lexicalSource != null)
+            {
+                var eligible = morphology.Where(t => !t.Proper && !protectedSpans.Any(p => p.Intersects(t.Start, t.Length)) && !lookup.ContainsKey(t.Lemma + "/" + t.Pos)).ToList();
+                foreach (var item in await lexicalSource.FindAsync(text, eligible, settings, token).ConfigureAwait(false))
+                    if (!lookup.ContainsKey(item.Lemma + "/" + item.Pos)) lookup.Add(item.Lemma + "/" + item.Pos, item);
+            }
+            var candidates = new List<List<TextEdit>>();
+            string lowered = text.ToLower(Turkish);
             foreach (var rule in catalog.GetRules().Where(r => (int)r.Strength <= (int)settings.DefaultStrength && r.Confidence >= settings.MinimumConfidence && (r.Domain == "genel" || r.Domain == settings.Domain)))
             {
                 token.ThrowIfCancellationRequested();
-                var regex = new Regex(rule.Pattern, RegexOptions.None, TimeSpan.FromMilliseconds(150));
-                foreach (Match match in regex.Matches(text.ToLower(Turkish)))
+                if (!rule.UserDefined && !string.IsNullOrEmpty(rule.RequiredText) && lowered.IndexOf(rule.RequiredText, StringComparison.Ordinal) < 0) continue;
+                if (patterns.Count > 4096) patterns.Clear();
+                var regex = patterns.GetOrAdd(rule.Pattern, key => new Regex(key, RegexOptions.None, TimeSpan.FromMilliseconds(150)));
+                foreach (Match match in regex.Matches(lowered))
                 {
-                    if (protectedSpans.Any(s => s.Intersects(match.Index, match.Length)) || match.Value.Any(char.IsControl))
+                    if (match.Value.Any(char.IsControl))
                         continue;
                     var tokens = morphology.Where(t => t.Start >= match.Index && t.Start < match.Index + match.Length).ToList();
                     if (rule.PosConstraint.Length > 0 && !tokens.Any(t => t.Pos == rule.PosConstraint))
@@ -58,28 +73,37 @@ namespace AcademicParaphraser.Core.RuleEngine
                     if (rule.ContextPattern.Length > 0 && !Regex.IsMatch(ParagraphAt(text, match.Index).ToLower(Turkish), rule.ContextPattern, RegexOptions.None, TimeSpan.FromMilliseconds(150)))
                         continue;
                     string original = text.Substring(match.Index, match.Length);
-                    string replacement = match.Result(rule.Target);
+                    string replacement = ExpandTarget(rule.Target, match, text);
                     replacement = CaseLike(original, replacement);
                     if (replacement.Any(char.IsControl))
                         continue;
                     if (original != replacement)
-                        candidates.Add(new TextEdit { Start = match.Index, Length = match.Length, Original = original, Replacement = replacement, RuleId = rule.Id, Family = rule.Family, Confidence = rule.Confidence });
+                    {
+                        var changes = AnchoredRuleEdits.Create(text, match.Index, match.Length, replacement, protectedSpans, rule);
+                        if (changes != null && changes.Count > 0) candidates.Add(changes.ToList());
+                    }
                 }
             }
+            var inflections = new Dictionary<string, string?>(StringComparer.Ordinal);
             foreach (var word in morphology.Where(t => !t.Proper && t.Length > 1 && !protectedSpans.Any(s => s.Intersects(t.Start, t.Length))))
             {
-                var entry = lexicon.FirstOrDefault(e => !e.Technical && e.Lemma == word.Lemma && e.Pos == word.Pos && e.Confidence >= settings.MinimumConfidence && (e.Domain == "genel" || e.Domain == settings.Domain));
-                if (entry == null)
+                lookup.TryGetValue(word.Lemma + "/" + word.Pos, out var entry);
+                if (entry == null || entry.Technical || entry.Confidence < settings.MinimumConfidence || (entry.Domain != "genel" && entry.Domain != settings.Domain))
                     continue;
                 foreach (var synonym in entry.Synonyms.Concat(entry.AcademicAlternatives).Where(x => !entry.ForbiddenReplacements.Contains(x)).Distinct())
                 {
-                    string? inflected = await nlp.InflectAsync(word.Surface, synonym, word.Pos, token).ConfigureAwait(false);
+                    string key = word.Surface + "/" + synonym + "/" + word.Pos;
+                    if (!inflections.TryGetValue(key, out var inflected))
+                    {
+                        inflected = await nlp.InflectAsync(word.Surface, synonym, word.Pos, token).ConfigureAwait(false);
+                        inflections[key] = inflected;
+                    }
                     if (string.IsNullOrWhiteSpace(inflected))
                         continue;
                     string replacement = CaseLike(word.Surface, inflected!);
                     if (replacement == word.Surface)
                         continue;
-                    candidates.Add(new TextEdit { Start = word.Start, Length = word.Length, Original = word.Surface, Replacement = replacement, RuleId = "lemma:" + word.Lemma + ":" + synonym, Family = "morfolojik eş anlam", Confidence = entry.Confidence });
+                    candidates.Add(new List<TextEdit> { new TextEdit { Start = word.Start, Length = word.Length, Original = word.Surface, Replacement = replacement, RuleId = "lemma:" + word.Lemma + ":" + synonym, Family = "morfolojik eş anlam", Confidence = entry.Confidence } });
                 }
             }
             if (candidates.Count == 0)
@@ -91,16 +115,19 @@ namespace AcademicParaphraser.Core.RuleEngine
             {
                 token.ThrowIfCancellationRequested();
                 var edits = new List<TextEdit>();
-                var groups = candidates.GroupBy(e => e.Start).OrderBy(g => g.Key).ToList();
+                var groups = candidates.GroupBy(e => e.Min(x => x.Start))
+                    .OrderByDescending(g => g.Max(e => Rank(e, settings.DefaultStrength)))
+                    .ThenByDescending(g => g.Max(e => e.Max(x => x.Start + x.Length) - e.Min(x => x.Start)))
+                    .ThenBy(g => g.Key).ToList();
                 foreach (var group in groups)
                 {
-                    var options = group.OrderByDescending(e => e.Confidence).ThenBy(e => e.RuleId, StringComparer.Ordinal).ToList();
+                    var options = group.OrderByDescending(e => Rank(e, settings.DefaultStrength)).ThenByDescending(e => e.Max(x => x.Start + x.Length) - e.Min(x => x.Start)).ThenByDescending(e => e.Min(x => x.Confidence)).ThenBy(e => e[0].RuleId, StringComparer.Ordinal).ToList();
                     var selected = options[(variant + groups.IndexOf(group)) % options.Count];
-                    if (edits.Any(e => e.Start < selected.Start + selected.Length && e.Start + e.Length > selected.Start))
+                    if (selected.Any(x => edits.Any(e => e.Start < x.Start + x.Length && e.Start + e.Length > x.Start)))
                         continue;
                     if (variant >= 6 && groups.Count > 1 && (groups.IndexOf(group) + variant) % 3 == 0)
                         continue;
-                    edits.Add(selected);
+                    edits.AddRange(selected);
                 }
                 string result = EditApplication.Apply(text, edits);
                 if (!seen.Add(result))
@@ -112,7 +139,24 @@ namespace AcademicParaphraser.Core.RuleEngine
                 if (proposals.Count >= settings.Alternatives)
                     break;
             }
-            return proposals.OrderByDescending(p => p.Score.SemanticSafety).ThenByDescending(p => p.Score.StructuralDifference).ToList();
+            return proposals.OrderByDescending(p => p.Score.StructuralDifference).ThenByDescending(p => p.Score.LexicalDifference).ThenByDescending(p => p.Score.SemanticSafety).ToList();
+        }
+        private static int Rank(List<TextEdit> edits, Strength strength)
+        {
+            if (strength == Strength.Strong && edits.Any(e => e.Family == "güvenli sıralama")) return 2;
+            return strength != Strength.Light && edits.Any(e => StructuralFamilies.Contains(e.Family)) ? 1 : 0;
+        }
+        private static string ExpandTarget(string target, Match match, string original)
+        {
+            return Regex.Replace(target, @"\$\$|\$&|\$\{(?<lower>lower:)?(?<name>[A-Za-z0-9_]+)\}|\$(?<number>[0-9]+)", m =>
+            {
+                if (m.Value == "$$") return "$";
+                if (m.Value == "$&") return original.Substring(match.Index, match.Length);
+                string key = m.Groups["name"].Success ? m.Groups["name"].Value : m.Groups["number"].Value;
+                var group = match.Groups[key];
+                string value = group.Success ? original.Substring(group.Index, group.Length) : "";
+                return m.Groups["lower"].Success && value.Length > 0 ? char.ToLower(value[0], Turkish) + value.Substring(1) : value;
+            });
         }
         private static string CaseLike(string original, string replacement)
         {

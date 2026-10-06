@@ -24,3 +24,7 @@ Windows JRE'nin `legal` dizini paketleme sırasında korunur. Kaynak kodu ve ilg
 Wiktionary/Vikisözlük sözlük içeriği, kaynak sayfasının CC BY-SA koşulları ve katkıcı atfına tabidir. Uygulama sonuçta sayfa bağlantısı/lisans yönlendirmesi verir. Wikipedia/Wikimedia veya sözlük katkıcıları bu projeyi destekliyor gibi gösterilmez. Çevrimiçi içerik önceden kaynak paketine kopyalanmamıştır.
 
 Zemberek ve Java transitif JAR lisans/NOTICE dosyalarının kopyaları `licenses/java` altında, NuGet bileşenlerinin nupkg içindeki lisans metinleri `licenses/nuget` altında bulunabilir. Windows VSTO/Office kurulumlarının Microsoft EULA'sı son kullanıcının kendi kurulumuna bağlıdır; Word bu projeyle dağıtılmaz.
+
+## KeNet lexical data
+
+Turkish WordNet / KeNet, Starlang Software and contributors. Upstream data is separately licensed CC BY-SA 4.0; upstream GPL source code is not incorporated. The pinned native XML is normalized into `data/kenet.sqlite`, which retains CC BY-SA 4.0. Attribution, exact source URL/commit and changes are in `data/KENET-NOTICE.txt`; build pin is `build/lexical-data.json`. License: https://creativecommons.org/licenses/by-sa/4.0/. Source: https://github.com/StarlangSoftware/TurkishWordNet.

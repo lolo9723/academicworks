@@ -20,6 +20,8 @@ namespace AcademicParaphraser.Infrastructure.InternetDictionaryProviders
             get; set;
         }
         public string Error { get; set; } = "";
+        public List<string> Synonyms { get; set; } = new List<string>();
+        public bool SingleSense { get; set; }
     }
     public interface IDictionaryProvider
     {
@@ -77,7 +79,8 @@ namespace AcademicParaphraser.Infrastructure.InternetDictionaryProviders
                     string content = string.Join(Environment.NewLine, (nodes ?? new HtmlNodeCollection(null)).Select(n => HtmlEntity.DeEntitize(n.InnerText).Trim()).Where(s => s.Length > 0).Distinct());
                     if (content.Length > 6000)
                         content = content.Substring(0, 6000);
-                    return new DictionaryResult { Term = term, Source = Name, SourceUrl = source, Content = content };
+                    var lexical = WikiLexicalParser.Parse(html);
+                    return new DictionaryResult { Term = term, Source = Name, SourceUrl = source, Content = content, Synonyms = lexical.Synonyms, SingleSense = lexical.SingleSense };
                 }
             }
         }

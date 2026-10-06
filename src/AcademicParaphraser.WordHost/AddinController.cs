@@ -7,9 +7,11 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using AcademicParaphraser.Core;
 using AcademicParaphraser.Core.RuleEngine;
+using AcademicParaphraser.Core.Rewriting;
 using AcademicParaphraser.Infrastructure.Diagnostics;
 using AcademicParaphraser.Infrastructure.InternetDictionaryProviders;
 using AcademicParaphraser.Infrastructure.Persistence;
+using AcademicParaphraser.Infrastructure.LexicalKnowledge;
 using AcademicParaphraser.Infrastructure.TurkishNlp;
 using AcademicParaphraser.WordHost.DocumentProtection;
 using AcademicParaphraser.WordHost.UI;
@@ -18,6 +20,7 @@ namespace AcademicParaphraser.WordHost
 {
     public sealed class AddinController : IDisposable
     {
+        private readonly WordNetLexicalSource knowledge;
         private readonly Word.Application app; private readonly WordDocumentAdapter adapter; private readonly LocalRepository repo; private readonly ZemberekProcess nlp; private readonly TransformationEngine engine; private readonly SafeLog log; private readonly DictionaryService dictionary; private readonly List<WiktionaryProvider> providers;
         private SelectionSnapshot? snapshot; private IReadOnlyList<Candidate> candidates = new List<Candidate>(); private int alternative; private CancellationTokenSource? operation; private bool busy, disposed;
         public PreviewPane Preview { get; } public Action? ShowPreview
@@ -39,10 +42,11 @@ namespace AcademicParaphraser.WordHost
             repo = new LocalRepository(Path.Combine(data, "academic.sqlite"), new WindowsTextProtector());
             startupProgress?.Invoke("NLP_CONFIGURATION");
             nlp = new ZemberekProcess(Path.Combine(installDirectory, "runtime", "java", "bin", "java.exe"), Path.Combine(installDirectory, "nlp", "turkish-nlp-1.0.0.jar"));
-            engine = new TransformationEngine(repo, nlp);
             startupProgress?.Invoke("DICTIONARY");
             providers = new List<WiktionaryProvider> { new TurkishWiktionaryProvider(), new EnglishWiktionaryProvider() };
             dictionary = new DictionaryService(repo, providers);
+            knowledge = new WordNetLexicalSource(Path.Combine(installDirectory, "data", "kenet.sqlite"), dictionary);
+            engine = new TransformationEngine(repo, nlp, knowledge);
             Preview.ApplyRequested += (s, e) => Guard(Apply);
             Preview.NextRequested += (s, e) => Guard(() => Next(1));
             Preview.CancelRequested += (s, e) => { operation?.Cancel(); candidates = new List<Candidate>(); Preview.ShowMessage("İşlem iptal edildi; belge değişmedi."); StateChanged?.Invoke(this, EventArgs.Empty); };
@@ -118,7 +122,7 @@ namespace AcademicParaphraser.WordHost
                     return;
                 token.ThrowIfCancellationRequested();
                 // Word formatting constraints are checked again after linguistic generation, before any write.
-                candidates = result.Select(c => { var edits = c.Edits.Where(current.CanEdit).ToList(); return new Candidate { Text = EditApplication.Apply(current.Text, edits), Edits = edits, Score = c.Score }; }).Where(c => c.Edits.Count > 0).GroupBy(c => c.Text, StringComparer.Ordinal).Select(g => g.First()).ToList();
+                candidates = result.Where(c => CandidateIntegrity.IsApplicable(current.Text, c, edit => current.CanEdit(edit) && !current.Protected.Any(p => p.Intersects(edit.Start, edit.Length)))).GroupBy(c => c.Text, StringComparer.Ordinal).Select(g => g.First()).ToList();
                 alternative = 0;
                 if (candidates.Count == 0)
                     Preview.ShowMessage("Bu seçim için anlamı ve biçimi güvenle koruyan dönüşüm bulunamadı. Metin olduğu gibi bırakıldı.");
@@ -159,7 +163,7 @@ namespace AcademicParaphraser.WordHost
         }
         public void Undo() => Guard(() => { adapter.Undo(snapshot); candidates = new List<Candidate>(); Preview.ShowMessage("Son parafraz geri alındı."); });
         public void LockSelected() => Guard(() => { repo.LockTerm(adapter.SelectedText()); Preview.ShowMessage("Seçili terim kişisel koruma sözlüğüne eklendi."); }); public void UnlockSelected() => Guard(() => repo.UnlockTerm(adapter.SelectedText()));
-        public void OpenSettings() => Guard(() => { string diagnostics = "Word: " + app.Version + Environment.NewLine + "Office işlemi: " + (Environment.Is64BitProcess ? "64 bit" : "32 bit") + Environment.NewLine + "Eklenti: 1.0.0" + Environment.NewLine + "NLP: " + nlp.Status + Environment.NewLine + "Veritabanı: hazır (migration 1)" + Environment.NewLine + "Kurallar: " + repo.GetRules().Count + Environment.NewLine + "Sözlük: " + repo.GetLexicon().Count + Environment.NewLine + "İnternet: " + (Settings.InternetEnabled && !Settings.OfflineMode ? "isteğe bağlı açık" : "kapalı"); using (var form = new SettingsForm(repo, diagnostics)) form.ShowDialog(); StateChanged?.Invoke(this, EventArgs.Empty); });
+        public void OpenSettings() => Guard(() => { string diagnostics = "Word: " + app.Version + Environment.NewLine + "Office işlemi: " + (Environment.Is64BitProcess ? "64 bit" : "32 bit") + Environment.NewLine + "Eklenti: " + typeof(AddinController).Assembly.GetName().Version + Environment.NewLine + "NLP: " + nlp.Status + Environment.NewLine + "Veritabanı: hazır (migration 1)" + Environment.NewLine + "Kurallar: " + repo.GetRules().Count + Environment.NewLine + "Kişisel/akademik sözcükler: " + repo.GetLexicon().Count + Environment.NewLine + "Geniş sözlük: " + knowledge.Describe() + Environment.NewLine + "İnternet: " + (Settings.InternetEnabled && !Settings.OfflineMode ? "isteğe bağlı açık" : "kapalı"); using (var form = new SettingsForm(repo, diagnostics)) form.ShowDialog(); StateChanged?.Invoke(this, EventArgs.Empty); });
         public void OpenDictionary() => Guard(() => { using (var form = new DictionaryForm(repo, dictionary)) form.ShowDialog(); }); public void OpenHistory() => Guard(() => { using (var form = new HistoryForm(repo)) form.ShowDialog(); });
         public void Guard(Action action)
         {

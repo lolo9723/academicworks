@@ -29,6 +29,9 @@ try {
 if($jdkVersion -notmatch 'version "(?:17|18|19|2\d)\.') {throw 'Java JDK 17 veya üstü gerekiyor.'}
 & mvn -f nlp/pom.xml clean package
 if($LASTEXITCODE -ne 0){throw 'Türkçe NLP derlemesi başarısız.'}
+& python build/Prepare-LexicalData.py
+if($LASTEXITCODE -ne 0){throw 'Geniş sözlük verisinin doğrulanması/paketlenmesi başarısız.'}
+$env:ACADEMIC_WORDNET=(Join-Path $root 'artifacts\lexical-data\kenet.sqlite')
 $pin=Get-Content build/java-runtime.json -Raw | ConvertFrom-Json
 $archive=Join-Path $root 'artifacts\java-windows.zip'
 if(-not(Test-Path $archive)){Invoke-WebRequest $pin.url -OutFile $archive -UseBasicParsing}
@@ -63,7 +66,7 @@ foreach($mode in @('Debug','Release')) {
  if($LASTEXITCODE -ne 0){throw "$mode VSTO derlemesi / manifest imzalama başarısız."}
 }
 $output=Join-Path $root "src\AcademicParaphraser.WordAddin\bin\$Configuration"
-foreach($file in @('AcademicParaphraser.WordAddin.dll','AcademicParaphraser.WordAddin.vsto','AcademicParaphraser.WordAddin.dll.manifest','runtimes\win-x86\native\e_sqlite3.dll','runtimes\win-x64\native\e_sqlite3.dll','runtime\java\bin\java.exe','nlp\turkish-nlp-1.0.0.jar')){if(-not(Test-Path (Join-Path $output $file))){throw "Dağıtım çıktısı eksik: $file"}}
+foreach($file in @('AcademicParaphraser.WordAddin.dll','AcademicParaphraser.WordAddin.vsto','AcademicParaphraser.WordAddin.dll.manifest','runtimes\win-x86\native\e_sqlite3.dll','runtimes\win-x64\native\e_sqlite3.dll','runtime\java\bin\java.exe','nlp\turkish-nlp-1.0.0.jar','data\kenet.sqlite','data\KENET-NOTICE.txt')){if(-not(Test-Path (Join-Path $output $file))){throw "Dağıtım çıktısı eksik: $file"}}
 $payload=Join-Path $root 'artifacts\payload'
 if(Test-Path $payload){Remove-Item $payload -Recurse -Force}
 Copy-Item $output $payload -Recurse

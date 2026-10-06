@@ -61,7 +61,7 @@ namespace AcademicParaphraser.WordHost.UI
             }
             before.Select(0, 0);
             after.Select(0, 0);
-            status.Text = $"Alternatif {index + 1}/{count} · {candidate.Edits.Count} dönüşüm · Kural güveni: %{candidate.Score.SemanticSafety * 100:0}\nBu puan dilbilimsel kurallara dayanır; anlam doğruluğunun garantisi değildir.";
+            status.Text = $"Alternatif {index + 1}/{count} · {candidate.Edits.Count} dönüşüm · Yapısal dönüşüm: {(candidate.Score.StructuralDifference > 0 ? "var" : "yok")}\nAnlamı ve akademik ifadeyi uygulamadan önce kontrol edin.";
             apply.Enabled = candidate.Edits.Count > 0;
             next.Enabled = count > 1;
         }

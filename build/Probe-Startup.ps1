@@ -23,7 +23,7 @@ try {
   $text=Get-Content $startup -Raw
   if($text -match '\bAP_[A-Z_]+_[A-Za-z0-9]+_[A-F0-9]{8}\b'){$report.startupCode=$Matches[0]}
  }
- foreach($relative in @('AcademicParaphraser.WordAddin.dll','AcademicParaphraser.WordAddin.dll.config','AcademicParaphraser.WordHost.dll','AcademicParaphraser.Infrastructure.dll','AcademicParaphraser.Core.dll','Microsoft.Data.Sqlite.dll','SQLitePCLRaw.core.dll','SQLitePCLRaw.batteries_v2.dll','SQLitePCLRaw.provider.dynamic_cdecl.dll','runtimes\win-x86\native\e_sqlite3.dll','runtimes\win-x64\native\e_sqlite3.dll','runtime\java\bin\java.exe','nlp\turkish-nlp-1.0.0.jar')){
+ foreach($relative in @('AcademicParaphraser.WordAddin.dll','AcademicParaphraser.WordAddin.dll.config','AcademicParaphraser.WordHost.dll','AcademicParaphraser.Infrastructure.dll','AcademicParaphraser.Core.dll','Microsoft.Data.Sqlite.dll','SQLitePCLRaw.core.dll','SQLitePCLRaw.batteries_v2.dll','SQLitePCLRaw.provider.dynamic_cdecl.dll','runtimes\win-x86\native\e_sqlite3.dll','runtimes\win-x64\native\e_sqlite3.dll','runtime\java\bin\java.exe','nlp\turkish-nlp-1.0.0.jar','data\kenet.sqlite','data\KENET-NOTICE.txt')){
   $report.files+=@{file=$relative;exists=(Test-Path -LiteralPath (Join-Path $Payload $relative) -PathType Leaf)}
  }
  $probeStage='HELPER_COMPILE'
@@ -69,6 +69,12 @@ public sealed class AcademicStartupProbe : MarshalByRefObject
             var lexicon = (ICollection)repositoryType.GetMethod("GetLexicon").Invoke(repository, null);
             if (rules.Count < 61 || lexicon.Count < 39) throw new InvalidOperationException();
             repositoryType.GetMethod("GetSettings").Invoke(repository, null);
+        });
+        Probe(results, "WORDNET", delegate {
+            var type = infrastructure.GetType("AcademicParaphraser.Infrastructure.LexicalKnowledge.WordNetLexicalSource", true);
+            var knowledge = Activator.CreateInstance(type, new object[] { Path.Combine(payload, "data", "kenet.sqlite"), null });
+            string description = (string)type.GetMethod("Describe").Invoke(knowledge, null);
+            if (int.Parse(description.Split(' ')[0]) < 60000) throw new InvalidOperationException();
         });
         Probe(results, "PREVIEW_UI", delegate {
             var host = Assembly.LoadFrom(Path.Combine(payload, "AcademicParaphraser.WordHost.dll"));
@@ -126,7 +132,7 @@ public sealed class AcademicStartupProbe : MarshalByRefObject
  if($storage.Count -eq 1){$report.assemblyStorage=$storage[0].Substring(8)}
  $report.failureOrigins=@($results | Where-Object {$_ -match '^SITE:'})
  $report.components=@($results | Where-Object {$_ -notmatch '^(STORAGE:|SITE:|STORAGE_LOAD:PASS$)'})
- $required=@('FRAMEWORK_LOAD','DATABASE','PREVIEW_UI','DICTIONARY_TurkishWiktionaryProvider','DICTIONARY_EnglishWiktionaryProvider','NLP_LOCAL')
+ $required=@('FRAMEWORK_LOAD','DATABASE','WORDNET','PREVIEW_UI','DICTIONARY_TurkishWiktionaryProvider','DICTIONARY_EnglishWiktionaryProvider','NLP_LOCAL')
  if(-not $SkipNativeBootstrap){$required+='NATIVE_SQLITE'}
  $missing=@($required | Where-Object {$report.components -notcontains ($_+':PASS')})
  $report.passed=(@($report.files | Where-Object {-not $_.exists}).Count -eq 0 -and @($report.components | Where-Object {$_ -match ':FAIL:'}).Count -eq 0 -and $missing.Count -eq 0 -and $report.assemblyStorage -eq $(if($ShadowCopy){'SHADOW'}else{'DIRECT'}))

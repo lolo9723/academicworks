@@ -122,6 +122,25 @@ namespace AcademicParaphraser.Core.DocumentProtection
             Text = buffer.ToString();
         }
         public IReadOnlyList<TextSpan> ProtectedSpans => runs.Where(r => r.Protected).Select(r => new TextSpan { Start = r.Start, Length = r.Length, Reason = "Word alanı" }).ToList();
+        public IReadOnlyList<TextSpan> EditableSpans
+        {
+            get
+            {
+                var result = new List<TextSpan>();
+                WordRun? previous = null;
+                foreach (var run in runs)
+                {
+                    if (run.Protected || run.Length == 0) { previous = null; continue; }
+                    if (previous != null && previous.Start + previous.Length == run.Start
+                        && previous.FormatKey == run.FormatKey && previous.ContainerKey == run.ContainerKey)
+                        result[result.Count - 1].Length += run.Length;
+                    else
+                        result.Add(new TextSpan { Start = run.Start, Length = run.Length });
+                    previous = run;
+                }
+                return result;
+            }
+        }
         public bool CanEdit(int start, int length)
         {
             var affected = runs.Where(r => start < r.Start + r.Length && start + length > r.Start).ToList();

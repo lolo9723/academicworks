@@ -86,6 +86,7 @@ namespace AcademicParaphraser.Infrastructure.Persistence
                         }
                         // Seed and schema commit together: avoid a separate disk flush for every default rule.
                         Seed<RuleDefinition>(c, tx, "rules", "rules.json", x => x.Id);
+                        Seed<RuleDefinition>(c, tx, "rules", "rules.extended.json", x => x.Id);
                         Seed<LexiconEntry>(c, tx, "lexicon", "lexicon.json", x => x.Lemma);
                         tx.Commit();
                     }

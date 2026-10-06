@@ -89,7 +89,8 @@ namespace AcademicParaphraser.Core
     {
         public string Id { get; set; } = ""; public string Pattern { get; set; } = ""; public string Target { get; set; } = "";
         public string Family { get; set; } = ""; public string PosConstraint { get; set; } = "";
-        public string ContextPattern { get; set; } = ""; public List<string> RequiredMorphemes { get; set; } = new List<string>();
+        public string ContextPattern { get; set; } = "";
+        public string RequiredText { get; set; } = ""; public List<string> RequiredMorphemes { get; set; } = new List<string>();
         public List<string> ForbiddenMorphemes { get; set; } = new List<string>();
         public Strength Strength { get; set; } = Strength.Light; public double Confidence { get; set; } = .95;
         public string Domain { get; set; } = "genel"; public bool UserDefined
