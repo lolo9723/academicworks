@@ -47,14 +47,27 @@ jobs:
         run: .\build\Build-Windows.ps1
       - name: Verify Windows runtime and deployment
         run: .\build\Verify-WindowsRuntime.ps1 -Payload artifacts\payload
-      - name: Verify real Framework payload startup
+      - name: Reproduce SQLite failure under Framework shadow copy
         run: |
-          .\build\Probe-Startup.ps1 -Payload artifacts\payload -ReportPath artifacts\startup-verification.json -Strict
-          & "$env:WINDIR\SysWOW64\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -STA -ExecutionPolicy Bypass -File .\build\Probe-Startup.ps1 -Payload artifacts\payload -ReportPath artifacts\startup-x86-verification.json -Strict
-          if($LASTEXITCODE -ne 0){throw '32 bit Framework acilis kontrolu basarisiz.'}
+          & "$env:WINDIR\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -STA -ExecutionPolicy Bypass -File .\build\Probe-Startup.ps1 -Payload artifacts\payload -ShadowCopy -SkipNativeBootstrap -ReportPath artifacts\shadow-baseline-verification.json
+          if($LASTEXITCODE -ne 0){throw 'Shadow-copy baseline harness failed.'}
+          $baseline=Get-Content artifacts\shadow-baseline-verification.json -Raw | ConvertFrom-Json
+          if($baseline.assemblyStorage -ne 'SHADOW' -or $baseline.components -notcontains 'DATABASE:FAIL:Exception:80131500' -or $baseline.failureOrigins -notcontains 'SITE:DATABASE:SQLitePCL.NativeLibrary.Load'){throw 'The suspected SQLite shadow-copy failure was not reproduced.'}
+      - name: Verify real Framework payload startup in x64 and x86
+        run: |
+          foreach($architecture in @('x64','x86')){
+            $systemFolder=if($architecture -eq 'x64'){'System32'}else{'SysWOW64'}
+            $powershell=Join-Path $env:WINDIR "$systemFolder\WindowsPowerShell\v1.0\powershell.exe"
+            foreach($storage in @('shadow','direct')){
+              $arguments=@('-NoProfile','-STA','-ExecutionPolicy','Bypass','-File','.\build\Probe-Startup.ps1','-Payload','artifacts\payload','-ReportPath',"artifacts\startup-$storage-$architecture-verification.json",'-Strict')
+              if($storage -eq 'shadow'){$arguments+='-ShadowCopy'}
+              & $powershell @arguments
+              if($LASTEXITCODE -ne 0){throw "Framework startup failed: $architecture $storage"}
+            }
+          }
       - name: Verify installer and write SHA256
         run: |
-          $installer=Get-Item artifacts\installer\AkademikParafraz-1.0.1-Setup.exe
+          $installer=Get-Item artifacts\installer\AkademikParafraz-1.0.2-Setup.exe
           if($installer.Length -lt 1000000){throw 'Installer çıktısı beklenenden küçük.'}
           $hash=(Get-FileHash $installer -Algorithm SHA256).Hash.ToLowerInvariant()
           "$hash  $($installer.Name)" | Set-Content -Encoding ASCII "$($installer.FullName).sha256"
@@ -70,10 +83,10 @@ jobs:
           Copy-Item build\Smoke-Word.ps1,build\Verify-Word.cmd,build\Probe-Startup.ps1,build\Tanila.cmd artifacts\installer
           Copy-Item docs\UsersGuide.md artifacts\installer
       - name: Test missing-Word prerequisite
-        run: .\build\Test-InstallerPrerequisites.ps1 -Installer artifacts\installer\AkademikParafraz-1.0.1-Setup.exe
+        run: .\build\Test-InstallerPrerequisites.ps1 -Installer artifacts\installer\AkademikParafraz-1.0.2-Setup.exe
       - name: Create bounded transfer parts
         run: |
-          $source=Get-Item artifacts\installer\AkademikParafraz-1.0.1-Setup.exe
+          $source=Get-Item artifacts\installer\AkademikParafraz-1.0.2-Setup.exe
           New-Item artifacts\transfer -ItemType Directory -Force | Out-Null
           $stream=[IO.File]::OpenRead($source.FullName)
           $buffer=New-Object byte[] (1024*1024)
@@ -113,7 +126,7 @@ jobs:
       - name: Installer artifact
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: AkademikParafraz-1.0.1-Windows-Setup
+          name: AkademikParafraz-1.0.2-Windows-Setup
           path: artifacts/installer/
           if-no-files-found: error
           retention-days: 30

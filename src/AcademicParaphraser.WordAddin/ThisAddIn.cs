@@ -46,9 +46,13 @@ namespace AcademicParaphraser.WordAddin
             try
             {
                 // A VSTO pane can be added only after its collection has completed initialization.
+                startupStage = "INSTALLATION";
+                string installationDirectory = InstallationDirectory.Resolve(typeof(ThisAddIn).Assembly);
+                startupStage = "NATIVE_SQLITE";
+                WordHost.NativeSqliteBootstrap.Prepare(installationDirectory);
                 startupStage = "CONTROLLER";
                 System.Windows.Forms.Application.EnableVisualStyles();
-                controller = new WordHost.AddinController(application!, Path.GetDirectoryName(typeof(ThisAddIn).Assembly.Location)!);
+                controller = new WordHost.AddinController(application!, installationDirectory, stage => startupStage = stage);
                 startupStage = "PANE";
                 pane = panes!.Add(controller.Preview, "Akademik Parafraz");
                 pane.Width = 390;
@@ -63,12 +67,15 @@ namespace AcademicParaphraser.WordAddin
             startupFailed = true;
             var cause = exception.GetBaseException();
             string code = "AP_" + startupStage + "_" + cause.GetType().Name + "_" + cause.HResult.ToString("X8");
-            // Startup does not read a document. Still exclude messages, stacks, paths and document content.
+            // Startup does not read a document. Record only the error code and method name; exclude messages, paths and document content.
             try
             {
                 string folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AkademikParafraz", "logs");
                 Directory.CreateDirectory(folder);
-                File.WriteAllText(Path.Combine(folder, "startup-diagnostics.txt"), DateTime.UtcNow.ToString("O") + " " + code + " process=" + (Environment.Is64BitProcess ? "x64" : "x86") + Environment.NewLine);
+                var frames = new System.Diagnostics.StackTrace(cause, false).GetFrames();
+                var method = frames != null && frames.Length > 0 ? frames[0].GetMethod() : null;
+                string origin = method == null ? "UNKNOWN" : method.DeclaringType?.FullName + "." + method.Name;
+                File.WriteAllText(Path.Combine(folder, "startup-diagnostics.txt"), DateTime.UtcNow.ToString("O") + " " + code + " process=" + (Environment.Is64BitProcess ? "x64" : "x86") + " origin=" + origin + Environment.NewLine);
             }
             catch (Exception ex) when (ex is IOException || ex is UnauthorizedAccessException || ex is System.Security.SecurityException) { }
             System.Windows.Forms.MessageBox.Show("Akademik Parafraz açılışı tamamlanamadı. Word belgeniz değiştirilmedi.\n\nHata kodu: " + code + "\n\nBu kodu paylaşın veya kurulum paketindeki Tanila.cmd dosyasını çalıştırın.", "Akademik Parafraz");

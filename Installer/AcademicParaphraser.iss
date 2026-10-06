@@ -7,7 +7,7 @@
 [Setup]
 AppId={{482D00C1-39AE-45A9-AB33-1253584ED67B}
 AppName=Akademik Parafraz
-AppVersion=1.0.1
+AppVersion=1.0.2
 AppPublisher=Akademik Parafraz
 DefaultDirName={localappdata}\Programs\AkademikParafraz
 PrivilegesRequired=lowest
@@ -15,7 +15,7 @@ ArchitecturesAllowed=x64compatible
 MinVersion=10.0
 DisableProgramGroupPage=yes
 OutputDir={#OutputDir}
-OutputBaseFilename=AkademikParafraz-1.0.1-Setup
+OutputBaseFilename=AkademikParafraz-1.0.2-Setup
 Compression=lzma2
 SolidCompression=yes
 UninstallDisplayName=Akademik Parafraz
@@ -31,6 +31,8 @@ Root: HKCU; Subkey: "Software\Microsoft\Office\Word\Addins\AcademicParaphraser.W
 Root: HKCU; Subkey: "Software\Microsoft\Office\Word\Addins\AcademicParaphraser.WordAddin"; ValueType: string; ValueName: "Description"; ValueData: "Yerel ve kural tabanlı akademik Türkçe parafraz"
 Root: HKCU; Subkey: "Software\Microsoft\Office\Word\Addins\AcademicParaphraser.WordAddin"; ValueType: dword; ValueName: "LoadBehavior"; ValueData: "3"
 Root: HKCU; Subkey: "Software\Microsoft\Office\Word\Addins\AcademicParaphraser.WordAddin"; ValueType: string; ValueName: "Manifest"; ValueData: "file:///{app}\AcademicParaphraser.WordAddin.vsto|vstolocal"
+[UninstallDelete]
+Type: files; Name: "{app}\e_sqlite3.dll"
 [UninstallRun]
 Filename: "{code:GetVstoInstaller}"; Parameters: "/Uninstall ""{app}\AcademicParaphraser.WordAddin.vsto"""; Flags: waituntilterminated; RunOnceId: "RemoveVstoTrustRegistration"
 [Code]

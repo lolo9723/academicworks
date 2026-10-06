@@ -20,20 +20,27 @@ namespace AcademicParaphraser.WordHost
     {
         private readonly Word.Application app; private readonly WordDocumentAdapter adapter; private readonly LocalRepository repo; private readonly ZemberekProcess nlp; private readonly TransformationEngine engine; private readonly SafeLog log; private readonly DictionaryService dictionary; private readonly List<WiktionaryProvider> providers;
         private SelectionSnapshot? snapshot; private IReadOnlyList<Candidate> candidates = new List<Candidate>(); private int alternative; private CancellationTokenSource? operation; private bool busy, disposed;
-        public PreviewPane Preview { get; } = new PreviewPane(); public Action? ShowPreview
+        public PreviewPane Preview { get; } public Action? ShowPreview
         {
             get; set;
         }
         public event EventHandler? StateChanged;
-        public AddinController(Word.Application app, string installDirectory)
+        public AddinController(Word.Application app, string installDirectory) : this(app, installDirectory, null) { }
+        public AddinController(Word.Application app, string installDirectory, Action<string>? startupProgress)
         {
+            startupProgress?.Invoke("PREVIEW");
+            Preview = new PreviewPane();
             this.app = app;
             adapter = new WordDocumentAdapter(app);
+            startupProgress?.Invoke("DATA_DIRECTORY");
             string data = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AkademikParafraz");
             log = new SafeLog(Path.Combine(data, "logs"));
+            startupProgress?.Invoke("DATABASE");
             repo = new LocalRepository(Path.Combine(data, "academic.sqlite"), new WindowsTextProtector());
+            startupProgress?.Invoke("NLP_CONFIGURATION");
             nlp = new ZemberekProcess(Path.Combine(installDirectory, "runtime", "java", "bin", "java.exe"), Path.Combine(installDirectory, "nlp", "turkish-nlp-1.0.0.jar"));
             engine = new TransformationEngine(repo, nlp);
+            startupProgress?.Invoke("DICTIONARY");
             providers = new List<WiktionaryProvider> { new TurkishWiktionaryProvider(), new EnglishWiktionaryProvider() };
             dictionary = new DictionaryService(repo, providers);
             Preview.ApplyRequested += (s, e) => Guard(Apply);

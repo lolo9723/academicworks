@@ -1,10 +1,12 @@
 ﻿param(
  [string]$Payload,
  [string]$ReportPath = (Join-Path $PSScriptRoot 'AkademikParafraz-Tani.json'),
- [switch]$Strict
+ [switch]$Strict,
+ [switch]$ShadowCopy,
+ [switch]$SkipNativeBootstrap
 )
 $ErrorActionPreference='Stop'
-$report=[ordered]@{wordExecuted=$false;processArchitecture=$(if([Environment]::Is64BitProcess){'x64'}else{'x86'});startupCode='NOT_RECORDED';files=@();components=@();passed=$false}
+$report=[ordered]@{wordExecuted=$false;processArchitecture=$(if([Environment]::Is64BitProcess){'x64'}else{'x86'});startupCode='NOT_RECORDED';shadowCopyRequested=[bool]$ShadowCopy;assemblyStorage='UNKNOWN';failureOrigins=@();files=@();components=@();passed=$false}
 $domain=$null;$temporary=$null
 $probeStage='ENVIRONMENT'
 try {
@@ -39,7 +41,7 @@ using System.Threading.Tasks;
 public sealed class AcademicStartupProbe : MarshalByRefObject
 {
     public override object InitializeLifetimeService() { return null; }
-    public string[] Run(string payload, string temporary)
+    public string[] Run(string payload, string temporary, string nativeMode)
     {
         var results = new List<string>();
         Assembly infrastructure = null;
@@ -47,6 +49,18 @@ public sealed class AcademicStartupProbe : MarshalByRefObject
             infrastructure = Assembly.LoadFrom(Path.Combine(payload, "AcademicParaphraser.Infrastructure.dll"));
         });
         if (infrastructure == null) return results.ToArray();
+        Probe(results, "STORAGE_LOAD", delegate {
+            var host = Assembly.LoadFrom(Path.Combine(payload, "AcademicParaphraser.WordHost.dll"));
+            var bootstrap = host.GetType("AcademicParaphraser.WordHost.NativeSqliteBootstrap", true);
+            results.Add("STORAGE:" + (string)bootstrap.GetMethod("GetStorageMode").Invoke(null, null));
+            if (nativeMode == "prepare") {
+                Probe(results, "NATIVE_SQLITE", delegate {
+                    bootstrap.GetMethod("Prepare").Invoke(null, new object[] { payload });
+                    // Repeating preparation must preserve an already verified file.
+                    bootstrap.GetMethod("Prepare").Invoke(null, new object[] { payload });
+                });
+            }
+        });
         Probe(results, "DATABASE", delegate {
             var protector = Activator.CreateInstance(infrastructure.GetType("AcademicParaphraser.Infrastructure.Persistence.WindowsTextProtector", true));
             var repositoryType = infrastructure.GetType("AcademicParaphraser.Infrastructure.Persistence.LocalRepository", true);
@@ -82,6 +96,9 @@ public sealed class AcademicStartupProbe : MarshalByRefObject
         catch (Exception ex) {
             var cause = ex.GetBaseException();
             results.Add(component + ":FAIL:" + cause.GetType().Name + ":" + cause.HResult.ToString("X8"));
+            var frame = new System.Diagnostics.StackTrace(cause, false).GetFrame(0);
+            var method = frame == null ? null : frame.GetMethod();
+            if (method != null) results.Add("SITE:" + component + ":" + method.DeclaringType.FullName + "." + method.Name);
         }
     }
 }
@@ -90,6 +107,12 @@ public sealed class AcademicStartupProbe : MarshalByRefObject
  $setup=New-Object AppDomainSetup
  $setup.ApplicationBase=$Payload
  $setup.ConfigurationFile=Join-Path $Payload 'AcademicParaphraser.WordAddin.dll.config'
+ if($ShadowCopy){
+  $setup.ShadowCopyFiles='true'
+  $setup.ShadowCopyDirectories=$Payload
+  $setup.CachePath=Join-Path $temporary 'shadow'
+  $setup.ApplicationName='AcademicStartupProbe'
+ }
  $domain=[AppDomain]::CreateDomain('AcademicStartupProbe',$null,$setup)
  $probeStage='HELPER_LOAD'
  $helperAssembly=[Reflection.Assembly]::LoadFrom($helper)
@@ -97,8 +120,16 @@ public sealed class AcademicStartupProbe : MarshalByRefObject
  $probe=$domain.CreateInstanceFromAndUnwrap($helper,'AcademicStartupProbe')
  $probeStage='COMPONENTS'
  # Windows PowerShell adapts the transparent proxy as MarshalByRefObject; invoke its actual contract.
- $report.components=@($runner.Invoke($probe,[string[]]@($Payload,$temporary)))
- $report.passed=(@($report.files | Where-Object {-not $_.exists}).Count -eq 0 -and @($report.components | Where-Object {$_ -match ':FAIL:'}).Count -eq 0 -and $report.components.Count -eq 6)
+ $nativeMode=if($SkipNativeBootstrap){'baseline'}else{'prepare'}
+ $results=@($runner.Invoke($probe,[string[]]@($Payload,$temporary,$nativeMode)))
+ $storage=@($results | Where-Object {$_ -match '^STORAGE:(DIRECT|SHADOW)$'})
+ if($storage.Count -eq 1){$report.assemblyStorage=$storage[0].Substring(8)}
+ $report.failureOrigins=@($results | Where-Object {$_ -match '^SITE:'})
+ $report.components=@($results | Where-Object {$_ -notmatch '^(STORAGE:|SITE:|STORAGE_LOAD:PASS$)'})
+ $required=@('FRAMEWORK_LOAD','DATABASE','PREVIEW_UI','DICTIONARY_TurkishWiktionaryProvider','DICTIONARY_EnglishWiktionaryProvider','NLP_LOCAL')
+ if(-not $SkipNativeBootstrap){$required+='NATIVE_SQLITE'}
+ $missing=@($required | Where-Object {$report.components -notcontains ($_+':PASS')})
+ $report.passed=(@($report.files | Where-Object {-not $_.exists}).Count -eq 0 -and @($report.components | Where-Object {$_ -match ':FAIL:'}).Count -eq 0 -and $missing.Count -eq 0 -and $report.assemblyStorage -eq $(if($ShadowCopy){'SHADOW'}else{'DIRECT'}))
 }catch{
  $cause=$_.Exception.GetBaseException()
  $report.components+=('PROBE_'+$probeStage+':FAIL:'+$cause.GetType().Name+':'+$cause.HResult.ToString('X8'))
