@@ -1,5 +1,6 @@
 ﻿param([string]$SigningThumbprint='', [ValidateSet('Debug','Release')][string]$Configuration='Release')
 $ErrorActionPreference='Stop'
+$ProgressPreference='SilentlyContinue'
 $root=Split-Path -Parent $PSScriptRoot
 Set-Location $root
 if (-not [Environment]::Is64BitOperatingSystem) {throw 'Bu paket 64-bit Windows gerektirir. 32-bit ve 64-bit Office desteklenir.'}
