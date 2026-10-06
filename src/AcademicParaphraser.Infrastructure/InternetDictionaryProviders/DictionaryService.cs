@@ -35,6 +35,7 @@ namespace AcademicParaphraser.Infrastructure.InternetDictionaryProviders
         }
         Task<DictionaryResult> LookupAsync(string term, CancellationToken cancellation);
     }
+    public interface IFallbackDictionaryProvider : IDictionaryProvider { }
     public abstract class WiktionaryProvider : IDictionaryProvider, IDisposable
     {
         private readonly HttpClient http = new HttpClient { Timeout = TimeSpan.FromSeconds(12) }; private readonly string language;
@@ -121,6 +122,7 @@ namespace AcademicParaphraser.Infrastructure.InternetDictionaryProviders
             foreach (var provider in providers)
             {
                 cancellation.ThrowIfCancellationRequested();
+                if (provider is IFallbackDictionaryProvider && results.Any(r => r.Error.Length == 0 && r.Content.Length > 0)) continue;
                 string key = "v2:" + provider.Name + ":" + term;
                 string? cached = repository.GetCached(key);
                 if (cached != null)

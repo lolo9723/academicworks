@@ -22,6 +22,7 @@ namespace AcademicParaphraser.WordHost
     {
         private readonly WordNetLexicalSource knowledge;
         private readonly OnlineStructureSource structures;
+        private readonly WikidataTermProvider termProvider;
         private readonly Word.Application app; private readonly WordDocumentAdapter adapter; private readonly LocalRepository repo; private readonly ZemberekProcess nlp; private readonly TransformationEngine engine; private readonly SafeLog log; private readonly DictionaryService dictionary; private readonly List<WiktionaryProvider> providers;
         private SelectionSnapshot? snapshot; private IReadOnlyList<Candidate> candidates = new List<Candidate>(); private int alternative; private CancellationTokenSource? operation; private bool busy, disposed;
         public PreviewPane Preview { get; } public Action? ShowPreview
@@ -45,7 +46,8 @@ namespace AcademicParaphraser.WordHost
             nlp = new ZemberekProcess(Path.Combine(installDirectory, "runtime", "java", "bin", "java.exe"), Path.Combine(installDirectory, "nlp", "turkish-nlp-1.0.0.jar"));
             startupProgress?.Invoke("DICTIONARY");
             providers = new List<WiktionaryProvider> { new TurkishWiktionaryProvider(), new EnglishWiktionaryProvider() };
-            dictionary = new DictionaryService(repo, providers);
+            termProvider = new WikidataTermProvider();
+            dictionary = new DictionaryService(repo, providers.Cast<IDictionaryProvider>().Concat(new[] { termProvider }).ToList());
             knowledge = new WordNetLexicalSource(Path.Combine(installDirectory, "data", "kenet.sqlite"), dictionary);
             structures = new OnlineStructureSource(repo);
             engine = new TransformationEngine(repo, nlp, knowledge, structures);
@@ -200,6 +202,7 @@ namespace AcademicParaphraser.WordHost
             snapshot?.Dispose();
             nlp.Dispose();
             structures.Dispose();
+            termProvider.Dispose();
             foreach (var provider in providers)
                 provider.Dispose();
             Preview.Dispose();

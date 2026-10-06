@@ -20,7 +20,8 @@ try {
     {
         using var turkish = new TurkishWiktionaryProvider();
         using var english = new EnglishWiktionaryProvider();
-        var dictionary = new DictionaryService(repo, new IDictionaryProvider[] { turkish, english });
+        using var termProvider = new WikidataTermProvider();
+        var dictionary = new DictionaryService(repo, new IDictionaryProvider[] { turkish, english, termProvider });
         var settings = new UserSettings { InternetEnabled = true, OfflineMode = false, DefaultStrength = Strength.Strong };
         var lookups = new List<object>(); int found = 0;
         string[] terms = { "yöntem", "örneklem", "parafraz", "ontoloji", "metot" };

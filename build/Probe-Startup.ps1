@@ -80,7 +80,7 @@ public sealed class AcademicStartupProbe : MarshalByRefObject
             var host = Assembly.LoadFrom(Path.Combine(payload, "AcademicParaphraser.WordHost.dll"));
             using (var preview = (IDisposable)Activator.CreateInstance(host.GetType("AcademicParaphraser.WordHost.UI.PreviewPane", true))) { }
         });
-        foreach (var name in new[] { "TurkishWiktionaryProvider", "EnglishWiktionaryProvider" }) {
+        foreach (var name in new[] { "TurkishWiktionaryProvider", "EnglishWiktionaryProvider", "WikidataTermProvider" }) {
             Probe(results, "DICTIONARY_" + name, delegate {
                 using (var provider = (IDisposable)Activator.CreateInstance(infrastructure.GetType("AcademicParaphraser.Infrastructure.InternetDictionaryProviders." + name, true))) { }
             });
@@ -132,7 +132,7 @@ public sealed class AcademicStartupProbe : MarshalByRefObject
  if($storage.Count -eq 1){$report.assemblyStorage=$storage[0].Substring(8)}
  $report.failureOrigins=@($results | Where-Object {$_ -match '^SITE:'})
  $report.components=@($results | Where-Object {$_ -notmatch '^(STORAGE:|SITE:|STORAGE_LOAD:PASS$)'})
- $required=@('FRAMEWORK_LOAD','DATABASE','WORDNET','PREVIEW_UI','DICTIONARY_TurkishWiktionaryProvider','DICTIONARY_EnglishWiktionaryProvider','NLP_LOCAL')
+ $required=@('FRAMEWORK_LOAD','DATABASE','WORDNET','PREVIEW_UI','DICTIONARY_TurkishWiktionaryProvider','DICTIONARY_EnglishWiktionaryProvider','DICTIONARY_WikidataTermProvider','NLP_LOCAL')
  if(-not $SkipNativeBootstrap){$required+='NATIVE_SQLITE'}
  $missing=@($required | Where-Object {$report.components -notcontains ($_+':PASS')})
  $report.passed=(@($report.files | Where-Object {-not $_.exists}).Count -eq 0 -and @($report.components | Where-Object {$_ -match ':FAIL:'}).Count -eq 0 -and $missing.Count -eq 0 -and $report.assemblyStorage -eq $(if($ShadowCopy){'SHADOW'}else{'DIRECT'}))

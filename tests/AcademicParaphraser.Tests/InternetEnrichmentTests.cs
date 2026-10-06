@@ -66,6 +66,40 @@ namespace AcademicParaphraser.Tests
                 return Task.FromResult(new DictionaryResult { Term = term, Source = Name, Error = "missing", NotFound = true });
             }
         }
+        private sealed class FallbackProvider : IFallbackDictionaryProvider
+        {
+            public string Name => "fallback";
+            public int Calls;
+            public Task<DictionaryResult> LookupAsync(string term, CancellationToken cancellation)
+            {
+                Calls++;
+                return Task.FromResult(new DictionaryResult { Term = term, Source = Name, Content = "term information" });
+            }
+        }
+        [Fact]
+        public async Task TermFallbackRunsOnlyWhenDictionariesHaveNoInformation()
+        {
+            var fallback = new FallbackProvider();
+            var service = new DictionaryService(repo, new IDictionaryProvider[] { new Provider(), fallback });
+            var known = await service.LookupAsync("zqalf", Online, CancellationToken.None);
+            Assert.Equal(0, fallback.Calls);
+            var missing = await service.LookupAsync("zqmissing", Online, CancellationToken.None);
+            Assert.Equal(1, fallback.Calls);
+            Assert.Contains(missing, r => r.Source == "fallback" && r.Content.Length > 0 && !r.SingleSense && r.Synonyms.Count == 0);
+        }
+        [Theory]
+        [InlineData("tr", "parafraz", false)]
+        [InlineData("en", "parafraz", true)]
+        [InlineData("tr", "parafras", true)]
+        public async Task WikidataRequiresExactTurkishMatchAndNeverProducesSynonyms(string language, string match, bool missing)
+        {
+            string json = "{\"search\":[{\"id\":\"Q255189\",\"label\":\"parafraz\",\"description\":\"public test definition\",\"match\":{\"language\":\"" + language + "\",\"text\":\"" + match + "\"}}]}";
+            var handler = new BankHandler { Bytes = Encoding.UTF8.GetBytes(json) }; using var client = new HttpClient(handler); using var provider = new WikidataTermProvider(client);
+            var result = await provider.LookupAsync("parafraz", CancellationToken.None);
+            Assert.Equal(missing, result.NotFound);
+            Assert.Empty(result.Synonyms); Assert.False(result.SingleSense); Assert.Empty(result.PosTags);
+            Assert.Contains("search=parafraz", handler.Request!.Query);
+        }
         [Fact]
         public async Task AllUnresolvedRootsAreQueriedAndNegativeResultsAreCached()
         {

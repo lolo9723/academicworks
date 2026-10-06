@@ -28,3 +28,5 @@ Zemberek ve Java transitif JAR lisans/NOTICE dosyalarının kopyaları `licenses
 ## KeNet lexical data
 
 Turkish WordNet / KeNet, Starlang Software and contributors. Upstream data is separately licensed CC BY-SA 4.0; upstream GPL source code is not incorporated. The pinned native XML is normalized into `data/kenet.sqlite`, which retains CC BY-SA 4.0. Attribution, exact source URL/commit and changes are in `data/KENET-NOTICE.txt`; build pin is `build/lexical-data.json`. License: https://creativecommons.org/licenses/by-sa/4.0/. Source: https://github.com/StarlangSoftware/TurkishWordNet.
+
+Wikidata term-information fallback uses CC0 structured data via the public MediaWiki interface (https://www.wikidata.org/wiki/Wikidata:Licensing). Only an exact Turkish term/alias match is shown, with the entity source URL; fuzzy or other-language matches are rejected. These descriptions are not used as synonyms or rewriting rules.
