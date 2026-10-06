@@ -4,7 +4,9 @@ Windows masaüstü Microsoft Word için C#/.NET Framework 4.8 ve VSTO mimarisind
 
 ## Teslim durumu
 
-Gerçek Windows CI üzerinde Core, Infrastructure, .NET Framework WordHost ve VSTO WordAddin projeleri Debug/Release derlenmiş; gerçek SQLite ve Zemberek ile **64/64 motor testi her iki yapılandırmada geçmiştir**. `.vsto` ve `.dll.manifest` dosyaları imzalanmış, Inno Setup ile gerçek `AkademikParafraz-1.0.0-Setup.exe` üretilmiştir. Güncel doğrulanmış Windows koşusu: [37421601160](https://github.com/lolo9723/academicworks/actions/runs/37421601160). Windows DPAPI, native mimariler, VSTO XML imzaları/dosya özetleri ve eksik Word installer testi de geçti.
+**1.0.1 açılış düzeltmesi:** VSTO panel koleksiyonunun BeginInit/EndInit sırası tamamlanır; panel Startup olayında açılır. Açılış hataları artık aşama/exception tipi/HRESULT koduyla kaydedilir. Gerçek .NET Framework x86/x64 altında SQLite, önizleme, sözlük bileşenleri ve bundled Java/Zemberek açılışı doğrulandı. [Açılış düzeltmesi ve kanıtları](docs/Startup-Fix-1.0.1.md).
+
+Gerçek Windows CI üzerinde Core, Infrastructure, .NET Framework WordHost ve VSTO WordAddin projeleri Debug/Release derlenmiş; gerçek SQLite ve Zemberek ile **64/64 motor testi her iki yapılandırmada geçmiştir**. `.vsto` ve `.dll.manifest` dosyaları imzalanmış, Inno Setup ile gerçek `AkademikParafraz-1.0.1-Setup.exe` üretilmiştir. Güncel doğrulanmış Windows koşusu: [37441471927](https://github.com/lolo9723/academicworks/actions/runs/37441471927). Windows DPAPI, native mimariler, VSTO XML imzaları/dosya özetleri ve eksik Word installer testi de geçti.
 
 **Gerçek Word üzerinde kurulum, Ribbon yükleme, biçim/bağlantı/Undo/Track Changes kabulü henüz çalıştırılmamıştır.** Windows CI makinesinde Word yoktur. Bu ilk paket geliştirme yayıncı sertifikası kullanır; installer EXE için üretim Authenticode sertifikası sağlanmamıştır. Üretim kabulü tamamlanmış gibi sunulmaz. Son kullanıcı kılavuzu [UsersGuide.md](docs/UsersGuide.md), çalıştırılan kontroller [Verification.md](docs/Verification.md) ve canlı Word matrisi [Windows-Acceptance.md](docs/Windows-Acceptance.md) içindedir.
 
@@ -104,11 +106,11 @@ Betik NLP JAR'ını derler, `build/java-runtime.json` içindeki sabit Temurin Wi
 
 Sertifika verilmezse geliştirme code-signing sertifikası oluşturulur. Kendinden imzalı geliştirme sertifikası otomatik güvenilir yapılmaz. VSTO'nun yayıncı/güven uyarısı çıkabilir; kurum politikasının bloklaması derleme ile çözülmüş sayılmaz. Setup.exe üretim Authenticode imzası bu teslimde üretilmemiştir. VSTO manifest imzası, installer exe imzasının yerine geçmez.
 
-Başarı çıktısı: `artifacts/installer/AkademikParafraz-1.0.0-Setup.exe`. **Bu dosya gerçek Windows CI koşusunda oluşturulmuştur.** VSTO hedefleri olmayan sistemde tam WordAddin derlemesi geçmez. Betik eksik artefaktları atlayıp başarı bildirmez.
+Başarı çıktısı: `artifacts/installer/AkademikParafraz-1.0.1-Setup.exe`. **Bu dosya gerçek Windows CI koşusunda oluşturulmuştur.** VSTO hedefleri olmayan sistemde tam WordAddin derlemesi geçmez. Betik eksik artefaktları atlayıp başarı bildirmez.
 
 ## Windows otomatik derleme
 
-`.github/workflows/windows-build.yml` her push veya manuel çalıştırmada `windows-2022` üzerinde çalışır. Gerçek Visual Studio VSTO bileşenini `Prepare-WindowsCI.ps1` ile tamamlar; Zemberek, motor ve VSTO projelerini Debug/Release derleyip test eder, manifestleri geliştirme sertifikasıyla imzalar, Inno Setup installer üretir. Başarılı koşu `AkademikParafraz-1.0.0-Windows-Setup` artefaktını, SHA256 dosyasını ve yayıncı açık sertifikasını sunar. İmzalama özel anahtarı artefakta dahil edilmez.
+`.github/workflows/windows-build.yml` her push veya manuel çalıştırmada `windows-2022` üzerinde çalışır. Gerçek Visual Studio VSTO bileşenini `Prepare-WindowsCI.ps1` ile tamamlar; Zemberek, motor ve VSTO projelerini Debug/Release derleyip test eder, manifestleri geliştirme sertifikasıyla imzalar, Inno Setup installer üretir. Başarılı koşu `AkademikParafraz-1.0.1-Windows-Setup` artefaktını, SHA256 dosyasını ve yayıncı açık sertifikasını sunar. İmzalama özel anahtarı artefakta dahil edilmez.
 
 GitHub Windows runner’da masaüstü Word yoktur; başarılı CI çalışması Word kabul testlerinin yerine geçmez. CI, installer üretiminden önce gerçek VSTO ve bütün bağımlılık çıktıları bulunmadığında başarısız olur. Action sürümleri commit SHA ile sabitlenmiştir; NuGet restore kilit dosyaları kullanır.
 

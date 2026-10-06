@@ -7,6 +7,7 @@
 - [x] Visual Studio 2022 OfficeTools ve .NET 4.8 Developer Pack bulunan Windows makinesinde Build-Windows.ps1 tamamlandı.
 - [x] Debug/Release motor testleri gerçek bundled Windows Java ile geçti.
 - [x] WordAddin.dll, dll.manifest ve .vsto üretildi, kriptografik XML imzaları ve dosya özetleri doğrulandı.
+- [x] Gerçek payload/config ile .NET Framework x86/x64: SQLite migration, önizleme, sözlük sağlayıcıları ve bundled Java/Zemberek bileşen açılışları geçti. Word COM çalıştırılmadı.
 - [x] Payload içinde managed NuGet bağımlılıkları, SQLite x86/x64, Zemberek JAR ve Java runtime/legal dosyaları var.
 - [x] Inno Setup 6.3+ gerçek Setup.exe oluşturdu; örnek dosyayla installer üretimi kabul sayılmadı.
 - [ ] Temiz Windows + Word 32 bit üzerinde kullanıcı başına kuruldu; AKADEMİK PARAFRAZ sekmesi göründü.
