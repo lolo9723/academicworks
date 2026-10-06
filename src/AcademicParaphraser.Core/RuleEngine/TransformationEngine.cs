@@ -16,7 +16,7 @@ namespace AcademicParaphraser.Core.RuleEngine
         private readonly IStructureSource? structureSource;
         private readonly ConcurrentDictionary<string, Regex> patterns = new ConcurrentDictionary<string, Regex>(StringComparer.Ordinal);
         private static readonly CultureInfo Turkish = CultureInfo.GetCultureInfo("tr-TR");
-        private static readonly HashSet<string> StructuralFamilies = new HashSet<string>(new[] { "etken-edilgen", "edilgen-etken", "isim-fiil", "fiil-isim", "isim tamlaması", "yüklem", "yan cümlecik", "sıfat-fiil", "zarf-fiil", "güvenli sıralama", "yüklem merkezli", "neden-sonuç", "karşılaştırma", "yöntem", "sonuç" }, StringComparer.Ordinal);
+        private static readonly HashSet<string> StructuralFamilies = new HashSet<string>(new[] { "cümle kuruluşu", "etken-edilgen", "edilgen-etken", "isim-fiil", "fiil-isim", "isim tamlaması", "yüklem", "yan cümlecik", "sıfat-fiil", "zarf-fiil", "güvenli sıralama", "yüklem merkezli", "neden-sonuç", "karşılaştırma", "yöntem", "sonuç" }, StringComparer.Ordinal);
         public TransformationEngine(IRuleCatalog catalog, ITurkishNlp nlp, ILexicalSource? lexicalSource = null, IStructureSource? structureSource = null)
         {
             this.structureSource = structureSource;
@@ -64,6 +64,8 @@ namespace AcademicParaphraser.Core.RuleEngine
             foreach (var rule in availableRules.Where(r => (int)r.Strength <= (int)settings.DefaultStrength && r.Confidence >= settings.MinimumConfidence && (r.Domain == "genel" || r.Domain == settings.Domain)))
             {
                 token.ThrowIfCancellationRequested();
+                if (!settings.EnableWordChoice && !rule.UserDefined &&
+                    (!StructuralFamilies.Contains(rule.Family) || (rule.Family == "yüklem" && rule.Id.StartsWith("extended-", StringComparison.Ordinal)))) continue;
                 if (!rule.UserDefined && !string.IsNullOrEmpty(rule.RequiredText) && lowered.IndexOf(rule.RequiredText, StringComparison.Ordinal) < 0) continue;
                 if (patterns.Count > 4096) patterns.Clear();
                 var regex = patterns.GetOrAdd(rule.Pattern, key => new Regex(key, RegexOptions.None, TimeSpan.FromMilliseconds(150)));
@@ -91,7 +93,7 @@ namespace AcademicParaphraser.Core.RuleEngine
                 }
             }
             var inflections = new Dictionary<string, string?>(StringComparer.Ordinal);
-            foreach (var word in morphology.Where(t => !t.Proper && t.Length > 1 && !protectedSpans.Any(s => s.Intersects(t.Start, t.Length))))
+            foreach (var word in morphology.Where(t => settings.EnableWordChoice && !t.Proper && t.Length > 1 && !protectedSpans.Any(s => s.Intersects(t.Start, t.Length))))
             {
                 lookup.TryGetValue(word.Lemma + "/" + word.Pos, out var entry);
                 if (entry == null || entry.Technical || entry.Confidence < settings.MinimumConfidence || (entry.Domain != "genel" && entry.Domain != settings.Domain))
@@ -112,8 +114,9 @@ namespace AcademicParaphraser.Core.RuleEngine
                     candidates.Add(new List<TextEdit> { new TextEdit { Start = word.Start, Length = word.Length, Original = word.Surface, Replacement = replacement, RuleId = "lemma:" + word.Lemma + ":" + synonym, Family = "morfolojik eş anlam", Confidence = entry.Confidence } });
                 }
             }
+            var sentences = SentenceSpans(text, protectedSpans);
             if (candidates.Count == 0)
-                return new[] { new Candidate { Text = text, Enrichment = enrichment.Summary, Score = new CandidateScore { SemanticSafety = 1, GrammarConfidence = 1, AcademicStyle = 1 } } };
+                return new[] { new Candidate { Text = text, SentenceCount = sentences.Count, Enrichment = enrichment.Summary, Score = new CandidateScore { SemanticSafety = 1, GrammarConfidence = 1, AcademicStyle = 1 } } };
             var proposals = new List<Candidate>();
             var seen = new HashSet<string>(StringComparer.Ordinal);
             // Deterministic variants rotate competing rules, then reject duplicates and near-identical alternatives.
@@ -128,6 +131,9 @@ namespace AcademicParaphraser.Core.RuleEngine
                 foreach (var group in groups)
                 {
                     var options = group.OrderByDescending(e => Rank(e, settings.DefaultStrength)).ThenByDescending(e => e.Max(x => x.Start + x.Length) - e.Min(x => x.Start)).ThenByDescending(e => e.Min(x => x.Confidence)).ThenBy(e => e[0].RuleId, StringComparer.Ordinal).ToList();
+                    // A variant must not demote a whole-sentence rewrite to a word substitution.
+                    int bestRank = Rank(options[0], settings.DefaultStrength);
+                    options = options.Where(e => Rank(e, settings.DefaultStrength) == bestRank).ToList();
                     var selected = options[(variant + groups.IndexOf(group)) % options.Count];
                     if (selected.Any(x => edits.Any(e => e.Start < x.Start + x.Length && e.Start + e.Length > x.Start)))
                         continue;
@@ -138,17 +144,18 @@ namespace AcademicParaphraser.Core.RuleEngine
                 string result = EditApplication.Apply(text, edits);
                 if (!seen.Add(result))
                     continue;
-                if (proposals.Any(c => Difference(c.Text, result) < .04))
+                if (proposals.Any(c => OrderedDifference(c.Text, result) < .04))
                     continue;
-                var score = new CandidateScore { SemanticSafety = edits.Count == 0 ? 1 : edits.Min(e => e.Confidence), GrammarConfidence = edits.Count == 0 ? 1 : edits.Min(e => e.Confidence), StructuralDifference = edits.Count(e => StructuralFamilies.Contains(e.Family)) / (double)Math.Max(1, edits.Count), LexicalDifference = Difference(text, result), AcademicStyle = edits.Count == 0 ? 1 : edits.Average(e => e.Confidence) };
-                proposals.Add(new Candidate { Text = result, Edits = edits, Score = score, Enrichment = enrichment.Summary });
-                if (proposals.Count >= settings.Alternatives)
-                    break;
+                var score = new CandidateScore { SemanticSafety = edits.Count == 0 ? 1 : edits.Min(e => e.Confidence), GrammarConfidence = edits.Count == 0 ? 1 : edits.Min(e => e.Confidence), StructuralDifference = edits.Count(e => StructuralFamilies.Contains(e.Family)) / (double)Math.Max(1, edits.Count), LexicalDifference = VocabularyDifference(text, result), AcademicStyle = edits.Count == 0 ? 1 : edits.Average(e => e.Confidence) };
+                int rewritten = sentences.Count(s => edits.Any(e => StructuralFamilies.Contains(e.Family) && s.Intersects(e.Start, e.Length)));
+                proposals.Add(new Candidate { Text = result, Edits = edits, Score = score, Enrichment = enrichment.Summary, SentenceCount = sentences.Count, RewrittenSentences = rewritten });
             }
-            return proposals.OrderByDescending(p => p.Score.StructuralDifference).ThenByDescending(p => p.Score.LexicalDifference).ThenByDescending(p => p.Score.SemanticSafety).ToList();
+            int bestCoverage = proposals.Max(p => p.RewrittenSentences);
+            return proposals.Where(p => p.RewrittenSentences == bestCoverage).OrderByDescending(p => p.Score.StructuralDifference).ThenByDescending(p => OrderedDifference(text, p.Text)).ThenByDescending(p => p.Score.SemanticSafety).Take(settings.Alternatives).ToList();
         }
         private static int Rank(List<TextEdit> edits, Strength strength)
         {
+            if (edits.Any(e => e.Family == "cümle kuruluşu" || e.RuleId.StartsWith("online-frame:", StringComparison.Ordinal))) return 3;
             if (strength == Strength.Strong && edits.Any(e => e.Family == "güvenli sıralama")) return 2;
             return strength != Strength.Light && edits.Any(e => StructuralFamilies.Contains(e.Family)) ? 1 : 0;
         }
@@ -181,11 +188,36 @@ namespace AcademicParaphraser.Core.RuleEngine
                 end++;
             return text.Substring(start, end - start);
         }
-        private static double Difference(string a, string b)
+        private static double VocabularyDifference(string a, string b)
         {
             var x = new HashSet<string>(Regex.Matches(a.ToLower(Turkish), @"\p{L}+").Cast<Match>().Select(m => m.Value));
             var y = new HashSet<string>(Regex.Matches(b.ToLower(Turkish), @"\p{L}+").Cast<Match>().Select(m => m.Value));
             return 1 - x.Intersect(y).Count() / (double)Math.Max(1, x.Union(y).Count());
+        }
+        private static double OrderedDifference(string a, string b)
+        {
+            // Adjacent word pairs retain order; vocabulary sets erased syntactic variants.
+            HashSet<string> Pairs(string value)
+            {
+                var words = Regex.Matches(value.ToLower(Turkish), @"\p{L}+|\p{N}+").Cast<Match>().Select(m => m.Value).ToList();
+                return new HashSet<string>(words.Select((w, i) => (i == 0 ? "^" : words[i - 1]) + " " + w).Concat(new[] { (words.LastOrDefault() ?? "") + " $" }));
+            }
+            var x = Pairs(a); var y = Pairs(b);
+            return 1 - x.Intersect(y).Count() / (double)Math.Max(1, x.Union(y).Count());
+        }
+        private static List<TextSpan> SentenceSpans(string text, IReadOnlyList<TextSpan> protections)
+        {
+            var result = new List<TextSpan>(); int start = 0;
+            for (int i = 0; i <= text.Length; i++)
+            {
+                bool end = i == text.Length || text[i] == '\r' || text[i] == '\n' || text[i] == '\a' ||
+                    ((text[i] == '.' || text[i] == '!' || text[i] == '?') && (i + 1 == text.Length || char.IsWhiteSpace(text[i + 1])) && !protections.Any(s => s.Intersects(i, 1)));
+                if (!end) continue;
+                int length = i == text.Length ? i - start : i + 1 - start;
+                if (length > 0 && text.Substring(start, length).Any(char.IsLetter)) result.Add(new TextSpan { Start = start, Length = length });
+                start = i + 1;
+            }
+            return result;
         }
     }
 }

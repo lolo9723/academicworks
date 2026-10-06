@@ -18,6 +18,9 @@ namespace AcademicParaphraser.Core
         public bool PreserveLinks { get; set; } = true;
         public bool InternetEnabled { get; set; } = false;
         public bool OfflineMode { get; set; } = true;
+        // Opt-in word-choice assistance is separate from sentence paraphrasing.
+        // Old settings deserialize to false, so upgrading stops thesaurus substitutions.
+        public bool EnableWordChoice { get; set; } = false;
         public bool TrackChanges
         {
             get; set;
@@ -83,6 +86,8 @@ namespace AcademicParaphraser.Core
     }
     public sealed class Candidate
     {
+        public int SentenceCount { get; set; }
+        public int RewrittenSentences { get; set; }
         public Rewriting.EnrichmentSummary? Enrichment { get; set; }
         public string Text { get; set; } = ""; public List<TextEdit> Edits { get; set; } = new List<TextEdit>(); public CandidateScore Score { get; set; } = new CandidateScore();
     }

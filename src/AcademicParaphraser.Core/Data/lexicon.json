@@ -492,5 +492,347 @@
     "Confidence": 1.0,
     "Examples": [],
     "Technical": true
+  },
+  {
+    "Lemma": "konsültasyon",
+    "Pos": "Noun",
+    "Technical": true,
+    "Domain": "genel",
+    "Confidence": 1,
+    "Synonyms": [],
+    "AcademicAlternatives": []
+  },
+  {
+    "Lemma": "diş hekimliği",
+    "Pos": "Noun",
+    "Technical": true,
+    "Domain": "genel",
+    "Confidence": 1,
+    "Synonyms": [],
+    "AcademicAlternatives": []
+  },
+  {
+    "Lemma": "restoratif diş tedavisi",
+    "Pos": "Noun",
+    "Technical": true,
+    "Domain": "genel",
+    "Confidence": 1,
+    "Synonyms": [],
+    "AcademicAlternatives": []
+  },
+  {
+    "Lemma": "protetik diş tedavisi",
+    "Pos": "Noun",
+    "Technical": true,
+    "Domain": "genel",
+    "Confidence": 1,
+    "Synonyms": [],
+    "AcademicAlternatives": []
+  },
+  {
+    "Lemma": "endodonti",
+    "Pos": "Noun",
+    "Technical": true,
+    "Domain": "genel",
+    "Confidence": 1,
+    "Synonyms": [],
+    "AcademicAlternatives": []
+  },
+  {
+    "Lemma": "periodontoloji",
+    "Pos": "Noun",
+    "Technical": true,
+    "Domain": "genel",
+    "Confidence": 1,
+    "Synonyms": [],
+    "AcademicAlternatives": []
+  },
+  {
+    "Lemma": "ortodonti",
+    "Pos": "Noun",
+    "Technical": true,
+    "Domain": "genel",
+    "Confidence": 1,
+    "Synonyms": [],
+    "AcademicAlternatives": []
+  },
+  {
+    "Lemma": "pedodonti",
+    "Pos": "Noun",
+    "Technical": true,
+    "Domain": "genel",
+    "Confidence": 1,
+    "Synonyms": [],
+    "AcademicAlternatives": []
+  },
+  {
+    "Lemma": "ağız diş ve çene cerrahisi",
+    "Pos": "Noun",
+    "Technical": true,
+    "Domain": "genel",
+    "Confidence": 1,
+    "Synonyms": [],
+    "AcademicAlternatives": []
+  },
+  {
+    "Lemma": "oral diagnoz",
+    "Pos": "Noun",
+    "Technical": true,
+    "Domain": "genel",
+    "Confidence": 1,
+    "Synonyms": [],
+    "AcademicAlternatives": []
+  },
+  {
+    "Lemma": "radyoloji",
+    "Pos": "Noun",
+    "Technical": true,
+    "Domain": "genel",
+    "Confidence": 1,
+    "Synonyms": [],
+    "AcademicAlternatives": []
+  },
+  {
+    "Lemma": "anabilim dalı",
+    "Pos": "Noun",
+    "Technical": true,
+    "Domain": "genel",
+    "Confidence": 1,
+    "Synonyms": [],
+    "AcademicAlternatives": []
+  },
+  {
+    "Lemma": "dentin",
+    "Pos": "Noun",
+    "Technical": true,
+    "Domain": "genel",
+    "Confidence": 1,
+    "Synonyms": [],
+    "AcademicAlternatives": []
+  },
+  {
+    "Lemma": "pulpa",
+    "Pos": "Noun",
+    "Technical": true,
+    "Domain": "genel",
+    "Confidence": 1,
+    "Synonyms": [],
+    "AcademicAlternatives": []
+  },
+  {
+    "Lemma": "dental implant",
+    "Pos": "Noun",
+    "Technical": true,
+    "Domain": "genel",
+    "Confidence": 1,
+    "Synonyms": [],
+    "AcademicAlternatives": []
+  },
+  {
+    "Lemma": "kompozit rezin",
+    "Pos": "Noun",
+    "Technical": true,
+    "Domain": "genel",
+    "Confidence": 1,
+    "Synonyms": [],
+    "AcademicAlternatives": []
+  },
+  {
+    "Lemma": "kök kanal tedavisi",
+    "Pos": "Noun",
+    "Technical": true,
+    "Domain": "genel",
+    "Confidence": 1,
+    "Synonyms": [],
+    "AcademicAlternatives": []
+  },
+  {
+    "Lemma": "gingivit",
+    "Pos": "Noun",
+    "Technical": true,
+    "Domain": "genel",
+    "Confidence": 1,
+    "Synonyms": [],
+    "AcademicAlternatives": []
+  },
+  {
+    "Lemma": "periodontit",
+    "Pos": "Noun",
+    "Technical": true,
+    "Domain": "genel",
+    "Confidence": 1,
+    "Synonyms": [],
+    "AcademicAlternatives": []
+  },
+  {
+    "Lemma": "çürük",
+    "Pos": "Noun",
+    "Technical": true,
+    "Domain": "genel",
+    "Confidence": 1,
+    "Synonyms": [],
+    "AcademicAlternatives": []
+  },
+  {
+    "Lemma": "uzman",
+    "Pos": "Noun",
+    "Technical": true,
+    "Domain": "genel",
+    "Confidence": 1,
+    "Synonyms": [],
+    "AcademicAlternatives": []
+  },
+  {
+    "Lemma": "lisansüstü öğrenci",
+    "Pos": "Noun",
+    "Technical": true,
+    "Domain": "genel",
+    "Confidence": 1,
+    "Synonyms": [],
+    "AcademicAlternatives": []
+  },
+  {
+    "Lemma": "klinik araştırma",
+    "Pos": "Noun",
+    "Technical": true,
+    "Domain": "genel",
+    "Confidence": 1,
+    "Synonyms": [],
+    "AcademicAlternatives": []
+  },
+  {
+    "Lemma": "randomizasyon",
+    "Pos": "Noun",
+    "Technical": true,
+    "Domain": "genel",
+    "Confidence": 1,
+    "Synonyms": [],
+    "AcademicAlternatives": []
+  },
+  {
+    "Lemma": "plasebo",
+    "Pos": "Noun",
+    "Technical": true,
+    "Domain": "genel",
+    "Confidence": 1,
+    "Synonyms": [],
+    "AcademicAlternatives": []
+  },
+  {
+    "Lemma": "istatistiksel anlamlılık",
+    "Pos": "Noun",
+    "Technical": true,
+    "Domain": "genel",
+    "Confidence": 1,
+    "Synonyms": [],
+    "AcademicAlternatives": []
+  },
+  {
+    "Lemma": "güven aralığı",
+    "Pos": "Noun",
+    "Technical": true,
+    "Domain": "genel",
+    "Confidence": 1,
+    "Synonyms": [],
+    "AcademicAlternatives": []
+  },
+  {
+    "Lemma": "p değeri",
+    "Pos": "Noun",
+    "Technical": true,
+    "Domain": "genel",
+    "Confidence": 1,
+    "Synonyms": [],
+    "AcademicAlternatives": []
+  },
+  {
+    "Lemma": "odds oranı",
+    "Pos": "Noun",
+    "Technical": true,
+    "Domain": "genel",
+    "Confidence": 1,
+    "Synonyms": [],
+    "AcademicAlternatives": []
+  },
+  {
+    "Lemma": "risk oranı",
+    "Pos": "Noun",
+    "Technical": true,
+    "Domain": "genel",
+    "Confidence": 1,
+    "Synonyms": [],
+    "AcademicAlternatives": []
+  },
+  {
+    "Lemma": "insidans",
+    "Pos": "Noun",
+    "Technical": true,
+    "Domain": "genel",
+    "Confidence": 1,
+    "Synonyms": [],
+    "AcademicAlternatives": []
+  },
+  {
+    "Lemma": "prevalans",
+    "Pos": "Noun",
+    "Technical": true,
+    "Domain": "genel",
+    "Confidence": 1,
+    "Synonyms": [],
+    "AcademicAlternatives": []
+  },
+  {
+    "Lemma": "kohort",
+    "Pos": "Noun",
+    "Technical": true,
+    "Domain": "genel",
+    "Confidence": 1,
+    "Synonyms": [],
+    "AcademicAlternatives": []
+  },
+  {
+    "Lemma": "kontrol grubu",
+    "Pos": "Noun",
+    "Technical": true,
+    "Domain": "genel",
+    "Confidence": 1,
+    "Synonyms": [],
+    "AcademicAlternatives": []
+  },
+  {
+    "Lemma": "konsültasyon talep formu",
+    "Pos": "Noun",
+    "Technical": true,
+    "Domain": "genel",
+    "Confidence": 1,
+    "Synonyms": [],
+    "AcademicAlternatives": []
+  },
+  {
+    "Lemma": "hasta kaydı",
+    "Pos": "Noun",
+    "Technical": true,
+    "Domain": "genel",
+    "Confidence": 1,
+    "Synonyms": [],
+    "AcademicAlternatives": []
+  },
+  {
+    "Lemma": "hasta dosyası",
+    "Pos": "Noun",
+    "Technical": true,
+    "Domain": "genel",
+    "Confidence": 1,
+    "Synonyms": [],
+    "AcademicAlternatives": []
+  },
+  {
+    "Lemma": "diş hekimliği fakültesi",
+    "Pos": "Noun",
+    "Technical": true,
+    "Domain": "genel",
+    "Confidence": 1,
+    "Synonyms": [],
+    "AcademicAlternatives": []
   }
 ]

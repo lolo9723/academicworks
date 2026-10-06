@@ -99,6 +99,9 @@ namespace AcademicParaphraser.WordHost.UI
         {
             get => s.CacheDictionary; set => s.CacheDictionary = value;
         }
+        [System.ComponentModel.DisplayName("Eş anlamlı kelime değişimlerini ayrıca uygula")]
+        [System.ComponentModel.Description("Varsayılan olarak kapalıdır. Açılırsa cümle dönüşümlerine sözlükten kelime önerileri eklenir; terimleri ve ifadeleri dikkatle kontrol edin.")]
+        public bool SözcükÖnerileri { get => s.EnableWordChoice; set => s.EnableWordChoice = value; }
         public int AlternatifSayısı
         {
             get => s.Alternatives; set => s.Alternatives = value;

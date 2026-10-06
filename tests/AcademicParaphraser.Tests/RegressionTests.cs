@@ -100,7 +100,7 @@ namespace AcademicParaphraser.Tests
         {
             repo.LockTerm("öznel zindelik");
             string input = "Doğayla ilişkinin öznel zindelik üzerindeki etkisinin anlamlı olduğu belirlenmiştir (Yılmaz & Demir, 2024; β=.43, p<.001).";
-            var result = await new TransformationEngine(repo, fixture.Nlp).GenerateAsync(input, new UserSettings(), null, CancellationToken.None);
+            var result = await new TransformationEngine(repo, fixture.Nlp).GenerateAsync(input, new UserSettings { EnableWordChoice = true }, null, CancellationToken.None);
             Assert.NotEmpty(result);
             Assert.Contains(result, c => c.Edits.Count > 0);
             foreach (var c in result)
@@ -126,7 +126,7 @@ namespace AcademicParaphraser.Tests
         [Fact]
         public async Task CapitalizationAndPunctuationPreserved()
         {
-            var result = await new TransformationEngine(repo, fixture.Nlp).GenerateAsync("Önem arz etmektedir.", new UserSettings(), null, CancellationToken.None);
+            var result = await new TransformationEngine(repo, fixture.Nlp).GenerateAsync("Önem arz etmektedir.", new UserSettings { EnableWordChoice = true }, null, CancellationToken.None);
             Assert.Contains(result, c => c.Text == "Önem taşımaktadır.");
         }
         [Fact]
@@ -137,15 +137,15 @@ namespace AcademicParaphraser.Tests
             var light = await engine.GenerateAsync(text, new UserSettings { DefaultStrength = Strength.Light }, null, CancellationToken.None);
             var strong = await engine.GenerateAsync(text, new UserSettings { DefaultStrength = Strength.Strong }, null, CancellationToken.None);
             Assert.DoesNotContain(light.SelectMany(c => c.Edits), e => e.Family == "güvenli sıralama");
-            Assert.Contains(strong.SelectMany(c => c.Edits), e => e.Family == "güvenli sıralama");
+            Assert.Contains(strong.SelectMany(c => c.Edits), e => e.Family == "güvenli sıralama" || e.Family == "cümle kuruluşu");
         }
         [Fact]
         public async Task AlternativesAreDistinctAndDeterministic()
         {
             var e = new TransformationEngine(repo, fixture.Nlp);
             string text = "Bu çalışmada sonuçların anlamlı olduğu belirlenmiştir.";
-            var a = await e.GenerateAsync(text, new UserSettings(), null, CancellationToken.None);
-            var b = await e.GenerateAsync(text, new UserSettings(), null, CancellationToken.None);
+            var a = await e.GenerateAsync(text, new UserSettings { EnableWordChoice = true }, null, CancellationToken.None);
+            var b = await e.GenerateAsync(text, new UserSettings { EnableWordChoice = true }, null, CancellationToken.None);
             Assert.True(a.Count >= 2);
             Assert.Equal(a.Count, a.Select(c => c.Text).Distinct().Count());
             Assert.Equal(a.Select(c => c.Text), b.Select(c => c.Text));
@@ -259,7 +259,7 @@ namespace AcademicParaphraser.Tests
             string xml = Doc("<w:p><w:r><w:drawing><inline xmlns='http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing'><extent cx='10' cy='10'/></inline></w:drawing></w:r><w:r><w:t>Önem arz etmektedir.</w:t></w:r></w:p>");
             var map = new OoxmlRunMap(xml);
             Assert.StartsWith("\u0001Önem", map.Text);
-            var candidates = await new TransformationEngine(repo, fixture.Nlp).GenerateAsync(map.Text, new UserSettings(), map.ProtectedSpans, CancellationToken.None);
+            var candidates = await new TransformationEngine(repo, fixture.Nlp).GenerateAsync(map.Text, new UserSettings { EnableWordChoice = true }, map.ProtectedSpans, CancellationToken.None);
             var candidate = Assert.Single(candidates);
             Assert.True(map.CanEdit(candidate.Edits[0].Start, candidate.Edits[0].Length));
             string result = map.Apply(candidate.Edits);

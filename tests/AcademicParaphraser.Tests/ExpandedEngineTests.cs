@@ -39,7 +39,8 @@ namespace AcademicParaphraser.Tests
             const string source = "İçerik analizi, ziyaretçi deneyimlerini incelemenin en etkili yöntemlerinden biridir. Ziyaretçi deneyimlerini anlamayı mümkün kıldığı için bu araştırmada içerik analizi kullanılmıştır. Ziyaretçilerin çevrimiçi yorumları incelenmiştir. Araştırma alanı olarak 12 destinasyon belirlenmiştir. Bu yorumlarda deneyimlerin nasıl temsil edildiği analiz edilmiştir. Bu araştırmanın amacı, ziyaretçi deneyimlerini incelemektir (Alfa, 2022; N=120).";
             var candidates = await new TransformationEngine(repository, fixture.Nlp, knowledge).GenerateAsync(source, new UserSettings { DefaultStrength = Strength.Strong }, null, CancellationToken.None);
             Assert.NotEmpty(candidates);
-            Assert.True(candidates[0].Edits.Count >= 6, candidates[0].Text);
+            Assert.True(candidates[0].RewrittenSentences >= 4, candidates[0].Text);
+            Assert.DoesNotContain(candidates.SelectMany(c => c.Edits), e => e.RuleId.StartsWith("lemma:"));
             Assert.Contains(candidates, c => c.Text.Contains("olanak sağladığından"));
             Assert.Contains(candidates, c => c.Text.Contains("amaçlamaktadır"));
             Assert.All(candidates, c => { Assert.Contains("12 destinasyon", c.Text); Assert.Contains("(Alfa, 2022; N=120)", c.Text); });
@@ -52,7 +53,7 @@ namespace AcademicParaphraser.Tests
         [InlineData("Çalışmada karşılaştırma yapılmaktadır.", "Çalışmada karşılaştırma gerçekleştirilmektedir.")]
         public async Task SentenceFramesAndNegationRemainGrammatical(string source, string expected)
         {
-            var result = await new TransformationEngine(repository, fixture.Nlp).GenerateAsync(source, new UserSettings { DefaultStrength = Strength.Strong }, null, CancellationToken.None);
+            var result = await new TransformationEngine(repository, fixture.Nlp).GenerateAsync(source, new UserSettings { DefaultStrength = Strength.Strong, EnableWordChoice = true }, null, CancellationToken.None);
             Assert.Contains(result, c => c.Text == expected);
         }
         [Fact]
@@ -61,7 +62,7 @@ namespace AcademicParaphraser.Tests
             var tokens = await fixture.Nlp.AnalyzeAsync("Çalışmada faktörler incelenmiştir.", CancellationToken.None);
             var entries = await knowledge.FindAsync("Çalışmada faktörler incelenmiştir.", tokens, new UserSettings(), CancellationToken.None);
             Assert.Contains(entries, e => e.Lemma == "faktör" && e.Synonyms.Contains("etmen"));
-            var result = await new TransformationEngine(repository, fixture.Nlp, knowledge).GenerateAsync("Çalışmada faktörler incelenmiştir.", new UserSettings(), null, CancellationToken.None);
+            var result = await new TransformationEngine(repository, fixture.Nlp, knowledge).GenerateAsync("Çalışmada faktörler incelenmiştir.", new UserSettings { EnableWordChoice = true }, null, CancellationToken.None);
             Assert.Contains(result, c => c.Text.Contains("etmenler"));
         }
         [Fact]

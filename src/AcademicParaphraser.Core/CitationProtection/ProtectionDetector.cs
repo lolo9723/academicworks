@@ -13,6 +13,7 @@ namespace AcademicParaphraser.Core.CitationProtection
         private static readonly Regex Identifier = Rx(@"(?:https?://|www\.)[^\s<>]+|\b10\.\d{4,9}/[^\s<>]+|\b(?:ISBN|ISSN|PMID)\s*[:=]?\s*[\dXx\-\s]+\d|\b[^\s@]+@[^\s@]+\.[^\s@]+");
         private static readonly Regex Numbers = Rx(@"\b[Nn]\s*=\s*\d+|%\s*\d+(?:[.,]\d+)?|[pββα]\s*[<>=≤≥]\s*[.,]?\d+(?:[.,]\d+)?|\b[tF]\s*\([\d,\s]+\)|R[²2]|\b\d+(?:[.,:/–\-]\d+)*\b");
         private static readonly Regex Names = Rx(@"\b\p{Lu}[\p{L}\p{M}]+(?:\s+\p{Lu}[\p{L}\p{M}]+)+|\b[\p{L}\p{M}]+['’][\p{L}\p{M}]+|\b[A-ZÇĞİÖŞÜ]{2,}\b");
+        private static readonly Regex ClinicalNames = new Regex(@"\b(?:diş hekimliği|tıp|eczacılık|veterinerlik|sağlık bilimleri) fakültesi[\p{L}]*|\b(?:restoratif|protetik) diş tedavisi(?: (?:anabilim dalları|anabilim dalı|kliniği|klinikleri)[\p{L}]*)?", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant, TimeSpan.FromMilliseconds(150));
         public IReadOnlyList<TextSpan> Detect(string text, UserSettings settings, IEnumerable<string> locks, IEnumerable<LexiconEntry> lexicon, IEnumerable<TextSpan>? external = null)
         {
             var spans = new List<TextSpan>();
@@ -28,7 +29,10 @@ namespace AcademicParaphraser.Core.CitationProtection
             if (settings.PreserveNumbers)
                 Add(Numbers, "sayısal veri");
             if (settings.PreserveNames)
+            {
                 Add(Names, "özel isim");
+                Add(ClinicalNames, "kurum/bölüm adı");
+            }
             foreach (var pattern in settings.CustomProtectionPatterns)
                 Add(Rx(pattern), "özel koruma");
             var terms = locks.Concat(settings.PreserveTechnicalTerms ? lexicon.Where(x => x.Technical).Select(x => x.Lemma) : Enumerable.Empty<string>());

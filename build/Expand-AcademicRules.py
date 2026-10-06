@@ -66,4 +66,5 @@ import uuid
 working=out/('rules.'+uuid.uuid4().hex+'.tmp')
 working.write_text(json.dumps(unique,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
 working.replace(out/'rules.extended.json')
-print(json.dumps({'totalRules':len(unique)+61,'newRules':len(unique),'templateFamilies':len({r['Family'] for r in unique})}))
+sentence_frames=json.loads((p.parent/'sentence-structures.json').read_text(encoding='utf-8'))
+print(json.dumps({'totalRules':len(unique)+61+len(sentence_frames),'newRules':len(unique),'sentenceFrames':len(sentence_frames),'templateFamilies':len({r['Family'] for r in unique})}))

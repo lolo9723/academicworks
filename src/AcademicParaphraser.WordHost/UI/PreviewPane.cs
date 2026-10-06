@@ -61,7 +61,8 @@ namespace AcademicParaphraser.WordHost.UI
             }
             before.Select(0, 0);
             after.Select(0, 0);
-            status.Text = $"Alternatif {index + 1}/{count} · {candidate.Edits.Count} dönüşüm · Yapısal dönüşüm: {(candidate.Score.StructuralDifference > 0 ? "var" : "yok")}\nAnlamı ve akademik ifadeyi uygulamadan önce kontrol edin.";
+            status.Text = $"Alternatif {index + 1}/{count} · {candidate.RewrittenSentences}/{candidate.SentenceCount} cümlede yapısal dönüşüm\nAnlamı ve akademik ifadeyi uygulamadan önce kontrol edin.";
+            if (candidate.Edits.Count == 0) status.Text += "\nBu seçim için uygun bir cümle dönüşümü bulunamadı.";
             var scan = candidate.Enrichment;
             if (scan != null && scan.RootsTotal > 0)
                 status.Text += $"\nUygun kök: {scan.RootsChecked}/{scan.RootsTotal} · bilgisi bulunan: {scan.RootsFound} · bulunamayan: {scan.RootsUnresolved}\nİnternette aranan: {scan.OnlineRootsQueried} · kaynak hatası: {scan.ProviderErrors}\nYapı bankası: {scan.StructureStatus} · {scan.StructureInventory} birleşim / {scan.ApplicableStructures} aday kalıp";

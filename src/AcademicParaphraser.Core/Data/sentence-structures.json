@@ -1,0 +1,3032 @@
+[
+  {
+    "Id": "sentence-v1-0001",
+    "Pattern": "\\bbu çalışmanın amacı,? (?<goal>[^.!?;\\r\\n\\a]{3,1100}?)maktır\\b",
+    "Target": "bu çalışma, ${goal}mayı amaçlamaktadır",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0002",
+    "Pattern": "\\bbu çalışmanın amacı,? (?<goal>[^.!?;\\r\\n\\a]{3,1100}?)maktır\\b",
+    "Target": "bu çalışma, ${goal}mayı hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0003",
+    "Pattern": "\\bbu çalışmanın amacı,? (?<goal>[^.!?;\\r\\n\\a]{3,1100}?)mektir\\b",
+    "Target": "bu çalışma, ${goal}meyi amaçlamaktadır",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0004",
+    "Pattern": "\\bbu çalışmanın amacı,? (?<goal>[^.!?;\\r\\n\\a]{3,1100}?)mektir\\b",
+    "Target": "bu çalışma, ${goal}meyi hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0005",
+    "Pattern": "\\bmevcut çalışmanın amacı,? (?<goal>[^.!?;\\r\\n\\a]{3,1100}?)maktır\\b",
+    "Target": "mevcut çalışma, ${goal}mayı amaçlamaktadır",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0006",
+    "Pattern": "\\bmevcut çalışmanın amacı,? (?<goal>[^.!?;\\r\\n\\a]{3,1100}?)maktır\\b",
+    "Target": "mevcut çalışma, ${goal}mayı hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0007",
+    "Pattern": "\\bmevcut çalışmanın amacı,? (?<goal>[^.!?;\\r\\n\\a]{3,1100}?)mektir\\b",
+    "Target": "mevcut çalışma, ${goal}meyi amaçlamaktadır",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0008",
+    "Pattern": "\\bmevcut çalışmanın amacı,? (?<goal>[^.!?;\\r\\n\\a]{3,1100}?)mektir\\b",
+    "Target": "mevcut çalışma, ${goal}meyi hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0009",
+    "Pattern": "\\bçalışmanın amacı,? (?<goal>[^.!?;\\r\\n\\a]{3,1100}?)maktır\\b",
+    "Target": "çalışma, ${goal}mayı amaçlamaktadır",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0010",
+    "Pattern": "\\bçalışmanın amacı,? (?<goal>[^.!?;\\r\\n\\a]{3,1100}?)maktır\\b",
+    "Target": "çalışma, ${goal}mayı hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0011",
+    "Pattern": "\\bçalışmanın amacı,? (?<goal>[^.!?;\\r\\n\\a]{3,1100}?)mektir\\b",
+    "Target": "çalışma, ${goal}meyi amaçlamaktadır",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0012",
+    "Pattern": "\\bçalışmanın amacı,? (?<goal>[^.!?;\\r\\n\\a]{3,1100}?)mektir\\b",
+    "Target": "çalışma, ${goal}meyi hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0013",
+    "Pattern": "\\b(?:bu )?çalışmanın ikincil amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)maktır\\b",
+    "Target": "çalışma, ikincil amaç doğrultusunda ${goal}mayı hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0014",
+    "Pattern": "\\b(?:bu )?çalışmanın ikincil amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)maktır\\b",
+    "Target": "ikincil amaç olarak, çalışma ${goal}mayı hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0015",
+    "Pattern": "\\b(?:bu )?çalışmanın ikincil amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)mektir\\b",
+    "Target": "çalışma, ikincil amaç doğrultusunda ${goal}meyi hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0016",
+    "Pattern": "\\b(?:bu )?çalışmanın ikincil amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)mektir\\b",
+    "Target": "ikincil amaç olarak, çalışma ${goal}meyi hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0017",
+    "Pattern": "\\b(?:bu )?çalışmanın birincil amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)maktır\\b",
+    "Target": "çalışma, birincil amaç doğrultusunda ${goal}mayı hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0018",
+    "Pattern": "\\b(?:bu )?çalışmanın birincil amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)maktır\\b",
+    "Target": "birincil amaç olarak, çalışma ${goal}mayı hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0019",
+    "Pattern": "\\b(?:bu )?çalışmanın birincil amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)mektir\\b",
+    "Target": "çalışma, birincil amaç doğrultusunda ${goal}meyi hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0020",
+    "Pattern": "\\b(?:bu )?çalışmanın birincil amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)mektir\\b",
+    "Target": "birincil amaç olarak, çalışma ${goal}meyi hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0021",
+    "Pattern": "\\b(?:bu )?çalışmanın temel amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)maktır\\b",
+    "Target": "çalışma, temel amaç doğrultusunda ${goal}mayı hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0022",
+    "Pattern": "\\b(?:bu )?çalışmanın temel amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)maktır\\b",
+    "Target": "temel amaç olarak, çalışma ${goal}mayı hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0023",
+    "Pattern": "\\b(?:bu )?çalışmanın temel amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)mektir\\b",
+    "Target": "çalışma, temel amaç doğrultusunda ${goal}meyi hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0024",
+    "Pattern": "\\b(?:bu )?çalışmanın temel amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)mektir\\b",
+    "Target": "temel amaç olarak, çalışma ${goal}meyi hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0025",
+    "Pattern": "\\b(?:bu )?çalışmanın diğer amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)maktır\\b",
+    "Target": "çalışma, diğer amaç doğrultusunda ${goal}mayı hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0026",
+    "Pattern": "\\b(?:bu )?çalışmanın diğer amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)maktır\\b",
+    "Target": "diğer amaç olarak, çalışma ${goal}mayı hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0027",
+    "Pattern": "\\b(?:bu )?çalışmanın diğer amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)mektir\\b",
+    "Target": "çalışma, diğer amaç doğrultusunda ${goal}meyi hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0028",
+    "Pattern": "\\b(?:bu )?çalışmanın diğer amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)mektir\\b",
+    "Target": "diğer amaç olarak, çalışma ${goal}meyi hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0029",
+    "Pattern": "\\bbu araştırmanın amacı,? (?<goal>[^.!?;\\r\\n\\a]{3,1100}?)maktır\\b",
+    "Target": "bu araştırma, ${goal}mayı amaçlamaktadır",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0030",
+    "Pattern": "\\bbu araştırmanın amacı,? (?<goal>[^.!?;\\r\\n\\a]{3,1100}?)maktır\\b",
+    "Target": "bu araştırma, ${goal}mayı hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0031",
+    "Pattern": "\\bbu araştırmanın amacı,? (?<goal>[^.!?;\\r\\n\\a]{3,1100}?)mektir\\b",
+    "Target": "bu araştırma, ${goal}meyi amaçlamaktadır",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0032",
+    "Pattern": "\\bbu araştırmanın amacı,? (?<goal>[^.!?;\\r\\n\\a]{3,1100}?)mektir\\b",
+    "Target": "bu araştırma, ${goal}meyi hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0033",
+    "Pattern": "\\bmevcut araştırmanın amacı,? (?<goal>[^.!?;\\r\\n\\a]{3,1100}?)maktır\\b",
+    "Target": "mevcut araştırma, ${goal}mayı amaçlamaktadır",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0034",
+    "Pattern": "\\bmevcut araştırmanın amacı,? (?<goal>[^.!?;\\r\\n\\a]{3,1100}?)maktır\\b",
+    "Target": "mevcut araştırma, ${goal}mayı hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0035",
+    "Pattern": "\\bmevcut araştırmanın amacı,? (?<goal>[^.!?;\\r\\n\\a]{3,1100}?)mektir\\b",
+    "Target": "mevcut araştırma, ${goal}meyi amaçlamaktadır",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0036",
+    "Pattern": "\\bmevcut araştırmanın amacı,? (?<goal>[^.!?;\\r\\n\\a]{3,1100}?)mektir\\b",
+    "Target": "mevcut araştırma, ${goal}meyi hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0037",
+    "Pattern": "\\baraştırmanın amacı,? (?<goal>[^.!?;\\r\\n\\a]{3,1100}?)maktır\\b",
+    "Target": "araştırma, ${goal}mayı amaçlamaktadır",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0038",
+    "Pattern": "\\baraştırmanın amacı,? (?<goal>[^.!?;\\r\\n\\a]{3,1100}?)maktır\\b",
+    "Target": "araştırma, ${goal}mayı hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0039",
+    "Pattern": "\\baraştırmanın amacı,? (?<goal>[^.!?;\\r\\n\\a]{3,1100}?)mektir\\b",
+    "Target": "araştırma, ${goal}meyi amaçlamaktadır",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0040",
+    "Pattern": "\\baraştırmanın amacı,? (?<goal>[^.!?;\\r\\n\\a]{3,1100}?)mektir\\b",
+    "Target": "araştırma, ${goal}meyi hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0041",
+    "Pattern": "\\b(?:bu )?araştırmanın ikincil amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)maktır\\b",
+    "Target": "araştırma, ikincil amaç doğrultusunda ${goal}mayı hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0042",
+    "Pattern": "\\b(?:bu )?araştırmanın ikincil amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)maktır\\b",
+    "Target": "ikincil amaç olarak, araştırma ${goal}mayı hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0043",
+    "Pattern": "\\b(?:bu )?araştırmanın ikincil amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)mektir\\b",
+    "Target": "araştırma, ikincil amaç doğrultusunda ${goal}meyi hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0044",
+    "Pattern": "\\b(?:bu )?araştırmanın ikincil amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)mektir\\b",
+    "Target": "ikincil amaç olarak, araştırma ${goal}meyi hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0045",
+    "Pattern": "\\b(?:bu )?araştırmanın birincil amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)maktır\\b",
+    "Target": "araştırma, birincil amaç doğrultusunda ${goal}mayı hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0046",
+    "Pattern": "\\b(?:bu )?araştırmanın birincil amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)maktır\\b",
+    "Target": "birincil amaç olarak, araştırma ${goal}mayı hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0047",
+    "Pattern": "\\b(?:bu )?araştırmanın birincil amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)mektir\\b",
+    "Target": "araştırma, birincil amaç doğrultusunda ${goal}meyi hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0048",
+    "Pattern": "\\b(?:bu )?araştırmanın birincil amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)mektir\\b",
+    "Target": "birincil amaç olarak, araştırma ${goal}meyi hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0049",
+    "Pattern": "\\b(?:bu )?araştırmanın temel amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)maktır\\b",
+    "Target": "araştırma, temel amaç doğrultusunda ${goal}mayı hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0050",
+    "Pattern": "\\b(?:bu )?araştırmanın temel amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)maktır\\b",
+    "Target": "temel amaç olarak, araştırma ${goal}mayı hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0051",
+    "Pattern": "\\b(?:bu )?araştırmanın temel amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)mektir\\b",
+    "Target": "araştırma, temel amaç doğrultusunda ${goal}meyi hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0052",
+    "Pattern": "\\b(?:bu )?araştırmanın temel amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)mektir\\b",
+    "Target": "temel amaç olarak, araştırma ${goal}meyi hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0053",
+    "Pattern": "\\b(?:bu )?araştırmanın diğer amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)maktır\\b",
+    "Target": "araştırma, diğer amaç doğrultusunda ${goal}mayı hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0054",
+    "Pattern": "\\b(?:bu )?araştırmanın diğer amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)maktır\\b",
+    "Target": "diğer amaç olarak, araştırma ${goal}mayı hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0055",
+    "Pattern": "\\b(?:bu )?araştırmanın diğer amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)mektir\\b",
+    "Target": "araştırma, diğer amaç doğrultusunda ${goal}meyi hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0056",
+    "Pattern": "\\b(?:bu )?araştırmanın diğer amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)mektir\\b",
+    "Target": "diğer amaç olarak, araştırma ${goal}meyi hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0057",
+    "Pattern": "\\bbu incelemenin amacı,? (?<goal>[^.!?;\\r\\n\\a]{3,1100}?)maktır\\b",
+    "Target": "bu inceleme, ${goal}mayı amaçlamaktadır",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0058",
+    "Pattern": "\\bbu incelemenin amacı,? (?<goal>[^.!?;\\r\\n\\a]{3,1100}?)maktır\\b",
+    "Target": "bu inceleme, ${goal}mayı hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0059",
+    "Pattern": "\\bbu incelemenin amacı,? (?<goal>[^.!?;\\r\\n\\a]{3,1100}?)mektir\\b",
+    "Target": "bu inceleme, ${goal}meyi amaçlamaktadır",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0060",
+    "Pattern": "\\bbu incelemenin amacı,? (?<goal>[^.!?;\\r\\n\\a]{3,1100}?)mektir\\b",
+    "Target": "bu inceleme, ${goal}meyi hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0061",
+    "Pattern": "\\bmevcut incelemenin amacı,? (?<goal>[^.!?;\\r\\n\\a]{3,1100}?)maktır\\b",
+    "Target": "mevcut inceleme, ${goal}mayı amaçlamaktadır",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0062",
+    "Pattern": "\\bmevcut incelemenin amacı,? (?<goal>[^.!?;\\r\\n\\a]{3,1100}?)maktır\\b",
+    "Target": "mevcut inceleme, ${goal}mayı hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0063",
+    "Pattern": "\\bmevcut incelemenin amacı,? (?<goal>[^.!?;\\r\\n\\a]{3,1100}?)mektir\\b",
+    "Target": "mevcut inceleme, ${goal}meyi amaçlamaktadır",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0064",
+    "Pattern": "\\bmevcut incelemenin amacı,? (?<goal>[^.!?;\\r\\n\\a]{3,1100}?)mektir\\b",
+    "Target": "mevcut inceleme, ${goal}meyi hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0065",
+    "Pattern": "\\bincelemenin amacı,? (?<goal>[^.!?;\\r\\n\\a]{3,1100}?)maktır\\b",
+    "Target": "inceleme, ${goal}mayı amaçlamaktadır",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0066",
+    "Pattern": "\\bincelemenin amacı,? (?<goal>[^.!?;\\r\\n\\a]{3,1100}?)maktır\\b",
+    "Target": "inceleme, ${goal}mayı hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0067",
+    "Pattern": "\\bincelemenin amacı,? (?<goal>[^.!?;\\r\\n\\a]{3,1100}?)mektir\\b",
+    "Target": "inceleme, ${goal}meyi amaçlamaktadır",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0068",
+    "Pattern": "\\bincelemenin amacı,? (?<goal>[^.!?;\\r\\n\\a]{3,1100}?)mektir\\b",
+    "Target": "inceleme, ${goal}meyi hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0069",
+    "Pattern": "\\b(?:bu )?incelemenin ikincil amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)maktır\\b",
+    "Target": "inceleme, ikincil amaç doğrultusunda ${goal}mayı hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0070",
+    "Pattern": "\\b(?:bu )?incelemenin ikincil amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)maktır\\b",
+    "Target": "ikincil amaç olarak, inceleme ${goal}mayı hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0071",
+    "Pattern": "\\b(?:bu )?incelemenin ikincil amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)mektir\\b",
+    "Target": "inceleme, ikincil amaç doğrultusunda ${goal}meyi hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0072",
+    "Pattern": "\\b(?:bu )?incelemenin ikincil amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)mektir\\b",
+    "Target": "ikincil amaç olarak, inceleme ${goal}meyi hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0073",
+    "Pattern": "\\b(?:bu )?incelemenin birincil amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)maktır\\b",
+    "Target": "inceleme, birincil amaç doğrultusunda ${goal}mayı hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0074",
+    "Pattern": "\\b(?:bu )?incelemenin birincil amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)maktır\\b",
+    "Target": "birincil amaç olarak, inceleme ${goal}mayı hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0075",
+    "Pattern": "\\b(?:bu )?incelemenin birincil amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)mektir\\b",
+    "Target": "inceleme, birincil amaç doğrultusunda ${goal}meyi hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0076",
+    "Pattern": "\\b(?:bu )?incelemenin birincil amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)mektir\\b",
+    "Target": "birincil amaç olarak, inceleme ${goal}meyi hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0077",
+    "Pattern": "\\b(?:bu )?incelemenin temel amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)maktır\\b",
+    "Target": "inceleme, temel amaç doğrultusunda ${goal}mayı hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0078",
+    "Pattern": "\\b(?:bu )?incelemenin temel amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)maktır\\b",
+    "Target": "temel amaç olarak, inceleme ${goal}mayı hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0079",
+    "Pattern": "\\b(?:bu )?incelemenin temel amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)mektir\\b",
+    "Target": "inceleme, temel amaç doğrultusunda ${goal}meyi hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0080",
+    "Pattern": "\\b(?:bu )?incelemenin temel amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)mektir\\b",
+    "Target": "temel amaç olarak, inceleme ${goal}meyi hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0081",
+    "Pattern": "\\b(?:bu )?incelemenin diğer amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)maktır\\b",
+    "Target": "inceleme, diğer amaç doğrultusunda ${goal}mayı hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0082",
+    "Pattern": "\\b(?:bu )?incelemenin diğer amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)maktır\\b",
+    "Target": "diğer amaç olarak, inceleme ${goal}mayı hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0083",
+    "Pattern": "\\b(?:bu )?incelemenin diğer amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)mektir\\b",
+    "Target": "inceleme, diğer amaç doğrultusunda ${goal}meyi hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0084",
+    "Pattern": "\\b(?:bu )?incelemenin diğer amacı,? (?:ise )?(?<goal>[^.!?;\\r\\n\\a]{3,1100}?)mektir\\b",
+    "Target": "diğer amaç olarak, inceleme ${goal}meyi hedeflemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "amacı"
+  },
+  {
+    "Id": "sentence-v1-0085",
+    "Pattern": "\\b(?<scope>(?:bu|mevcut|sunulan) (?:çalışmada|araştırmada|incelemede)) (?<object>[^.!?;\\r\\n\\a]{3,1000}?) incelenmiştir\\b",
+    "Target": "${object}, ${lower:scope} incelenmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "incelenmiştir"
+  },
+  {
+    "Id": "sentence-v1-0086",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) retrospektif olarak incelenmiştir\\b",
+    "Target": "retrospektif olarak, ${object} incelenmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "retrospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0087",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) prospektif olarak incelenmiştir\\b",
+    "Target": "prospektif olarak, ${object} incelenmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "prospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0088",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nitel olarak incelenmiştir\\b",
+    "Target": "nitel olarak, ${object} incelenmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nitel olarak"
+  },
+  {
+    "Id": "sentence-v1-0089",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nicel olarak incelenmiştir\\b",
+    "Target": "nicel olarak, ${object} incelenmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nicel olarak"
+  },
+  {
+    "Id": "sentence-v1-0090",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) sistematik olarak incelenmiştir\\b",
+    "Target": "sistematik olarak, ${object} incelenmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "sistematik olarak"
+  },
+  {
+    "Id": "sentence-v1-0091",
+    "Pattern": "\\b(?<scope>(?:bu|mevcut|sunulan) (?:çalışmada|araştırmada|incelemede)) (?<object>[^.!?;\\r\\n\\a]{3,1000}?) incelenmemiştir\\b",
+    "Target": "${object}, ${lower:scope} incelenmemiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "incelenmemiştir"
+  },
+  {
+    "Id": "sentence-v1-0092",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) retrospektif olarak incelenmemiştir\\b",
+    "Target": "retrospektif olarak, ${object} incelenmemiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "retrospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0093",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) prospektif olarak incelenmemiştir\\b",
+    "Target": "prospektif olarak, ${object} incelenmemiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "prospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0094",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nitel olarak incelenmemiştir\\b",
+    "Target": "nitel olarak, ${object} incelenmemiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nitel olarak"
+  },
+  {
+    "Id": "sentence-v1-0095",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nicel olarak incelenmemiştir\\b",
+    "Target": "nicel olarak, ${object} incelenmemiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nicel olarak"
+  },
+  {
+    "Id": "sentence-v1-0096",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) sistematik olarak incelenmemiştir\\b",
+    "Target": "sistematik olarak, ${object} incelenmemiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "sistematik olarak"
+  },
+  {
+    "Id": "sentence-v1-0097",
+    "Pattern": "\\b(?<scope>(?:bu|mevcut|sunulan) (?:çalışmada|araştırmada|incelemede)) (?<object>[^.!?;\\r\\n\\a]{3,1000}?) incelenmektedir\\b",
+    "Target": "${object}, ${lower:scope} incelenmektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "incelenmektedir"
+  },
+  {
+    "Id": "sentence-v1-0098",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) retrospektif olarak incelenmektedir\\b",
+    "Target": "retrospektif olarak, ${object} incelenmektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "retrospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0099",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) prospektif olarak incelenmektedir\\b",
+    "Target": "prospektif olarak, ${object} incelenmektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "prospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0100",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nitel olarak incelenmektedir\\b",
+    "Target": "nitel olarak, ${object} incelenmektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nitel olarak"
+  },
+  {
+    "Id": "sentence-v1-0101",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nicel olarak incelenmektedir\\b",
+    "Target": "nicel olarak, ${object} incelenmektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nicel olarak"
+  },
+  {
+    "Id": "sentence-v1-0102",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) sistematik olarak incelenmektedir\\b",
+    "Target": "sistematik olarak, ${object} incelenmektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "sistematik olarak"
+  },
+  {
+    "Id": "sentence-v1-0103",
+    "Pattern": "\\b(?<scope>(?:bu|mevcut|sunulan) (?:çalışmada|araştırmada|incelemede)) (?<object>[^.!?;\\r\\n\\a]{3,1000}?) incelenmemektedir\\b",
+    "Target": "${object}, ${lower:scope} incelenmemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "incelenmemektedir"
+  },
+  {
+    "Id": "sentence-v1-0104",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) retrospektif olarak incelenmemektedir\\b",
+    "Target": "retrospektif olarak, ${object} incelenmemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "retrospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0105",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) prospektif olarak incelenmemektedir\\b",
+    "Target": "prospektif olarak, ${object} incelenmemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "prospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0106",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nitel olarak incelenmemektedir\\b",
+    "Target": "nitel olarak, ${object} incelenmemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nitel olarak"
+  },
+  {
+    "Id": "sentence-v1-0107",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nicel olarak incelenmemektedir\\b",
+    "Target": "nicel olarak, ${object} incelenmemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nicel olarak"
+  },
+  {
+    "Id": "sentence-v1-0108",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) sistematik olarak incelenmemektedir\\b",
+    "Target": "sistematik olarak, ${object} incelenmemektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "sistematik olarak"
+  },
+  {
+    "Id": "sentence-v1-0109",
+    "Pattern": "\\b(?<scope>(?:bu|mevcut|sunulan) (?:çalışmada|araştırmada|incelemede)) (?<object>[^.!?;\\r\\n\\a]{3,1000}?) karşılaştırılmıştır\\b",
+    "Target": "${object}, ${lower:scope} karşılaştırılmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "karşılaştırılmıştır"
+  },
+  {
+    "Id": "sentence-v1-0110",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) retrospektif olarak karşılaştırılmıştır\\b",
+    "Target": "retrospektif olarak, ${object} karşılaştırılmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "retrospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0111",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) prospektif olarak karşılaştırılmıştır\\b",
+    "Target": "prospektif olarak, ${object} karşılaştırılmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "prospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0112",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nitel olarak karşılaştırılmıştır\\b",
+    "Target": "nitel olarak, ${object} karşılaştırılmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nitel olarak"
+  },
+  {
+    "Id": "sentence-v1-0113",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nicel olarak karşılaştırılmıştır\\b",
+    "Target": "nicel olarak, ${object} karşılaştırılmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nicel olarak"
+  },
+  {
+    "Id": "sentence-v1-0114",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) sistematik olarak karşılaştırılmıştır\\b",
+    "Target": "sistematik olarak, ${object} karşılaştırılmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "sistematik olarak"
+  },
+  {
+    "Id": "sentence-v1-0115",
+    "Pattern": "\\b(?<scope>(?:bu|mevcut|sunulan) (?:çalışmada|araştırmada|incelemede)) (?<object>[^.!?;\\r\\n\\a]{3,1000}?) karşılaştırılmamıştır\\b",
+    "Target": "${object}, ${lower:scope} karşılaştırılmamıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "karşılaştırılmamıştır"
+  },
+  {
+    "Id": "sentence-v1-0116",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) retrospektif olarak karşılaştırılmamıştır\\b",
+    "Target": "retrospektif olarak, ${object} karşılaştırılmamıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "retrospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0117",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) prospektif olarak karşılaştırılmamıştır\\b",
+    "Target": "prospektif olarak, ${object} karşılaştırılmamıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "prospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0118",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nitel olarak karşılaştırılmamıştır\\b",
+    "Target": "nitel olarak, ${object} karşılaştırılmamıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nitel olarak"
+  },
+  {
+    "Id": "sentence-v1-0119",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nicel olarak karşılaştırılmamıştır\\b",
+    "Target": "nicel olarak, ${object} karşılaştırılmamıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nicel olarak"
+  },
+  {
+    "Id": "sentence-v1-0120",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) sistematik olarak karşılaştırılmamıştır\\b",
+    "Target": "sistematik olarak, ${object} karşılaştırılmamıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "sistematik olarak"
+  },
+  {
+    "Id": "sentence-v1-0121",
+    "Pattern": "\\b(?<scope>(?:bu|mevcut|sunulan) (?:çalışmada|araştırmada|incelemede)) (?<object>[^.!?;\\r\\n\\a]{3,1000}?) karşılaştırılmaktadır\\b",
+    "Target": "${object}, ${lower:scope} karşılaştırılmaktadır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "karşılaştırılmaktadır"
+  },
+  {
+    "Id": "sentence-v1-0122",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) retrospektif olarak karşılaştırılmaktadır\\b",
+    "Target": "retrospektif olarak, ${object} karşılaştırılmaktadır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "retrospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0123",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) prospektif olarak karşılaştırılmaktadır\\b",
+    "Target": "prospektif olarak, ${object} karşılaştırılmaktadır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "prospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0124",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nitel olarak karşılaştırılmaktadır\\b",
+    "Target": "nitel olarak, ${object} karşılaştırılmaktadır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nitel olarak"
+  },
+  {
+    "Id": "sentence-v1-0125",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nicel olarak karşılaştırılmaktadır\\b",
+    "Target": "nicel olarak, ${object} karşılaştırılmaktadır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nicel olarak"
+  },
+  {
+    "Id": "sentence-v1-0126",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) sistematik olarak karşılaştırılmaktadır\\b",
+    "Target": "sistematik olarak, ${object} karşılaştırılmaktadır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "sistematik olarak"
+  },
+  {
+    "Id": "sentence-v1-0127",
+    "Pattern": "\\b(?<scope>(?:bu|mevcut|sunulan) (?:çalışmada|araştırmada|incelemede)) (?<object>[^.!?;\\r\\n\\a]{3,1000}?) değerlendirilmiştir\\b",
+    "Target": "${object}, ${lower:scope} değerlendirilmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "değerlendirilmiştir"
+  },
+  {
+    "Id": "sentence-v1-0128",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) retrospektif olarak değerlendirilmiştir\\b",
+    "Target": "retrospektif olarak, ${object} değerlendirilmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "retrospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0129",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) prospektif olarak değerlendirilmiştir\\b",
+    "Target": "prospektif olarak, ${object} değerlendirilmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "prospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0130",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nitel olarak değerlendirilmiştir\\b",
+    "Target": "nitel olarak, ${object} değerlendirilmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nitel olarak"
+  },
+  {
+    "Id": "sentence-v1-0131",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nicel olarak değerlendirilmiştir\\b",
+    "Target": "nicel olarak, ${object} değerlendirilmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nicel olarak"
+  },
+  {
+    "Id": "sentence-v1-0132",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) sistematik olarak değerlendirilmiştir\\b",
+    "Target": "sistematik olarak, ${object} değerlendirilmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "sistematik olarak"
+  },
+  {
+    "Id": "sentence-v1-0133",
+    "Pattern": "\\b(?<scope>(?:bu|mevcut|sunulan) (?:çalışmada|araştırmada|incelemede)) (?<object>[^.!?;\\r\\n\\a]{3,1000}?) değerlendirilmemiştir\\b",
+    "Target": "${object}, ${lower:scope} değerlendirilmemiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "değerlendirilmemiştir"
+  },
+  {
+    "Id": "sentence-v1-0134",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) retrospektif olarak değerlendirilmemiştir\\b",
+    "Target": "retrospektif olarak, ${object} değerlendirilmemiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "retrospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0135",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) prospektif olarak değerlendirilmemiştir\\b",
+    "Target": "prospektif olarak, ${object} değerlendirilmemiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "prospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0136",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nitel olarak değerlendirilmemiştir\\b",
+    "Target": "nitel olarak, ${object} değerlendirilmemiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nitel olarak"
+  },
+  {
+    "Id": "sentence-v1-0137",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nicel olarak değerlendirilmemiştir\\b",
+    "Target": "nicel olarak, ${object} değerlendirilmemiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nicel olarak"
+  },
+  {
+    "Id": "sentence-v1-0138",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) sistematik olarak değerlendirilmemiştir\\b",
+    "Target": "sistematik olarak, ${object} değerlendirilmemiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "sistematik olarak"
+  },
+  {
+    "Id": "sentence-v1-0139",
+    "Pattern": "\\b(?<scope>(?:bu|mevcut|sunulan) (?:çalışmada|araştırmada|incelemede)) (?<object>[^.!?;\\r\\n\\a]{3,1000}?) değerlendirilmektedir\\b",
+    "Target": "${object}, ${lower:scope} değerlendirilmektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "değerlendirilmektedir"
+  },
+  {
+    "Id": "sentence-v1-0140",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) retrospektif olarak değerlendirilmektedir\\b",
+    "Target": "retrospektif olarak, ${object} değerlendirilmektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "retrospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0141",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) prospektif olarak değerlendirilmektedir\\b",
+    "Target": "prospektif olarak, ${object} değerlendirilmektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "prospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0142",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nitel olarak değerlendirilmektedir\\b",
+    "Target": "nitel olarak, ${object} değerlendirilmektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nitel olarak"
+  },
+  {
+    "Id": "sentence-v1-0143",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nicel olarak değerlendirilmektedir\\b",
+    "Target": "nicel olarak, ${object} değerlendirilmektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nicel olarak"
+  },
+  {
+    "Id": "sentence-v1-0144",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) sistematik olarak değerlendirilmektedir\\b",
+    "Target": "sistematik olarak, ${object} değerlendirilmektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "sistematik olarak"
+  },
+  {
+    "Id": "sentence-v1-0145",
+    "Pattern": "\\b(?<scope>(?:bu|mevcut|sunulan) (?:çalışmada|araştırmada|incelemede)) (?<object>[^.!?;\\r\\n\\a]{3,1000}?) analiz edilmiştir\\b",
+    "Target": "${object}, ${lower:scope} analiz edilmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "analiz edilmiştir"
+  },
+  {
+    "Id": "sentence-v1-0146",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) retrospektif olarak analiz edilmiştir\\b",
+    "Target": "retrospektif olarak, ${object} analiz edilmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "retrospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0147",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) prospektif olarak analiz edilmiştir\\b",
+    "Target": "prospektif olarak, ${object} analiz edilmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "prospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0148",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nitel olarak analiz edilmiştir\\b",
+    "Target": "nitel olarak, ${object} analiz edilmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nitel olarak"
+  },
+  {
+    "Id": "sentence-v1-0149",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nicel olarak analiz edilmiştir\\b",
+    "Target": "nicel olarak, ${object} analiz edilmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nicel olarak"
+  },
+  {
+    "Id": "sentence-v1-0150",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) sistematik olarak analiz edilmiştir\\b",
+    "Target": "sistematik olarak, ${object} analiz edilmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "sistematik olarak"
+  },
+  {
+    "Id": "sentence-v1-0151",
+    "Pattern": "\\b(?<scope>(?:bu|mevcut|sunulan) (?:çalışmada|araştırmada|incelemede)) (?<object>[^.!?;\\r\\n\\a]{3,1000}?) analiz edilmemiştir\\b",
+    "Target": "${object}, ${lower:scope} analiz edilmemiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "analiz edilmemiştir"
+  },
+  {
+    "Id": "sentence-v1-0152",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) retrospektif olarak analiz edilmemiştir\\b",
+    "Target": "retrospektif olarak, ${object} analiz edilmemiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "retrospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0153",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) prospektif olarak analiz edilmemiştir\\b",
+    "Target": "prospektif olarak, ${object} analiz edilmemiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "prospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0154",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nitel olarak analiz edilmemiştir\\b",
+    "Target": "nitel olarak, ${object} analiz edilmemiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nitel olarak"
+  },
+  {
+    "Id": "sentence-v1-0155",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nicel olarak analiz edilmemiştir\\b",
+    "Target": "nicel olarak, ${object} analiz edilmemiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nicel olarak"
+  },
+  {
+    "Id": "sentence-v1-0156",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) sistematik olarak analiz edilmemiştir\\b",
+    "Target": "sistematik olarak, ${object} analiz edilmemiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "sistematik olarak"
+  },
+  {
+    "Id": "sentence-v1-0157",
+    "Pattern": "\\b(?<scope>(?:bu|mevcut|sunulan) (?:çalışmada|araştırmada|incelemede)) (?<object>[^.!?;\\r\\n\\a]{3,1000}?) analiz edilmektedir\\b",
+    "Target": "${object}, ${lower:scope} analiz edilmektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "analiz edilmektedir"
+  },
+  {
+    "Id": "sentence-v1-0158",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) retrospektif olarak analiz edilmektedir\\b",
+    "Target": "retrospektif olarak, ${object} analiz edilmektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "retrospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0159",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) prospektif olarak analiz edilmektedir\\b",
+    "Target": "prospektif olarak, ${object} analiz edilmektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "prospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0160",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nitel olarak analiz edilmektedir\\b",
+    "Target": "nitel olarak, ${object} analiz edilmektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nitel olarak"
+  },
+  {
+    "Id": "sentence-v1-0161",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nicel olarak analiz edilmektedir\\b",
+    "Target": "nicel olarak, ${object} analiz edilmektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nicel olarak"
+  },
+  {
+    "Id": "sentence-v1-0162",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) sistematik olarak analiz edilmektedir\\b",
+    "Target": "sistematik olarak, ${object} analiz edilmektedir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "sistematik olarak"
+  },
+  {
+    "Id": "sentence-v1-0163",
+    "Pattern": "\\b(?<scope>(?:bu|mevcut|sunulan) (?:çalışmada|araştırmada|incelemede)) (?<object>[^.!?;\\r\\n\\a]{3,1000}?) sınıflandırılmıştır\\b",
+    "Target": "${object}, ${lower:scope} sınıflandırılmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "sınıflandırılmıştır"
+  },
+  {
+    "Id": "sentence-v1-0164",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) retrospektif olarak sınıflandırılmıştır\\b",
+    "Target": "retrospektif olarak, ${object} sınıflandırılmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "retrospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0165",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) prospektif olarak sınıflandırılmıştır\\b",
+    "Target": "prospektif olarak, ${object} sınıflandırılmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "prospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0166",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nitel olarak sınıflandırılmıştır\\b",
+    "Target": "nitel olarak, ${object} sınıflandırılmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nitel olarak"
+  },
+  {
+    "Id": "sentence-v1-0167",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nicel olarak sınıflandırılmıştır\\b",
+    "Target": "nicel olarak, ${object} sınıflandırılmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nicel olarak"
+  },
+  {
+    "Id": "sentence-v1-0168",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) sistematik olarak sınıflandırılmıştır\\b",
+    "Target": "sistematik olarak, ${object} sınıflandırılmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "sistematik olarak"
+  },
+  {
+    "Id": "sentence-v1-0169",
+    "Pattern": "\\b(?<scope>(?:bu|mevcut|sunulan) (?:çalışmada|araştırmada|incelemede)) (?<object>[^.!?;\\r\\n\\a]{3,1000}?) sınıflandırılmamıştır\\b",
+    "Target": "${object}, ${lower:scope} sınıflandırılmamıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "sınıflandırılmamıştır"
+  },
+  {
+    "Id": "sentence-v1-0170",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) retrospektif olarak sınıflandırılmamıştır\\b",
+    "Target": "retrospektif olarak, ${object} sınıflandırılmamıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "retrospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0171",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) prospektif olarak sınıflandırılmamıştır\\b",
+    "Target": "prospektif olarak, ${object} sınıflandırılmamıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "prospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0172",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nitel olarak sınıflandırılmamıştır\\b",
+    "Target": "nitel olarak, ${object} sınıflandırılmamıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nitel olarak"
+  },
+  {
+    "Id": "sentence-v1-0173",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nicel olarak sınıflandırılmamıştır\\b",
+    "Target": "nicel olarak, ${object} sınıflandırılmamıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nicel olarak"
+  },
+  {
+    "Id": "sentence-v1-0174",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) sistematik olarak sınıflandırılmamıştır\\b",
+    "Target": "sistematik olarak, ${object} sınıflandırılmamıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "sistematik olarak"
+  },
+  {
+    "Id": "sentence-v1-0175",
+    "Pattern": "\\b(?<scope>(?:bu|mevcut|sunulan) (?:çalışmada|araştırmada|incelemede)) (?<object>[^.!?;\\r\\n\\a]{3,1000}?) sınıflandırılmaktadır\\b",
+    "Target": "${object}, ${lower:scope} sınıflandırılmaktadır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "sınıflandırılmaktadır"
+  },
+  {
+    "Id": "sentence-v1-0176",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) retrospektif olarak sınıflandırılmaktadır\\b",
+    "Target": "retrospektif olarak, ${object} sınıflandırılmaktadır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "retrospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0177",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) prospektif olarak sınıflandırılmaktadır\\b",
+    "Target": "prospektif olarak, ${object} sınıflandırılmaktadır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "prospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0178",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nitel olarak sınıflandırılmaktadır\\b",
+    "Target": "nitel olarak, ${object} sınıflandırılmaktadır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nitel olarak"
+  },
+  {
+    "Id": "sentence-v1-0179",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nicel olarak sınıflandırılmaktadır\\b",
+    "Target": "nicel olarak, ${object} sınıflandırılmaktadır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nicel olarak"
+  },
+  {
+    "Id": "sentence-v1-0180",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) sistematik olarak sınıflandırılmaktadır\\b",
+    "Target": "sistematik olarak, ${object} sınıflandırılmaktadır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "sistematik olarak"
+  },
+  {
+    "Id": "sentence-v1-0181",
+    "Pattern": "\\b(?<scope>(?:bu|mevcut|sunulan) (?:çalışmada|araştırmada|incelemede)) (?<object>[^.!?;\\r\\n\\a]{3,1000}?) toplanmıştır\\b",
+    "Target": "${object}, ${lower:scope} toplanmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "toplanmıştır"
+  },
+  {
+    "Id": "sentence-v1-0182",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) retrospektif olarak toplanmıştır\\b",
+    "Target": "retrospektif olarak, ${object} toplanmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "retrospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0183",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) prospektif olarak toplanmıştır\\b",
+    "Target": "prospektif olarak, ${object} toplanmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "prospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0184",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nitel olarak toplanmıştır\\b",
+    "Target": "nitel olarak, ${object} toplanmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nitel olarak"
+  },
+  {
+    "Id": "sentence-v1-0185",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nicel olarak toplanmıştır\\b",
+    "Target": "nicel olarak, ${object} toplanmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nicel olarak"
+  },
+  {
+    "Id": "sentence-v1-0186",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) sistematik olarak toplanmıştır\\b",
+    "Target": "sistematik olarak, ${object} toplanmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "sistematik olarak"
+  },
+  {
+    "Id": "sentence-v1-0187",
+    "Pattern": "\\b(?<scope>(?:bu|mevcut|sunulan) (?:çalışmada|araştırmada|incelemede)) (?<object>[^.!?;\\r\\n\\a]{3,1000}?) toplanmamıştır\\b",
+    "Target": "${object}, ${lower:scope} toplanmamıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "toplanmamıştır"
+  },
+  {
+    "Id": "sentence-v1-0188",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) retrospektif olarak toplanmamıştır\\b",
+    "Target": "retrospektif olarak, ${object} toplanmamıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "retrospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0189",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) prospektif olarak toplanmamıştır\\b",
+    "Target": "prospektif olarak, ${object} toplanmamıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "prospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0190",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nitel olarak toplanmamıştır\\b",
+    "Target": "nitel olarak, ${object} toplanmamıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nitel olarak"
+  },
+  {
+    "Id": "sentence-v1-0191",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nicel olarak toplanmamıştır\\b",
+    "Target": "nicel olarak, ${object} toplanmamıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nicel olarak"
+  },
+  {
+    "Id": "sentence-v1-0192",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) sistematik olarak toplanmamıştır\\b",
+    "Target": "sistematik olarak, ${object} toplanmamıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "sistematik olarak"
+  },
+  {
+    "Id": "sentence-v1-0193",
+    "Pattern": "\\b(?<scope>(?:bu|mevcut|sunulan) (?:çalışmada|araştırmada|incelemede)) (?<object>[^.!?;\\r\\n\\a]{3,1000}?) toplanmaktadır\\b",
+    "Target": "${object}, ${lower:scope} toplanmaktadır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "toplanmaktadır"
+  },
+  {
+    "Id": "sentence-v1-0194",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) retrospektif olarak toplanmaktadır\\b",
+    "Target": "retrospektif olarak, ${object} toplanmaktadır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "retrospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0195",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) prospektif olarak toplanmaktadır\\b",
+    "Target": "prospektif olarak, ${object} toplanmaktadır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "prospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0196",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nitel olarak toplanmaktadır\\b",
+    "Target": "nitel olarak, ${object} toplanmaktadır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nitel olarak"
+  },
+  {
+    "Id": "sentence-v1-0197",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nicel olarak toplanmaktadır\\b",
+    "Target": "nicel olarak, ${object} toplanmaktadır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nicel olarak"
+  },
+  {
+    "Id": "sentence-v1-0198",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) sistematik olarak toplanmaktadır\\b",
+    "Target": "sistematik olarak, ${object} toplanmaktadır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "sistematik olarak"
+  },
+  {
+    "Id": "sentence-v1-0199",
+    "Pattern": "\\b(?<scope>(?:bu|mevcut|sunulan) (?:çalışmada|araştırmada|incelemede)) (?<object>[^.!?;\\r\\n\\a]{3,1000}?) kaydedilmiştir\\b",
+    "Target": "${object}, ${lower:scope} kaydedilmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "kaydedilmiştir"
+  },
+  {
+    "Id": "sentence-v1-0200",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) retrospektif olarak kaydedilmiştir\\b",
+    "Target": "retrospektif olarak, ${object} kaydedilmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "retrospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0201",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) prospektif olarak kaydedilmiştir\\b",
+    "Target": "prospektif olarak, ${object} kaydedilmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "prospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0202",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nitel olarak kaydedilmiştir\\b",
+    "Target": "nitel olarak, ${object} kaydedilmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nitel olarak"
+  },
+  {
+    "Id": "sentence-v1-0203",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nicel olarak kaydedilmiştir\\b",
+    "Target": "nicel olarak, ${object} kaydedilmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nicel olarak"
+  },
+  {
+    "Id": "sentence-v1-0204",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) sistematik olarak kaydedilmiştir\\b",
+    "Target": "sistematik olarak, ${object} kaydedilmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "sistematik olarak"
+  },
+  {
+    "Id": "sentence-v1-0205",
+    "Pattern": "\\b(?<scope>(?:bu|mevcut|sunulan) (?:çalışmada|araştırmada|incelemede)) (?<object>[^.!?;\\r\\n\\a]{3,1000}?) kaydedilmemiştir\\b",
+    "Target": "${object}, ${lower:scope} kaydedilmemiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "kaydedilmemiştir"
+  },
+  {
+    "Id": "sentence-v1-0206",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) retrospektif olarak kaydedilmemiştir\\b",
+    "Target": "retrospektif olarak, ${object} kaydedilmemiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "retrospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0207",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) prospektif olarak kaydedilmemiştir\\b",
+    "Target": "prospektif olarak, ${object} kaydedilmemiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "prospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0208",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nitel olarak kaydedilmemiştir\\b",
+    "Target": "nitel olarak, ${object} kaydedilmemiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nitel olarak"
+  },
+  {
+    "Id": "sentence-v1-0209",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nicel olarak kaydedilmemiştir\\b",
+    "Target": "nicel olarak, ${object} kaydedilmemiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nicel olarak"
+  },
+  {
+    "Id": "sentence-v1-0210",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) sistematik olarak kaydedilmemiştir\\b",
+    "Target": "sistematik olarak, ${object} kaydedilmemiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "sistematik olarak"
+  },
+  {
+    "Id": "sentence-v1-0211",
+    "Pattern": "\\b(?<scope>(?:bu|mevcut|sunulan) (?:çalışmada|araştırmada|incelemede)) (?<object>[^.!?;\\r\\n\\a]{3,1000}?) ölçülmüştür\\b",
+    "Target": "${object}, ${lower:scope} ölçülmüştür",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "ölçülmüştür"
+  },
+  {
+    "Id": "sentence-v1-0212",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) retrospektif olarak ölçülmüştür\\b",
+    "Target": "retrospektif olarak, ${object} ölçülmüştür",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "retrospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0213",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) prospektif olarak ölçülmüştür\\b",
+    "Target": "prospektif olarak, ${object} ölçülmüştür",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "prospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0214",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nitel olarak ölçülmüştür\\b",
+    "Target": "nitel olarak, ${object} ölçülmüştür",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nitel olarak"
+  },
+  {
+    "Id": "sentence-v1-0215",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nicel olarak ölçülmüştür\\b",
+    "Target": "nicel olarak, ${object} ölçülmüştür",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nicel olarak"
+  },
+  {
+    "Id": "sentence-v1-0216",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) sistematik olarak ölçülmüştür\\b",
+    "Target": "sistematik olarak, ${object} ölçülmüştür",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "sistematik olarak"
+  },
+  {
+    "Id": "sentence-v1-0217",
+    "Pattern": "\\b(?<scope>(?:bu|mevcut|sunulan) (?:çalışmada|araştırmada|incelemede)) (?<object>[^.!?;\\r\\n\\a]{3,1000}?) ölçülmemiştir\\b",
+    "Target": "${object}, ${lower:scope} ölçülmemiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "ölçülmemiştir"
+  },
+  {
+    "Id": "sentence-v1-0218",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) retrospektif olarak ölçülmemiştir\\b",
+    "Target": "retrospektif olarak, ${object} ölçülmemiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "retrospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0219",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) prospektif olarak ölçülmemiştir\\b",
+    "Target": "prospektif olarak, ${object} ölçülmemiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "prospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0220",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nitel olarak ölçülmemiştir\\b",
+    "Target": "nitel olarak, ${object} ölçülmemiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nitel olarak"
+  },
+  {
+    "Id": "sentence-v1-0221",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nicel olarak ölçülmemiştir\\b",
+    "Target": "nicel olarak, ${object} ölçülmemiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nicel olarak"
+  },
+  {
+    "Id": "sentence-v1-0222",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) sistematik olarak ölçülmemiştir\\b",
+    "Target": "sistematik olarak, ${object} ölçülmemiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "sistematik olarak"
+  },
+  {
+    "Id": "sentence-v1-0223",
+    "Pattern": "\\b(?<scope>(?:bu|mevcut|sunulan) (?:çalışmada|araştırmada|incelemede)) (?<object>[^.!?;\\r\\n\\a]{3,1000}?) hesaplanmıştır\\b",
+    "Target": "${object}, ${lower:scope} hesaplanmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "hesaplanmıştır"
+  },
+  {
+    "Id": "sentence-v1-0224",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) retrospektif olarak hesaplanmıştır\\b",
+    "Target": "retrospektif olarak, ${object} hesaplanmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "retrospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0225",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) prospektif olarak hesaplanmıştır\\b",
+    "Target": "prospektif olarak, ${object} hesaplanmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "prospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0226",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nitel olarak hesaplanmıştır\\b",
+    "Target": "nitel olarak, ${object} hesaplanmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nitel olarak"
+  },
+  {
+    "Id": "sentence-v1-0227",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nicel olarak hesaplanmıştır\\b",
+    "Target": "nicel olarak, ${object} hesaplanmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nicel olarak"
+  },
+  {
+    "Id": "sentence-v1-0228",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) sistematik olarak hesaplanmıştır\\b",
+    "Target": "sistematik olarak, ${object} hesaplanmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "sistematik olarak"
+  },
+  {
+    "Id": "sentence-v1-0229",
+    "Pattern": "\\b(?<scope>(?:bu|mevcut|sunulan) (?:çalışmada|araştırmada|incelemede)) (?<object>[^.!?;\\r\\n\\a]{3,1000}?) hesaplanmamıştır\\b",
+    "Target": "${object}, ${lower:scope} hesaplanmamıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "hesaplanmamıştır"
+  },
+  {
+    "Id": "sentence-v1-0230",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) retrospektif olarak hesaplanmamıştır\\b",
+    "Target": "retrospektif olarak, ${object} hesaplanmamıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "retrospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0231",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) prospektif olarak hesaplanmamıştır\\b",
+    "Target": "prospektif olarak, ${object} hesaplanmamıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "prospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0232",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nitel olarak hesaplanmamıştır\\b",
+    "Target": "nitel olarak, ${object} hesaplanmamıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nitel olarak"
+  },
+  {
+    "Id": "sentence-v1-0233",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nicel olarak hesaplanmamıştır\\b",
+    "Target": "nicel olarak, ${object} hesaplanmamıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nicel olarak"
+  },
+  {
+    "Id": "sentence-v1-0234",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) sistematik olarak hesaplanmamıştır\\b",
+    "Target": "sistematik olarak, ${object} hesaplanmamıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "sistematik olarak"
+  },
+  {
+    "Id": "sentence-v1-0235",
+    "Pattern": "\\b(?<scope>(?:bu|mevcut|sunulan) (?:çalışmada|araştırmada|incelemede)) (?<object>[^.!?;\\r\\n\\a]{3,1000}?) belirlenmiştir\\b",
+    "Target": "${object}, ${lower:scope} belirlenmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "belirlenmiştir"
+  },
+  {
+    "Id": "sentence-v1-0236",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) retrospektif olarak belirlenmiştir\\b",
+    "Target": "retrospektif olarak, ${object} belirlenmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "retrospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0237",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) prospektif olarak belirlenmiştir\\b",
+    "Target": "prospektif olarak, ${object} belirlenmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "prospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0238",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nitel olarak belirlenmiştir\\b",
+    "Target": "nitel olarak, ${object} belirlenmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nitel olarak"
+  },
+  {
+    "Id": "sentence-v1-0239",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nicel olarak belirlenmiştir\\b",
+    "Target": "nicel olarak, ${object} belirlenmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nicel olarak"
+  },
+  {
+    "Id": "sentence-v1-0240",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) sistematik olarak belirlenmiştir\\b",
+    "Target": "sistematik olarak, ${object} belirlenmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "sistematik olarak"
+  },
+  {
+    "Id": "sentence-v1-0241",
+    "Pattern": "\\b(?<scope>(?:bu|mevcut|sunulan) (?:çalışmada|araştırmada|incelemede)) (?<object>[^.!?;\\r\\n\\a]{3,1000}?) belirlenmemiştir\\b",
+    "Target": "${object}, ${lower:scope} belirlenmemiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "belirlenmemiştir"
+  },
+  {
+    "Id": "sentence-v1-0242",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) retrospektif olarak belirlenmemiştir\\b",
+    "Target": "retrospektif olarak, ${object} belirlenmemiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "retrospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0243",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) prospektif olarak belirlenmemiştir\\b",
+    "Target": "prospektif olarak, ${object} belirlenmemiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "prospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0244",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nitel olarak belirlenmemiştir\\b",
+    "Target": "nitel olarak, ${object} belirlenmemiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nitel olarak"
+  },
+  {
+    "Id": "sentence-v1-0245",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) nicel olarak belirlenmemiştir\\b",
+    "Target": "nicel olarak, ${object} belirlenmemiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "nicel olarak"
+  },
+  {
+    "Id": "sentence-v1-0246",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) sistematik olarak belirlenmemiştir\\b",
+    "Target": "sistematik olarak, ${object} belirlenmemiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "sistematik olarak"
+  },
+  {
+    "Id": "sentence-v1-0247",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) incelenmiş ve kategorize edilmiştir\\b",
+    "Target": "${object} incelenerek kategorize edilmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "incelenmiş ve"
+  },
+  {
+    "Id": "sentence-v1-0248",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) incelenmiş ve sınıflandırılmıştır\\b",
+    "Target": "${object} incelenerek sınıflandırılmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "incelenmiş ve"
+  },
+  {
+    "Id": "sentence-v1-0249",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) incelenmiş ve kategorilere ayrılmıştır\\b",
+    "Target": "${object} incelenerek kategorilere ayrılmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "incelenmiş ve"
+  },
+  {
+    "Id": "sentence-v1-0250",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) toplanmış ve analiz edilmiştir\\b",
+    "Target": "${object} toplanarak analiz edilmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "toplanmış ve"
+  },
+  {
+    "Id": "sentence-v1-0251",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) toplanmış ve değerlendirilmiştir\\b",
+    "Target": "${object} toplanarak değerlendirilmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "toplanmış ve"
+  },
+  {
+    "Id": "sentence-v1-0252",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) analiz edilmiş ve yorumlanmıştır\\b",
+    "Target": "${object} analiz edilerek yorumlanmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "analiz edilmiş ve"
+  },
+  {
+    "Id": "sentence-v1-0253",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) değerlendirilmiş ve raporlanmıştır\\b",
+    "Target": "${object} değerlendirilerek raporlanmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "değerlendirilmiş ve"
+  },
+  {
+    "Id": "sentence-v1-0254",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) retrospektif olarak incelenmiş ve kategorize edilmiştir\\b",
+    "Target": "retrospektif inceleme kapsamında ${object}, incelenmiş ve kategorilere ayrılmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "retrospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0255",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) retrospektif olarak incelenmiş ve kategorize edilmiştir\\b",
+    "Target": "${object} retrospektif olarak incelenerek kategorize edilmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "retrospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0256",
+    "Pattern": "(?<gap> +)(?<object>[^.!?;\\r\\n\\a]{3,1000}?) retrospektif olarak incelenmiş ve kategorize edilmiştir\\b",
+    "Target": "${gap}Retrospektif inceleme kapsamında ${object}, incelenmiş ve kategorilere ayrılmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "retrospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0257",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) notları retrospektif olarak incelenmiş ve kategorize edilmiştir\\b",
+    "Target": "${object} notları üzerinde retrospektif inceleme yapılmış ve notlar kategorilere ayrılmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "retrospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0258",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) kayıtları retrospektif olarak incelenmiş ve kategorize edilmiştir\\b",
+    "Target": "${object} kayıtları üzerinde retrospektif inceleme yapılmış ve kayıtlar kategorilere ayrılmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "retrospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0259",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) formları retrospektif olarak incelenmiş ve kategorize edilmiştir\\b",
+    "Target": "${object} formları üzerinde retrospektif inceleme yapılmış ve formlar kategorilere ayrılmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "retrospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0260",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) dosyaları retrospektif olarak incelenmiş ve kategorize edilmiştir\\b",
+    "Target": "${object} dosyaları üzerinde retrospektif inceleme yapılmış ve dosyalar kategorilere ayrılmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "retrospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0261",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) veriler retrospektif olarak incelenmiş ve kategorize edilmiştir\\b",
+    "Target": "${object} veriler üzerinde retrospektif inceleme yapılmış ve veriler kategorilere ayrılmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "retrospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0262",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) belgeleri retrospektif olarak incelenmiş ve kategorize edilmiştir\\b",
+    "Target": "${object} belgeleri üzerinde retrospektif inceleme yapılmış ve belgeler kategorilere ayrılmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "retrospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0263",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) yanıtları retrospektif olarak incelenmiş ve kategorize edilmiştir\\b",
+    "Target": "${object} yanıtları üzerinde retrospektif inceleme yapılmış ve yanıtlar kategorilere ayrılmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "retrospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0264",
+    "Pattern": "\\b(?<object>[^.!?;\\r\\n\\a]{3,1000}?) raporları retrospektif olarak incelenmiş ve kategorize edilmiştir\\b",
+    "Target": "${object} raporları üzerinde retrospektif inceleme yapılmış ve raporlar kategorilere ayrılmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "retrospektif olarak"
+  },
+  {
+    "Id": "sentence-v1-0265",
+    "Pattern": "\\bbu çalışmada veriler analiz edilmiştir\\b",
+    "Target": "veriler, bu çalışmada analiz edilmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "bu çalışmada"
+  },
+  {
+    "Id": "sentence-v1-0266",
+    "Pattern": "\\bbu çalışmada veriler incelenmiştir\\b",
+    "Target": "veriler, bu çalışmada incelenmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "bu çalışmada"
+  },
+  {
+    "Id": "sentence-v1-0267",
+    "Pattern": "\\bbu çalışmada veriler karşılaştırılmıştır\\b",
+    "Target": "veriler, bu çalışmada karşılaştırılmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "bu çalışmada"
+  },
+  {
+    "Id": "sentence-v1-0268",
+    "Pattern": "\\bbu çalışmada bulgular analiz edilmiştir\\b",
+    "Target": "bulgular, bu çalışmada analiz edilmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "bu çalışmada"
+  },
+  {
+    "Id": "sentence-v1-0269",
+    "Pattern": "\\bbu çalışmada bulgular incelenmiştir\\b",
+    "Target": "bulgular, bu çalışmada incelenmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "bu çalışmada"
+  },
+  {
+    "Id": "sentence-v1-0270",
+    "Pattern": "\\bbu çalışmada bulgular karşılaştırılmıştır\\b",
+    "Target": "bulgular, bu çalışmada karşılaştırılmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "bu çalışmada"
+  },
+  {
+    "Id": "sentence-v1-0271",
+    "Pattern": "\\bbu çalışmada sonuçlar analiz edilmiştir\\b",
+    "Target": "sonuçlar, bu çalışmada analiz edilmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "bu çalışmada"
+  },
+  {
+    "Id": "sentence-v1-0272",
+    "Pattern": "\\bbu çalışmada sonuçlar incelenmiştir\\b",
+    "Target": "sonuçlar, bu çalışmada incelenmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "bu çalışmada"
+  },
+  {
+    "Id": "sentence-v1-0273",
+    "Pattern": "\\bbu çalışmada sonuçlar karşılaştırılmıştır\\b",
+    "Target": "sonuçlar, bu çalışmada karşılaştırılmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "bu çalışmada"
+  },
+  {
+    "Id": "sentence-v1-0274",
+    "Pattern": "\\bbu çalışmada yanıtlar analiz edilmiştir\\b",
+    "Target": "yanıtlar, bu çalışmada analiz edilmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "bu çalışmada"
+  },
+  {
+    "Id": "sentence-v1-0275",
+    "Pattern": "\\bbu çalışmada yanıtlar incelenmiştir\\b",
+    "Target": "yanıtlar, bu çalışmada incelenmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "bu çalışmada"
+  },
+  {
+    "Id": "sentence-v1-0276",
+    "Pattern": "\\bbu çalışmada yanıtlar karşılaştırılmıştır\\b",
+    "Target": "yanıtlar, bu çalışmada karşılaştırılmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "bu çalışmada"
+  },
+  {
+    "Id": "sentence-v1-0277",
+    "Pattern": "\\bbu araştırmada veriler analiz edilmiştir\\b",
+    "Target": "veriler, bu araştırmada analiz edilmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "bu araştırmada"
+  },
+  {
+    "Id": "sentence-v1-0278",
+    "Pattern": "\\bbu araştırmada veriler incelenmiştir\\b",
+    "Target": "veriler, bu araştırmada incelenmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "bu araştırmada"
+  },
+  {
+    "Id": "sentence-v1-0279",
+    "Pattern": "\\bbu araştırmada veriler karşılaştırılmıştır\\b",
+    "Target": "veriler, bu araştırmada karşılaştırılmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "bu araştırmada"
+  },
+  {
+    "Id": "sentence-v1-0280",
+    "Pattern": "\\bbu araştırmada bulgular analiz edilmiştir\\b",
+    "Target": "bulgular, bu araştırmada analiz edilmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "bu araştırmada"
+  },
+  {
+    "Id": "sentence-v1-0281",
+    "Pattern": "\\bbu araştırmada bulgular incelenmiştir\\b",
+    "Target": "bulgular, bu araştırmada incelenmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "bu araştırmada"
+  },
+  {
+    "Id": "sentence-v1-0282",
+    "Pattern": "\\bbu araştırmada bulgular karşılaştırılmıştır\\b",
+    "Target": "bulgular, bu araştırmada karşılaştırılmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "bu araştırmada"
+  },
+  {
+    "Id": "sentence-v1-0283",
+    "Pattern": "\\bbu araştırmada sonuçlar analiz edilmiştir\\b",
+    "Target": "sonuçlar, bu araştırmada analiz edilmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "bu araştırmada"
+  },
+  {
+    "Id": "sentence-v1-0284",
+    "Pattern": "\\bbu araştırmada sonuçlar incelenmiştir\\b",
+    "Target": "sonuçlar, bu araştırmada incelenmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "bu araştırmada"
+  },
+  {
+    "Id": "sentence-v1-0285",
+    "Pattern": "\\bbu araştırmada sonuçlar karşılaştırılmıştır\\b",
+    "Target": "sonuçlar, bu araştırmada karşılaştırılmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "bu araştırmada"
+  },
+  {
+    "Id": "sentence-v1-0286",
+    "Pattern": "\\bbu araştırmada yanıtlar analiz edilmiştir\\b",
+    "Target": "yanıtlar, bu araştırmada analiz edilmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "bu araştırmada"
+  },
+  {
+    "Id": "sentence-v1-0287",
+    "Pattern": "\\bbu araştırmada yanıtlar incelenmiştir\\b",
+    "Target": "yanıtlar, bu araştırmada incelenmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "bu araştırmada"
+  },
+  {
+    "Id": "sentence-v1-0288",
+    "Pattern": "\\bbu araştırmada yanıtlar karşılaştırılmıştır\\b",
+    "Target": "yanıtlar, bu araştırmada karşılaştırılmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "bu araştırmada"
+  },
+  {
+    "Id": "sentence-v1-0289",
+    "Pattern": "\\bbu incelemede veriler analiz edilmiştir\\b",
+    "Target": "veriler, bu incelemede analiz edilmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "bu incelemede"
+  },
+  {
+    "Id": "sentence-v1-0290",
+    "Pattern": "\\bbu incelemede veriler incelenmiştir\\b",
+    "Target": "veriler, bu incelemede incelenmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "bu incelemede"
+  },
+  {
+    "Id": "sentence-v1-0291",
+    "Pattern": "\\bbu incelemede veriler karşılaştırılmıştır\\b",
+    "Target": "veriler, bu incelemede karşılaştırılmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "bu incelemede"
+  },
+  {
+    "Id": "sentence-v1-0292",
+    "Pattern": "\\bbu incelemede bulgular analiz edilmiştir\\b",
+    "Target": "bulgular, bu incelemede analiz edilmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "bu incelemede"
+  },
+  {
+    "Id": "sentence-v1-0293",
+    "Pattern": "\\bbu incelemede bulgular incelenmiştir\\b",
+    "Target": "bulgular, bu incelemede incelenmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "bu incelemede"
+  },
+  {
+    "Id": "sentence-v1-0294",
+    "Pattern": "\\bbu incelemede bulgular karşılaştırılmıştır\\b",
+    "Target": "bulgular, bu incelemede karşılaştırılmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "bu incelemede"
+  },
+  {
+    "Id": "sentence-v1-0295",
+    "Pattern": "\\bbu incelemede sonuçlar analiz edilmiştir\\b",
+    "Target": "sonuçlar, bu incelemede analiz edilmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "bu incelemede"
+  },
+  {
+    "Id": "sentence-v1-0296",
+    "Pattern": "\\bbu incelemede sonuçlar incelenmiştir\\b",
+    "Target": "sonuçlar, bu incelemede incelenmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "bu incelemede"
+  },
+  {
+    "Id": "sentence-v1-0297",
+    "Pattern": "\\bbu incelemede sonuçlar karşılaştırılmıştır\\b",
+    "Target": "sonuçlar, bu incelemede karşılaştırılmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "bu incelemede"
+  },
+  {
+    "Id": "sentence-v1-0298",
+    "Pattern": "\\bbu incelemede yanıtlar analiz edilmiştir\\b",
+    "Target": "yanıtlar, bu incelemede analiz edilmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "bu incelemede"
+  },
+  {
+    "Id": "sentence-v1-0299",
+    "Pattern": "\\bbu incelemede yanıtlar incelenmiştir\\b",
+    "Target": "yanıtlar, bu incelemede incelenmiştir",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "bu incelemede"
+  },
+  {
+    "Id": "sentence-v1-0300",
+    "Pattern": "\\bbu incelemede yanıtlar karşılaştırılmıştır\\b",
+    "Target": "yanıtlar, bu incelemede karşılaştırılmıştır",
+    "Family": "cümle kuruluşu",
+    "Strength": 3,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "bu incelemede"
+  },
+  {
+    "Id": "sentence-v1-0301",
+    "Pattern": "\\b(?<groups>[^.!?;\\r\\n\\a]{3,220}?) arasında bir fark bulunmuştur\\b",
+    "Target": "${groups} arasında bir farklılık olduğu görülmüştür",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "fark bulunmuştur"
+  },
+  {
+    "Id": "sentence-v1-0302",
+    "Pattern": "\\b(?<groups>[^.!?;\\r\\n\\a]{3,220}?) arasında anlamlı bir fark bulunmuştur\\b",
+    "Target": "${groups} arasında anlamlı bir farklılık olduğu görülmüştür",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "fark bulunmuştur"
+  },
+  {
+    "Id": "sentence-v1-0303",
+    "Pattern": "\\b(?<groups>[^.!?;\\r\\n\\a]{3,220}?) arasında anlamlı olmayan bir fark bulunmuştur\\b",
+    "Target": "${groups} arasında anlamlı olmayan bir farklılık olduğu görülmüştür",
+    "Family": "cümle kuruluşu",
+    "Strength": 2,
+    "Confidence": 0.96,
+    "Domain": "genel",
+    "RequiredText": "fark bulunmuştur"
+  }
+]
