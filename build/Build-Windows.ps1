@@ -67,7 +67,7 @@ foreach($file in @('AcademicParaphraser.WordAddin.dll','AcademicParaphraser.Word
 $payload=Join-Path $root 'artifacts\payload'
 if(Test-Path $payload){Remove-Item $payload -Recurse -Force}
 Copy-Item $output $payload -Recurse
-Copy-Item README.md,docs/Windows-Acceptance.md,THIRD-PARTY-NOTICES.md $payload
+Copy-Item docs/UsersGuide.md,THIRD-PARTY-NOTICES.md $payload
 Copy-Item licenses $payload -Recurse
 Export-Certificate -Cert $cert -FilePath (Join-Path $payload 'publisher.cer') | Out-Null
 $inventory=Get-ChildItem $payload -Recurse -File | ForEach-Object {

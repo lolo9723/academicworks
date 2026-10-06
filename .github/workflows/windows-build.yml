@@ -39,6 +39,8 @@ jobs:
         run: .\build\Prepare-WindowsCI.ps1
       - name: Build, test and package
         run: .\build\Build-Windows.ps1
+      - name: Verify Windows runtime and deployment
+        run: .\build\Verify-WindowsRuntime.ps1 -Payload artifacts\payload
       - name: Verify installer and write SHA256
         run: |
           $installer=Get-Item artifacts\installer\AkademikParafraz-1.0.0-Setup.exe
@@ -55,6 +57,48 @@ jobs:
           '@ | Set-Content -Encoding UTF8 artifacts\installer\KURULUMU-OKU.txt
           Copy-Item artifacts\payload\publisher.cer artifacts\installer
           Copy-Item build\Smoke-Word.ps1,build\Verify-Word.cmd artifacts\installer
+          Copy-Item docs\UsersGuide.md artifacts\installer
+      - name: Test missing-Word prerequisite
+        run: .\build\Test-InstallerPrerequisites.ps1 -Installer artifacts\installer\AkademikParafraz-1.0.0-Setup.exe
+      - name: Create bounded transfer parts
+        run: |
+          $source=Get-Item artifacts\installer\AkademikParafraz-1.0.0-Setup.exe
+          New-Item artifacts\transfer -ItemType Directory -Force | Out-Null
+          $stream=[IO.File]::OpenRead($source.FullName)
+          $buffer=New-Object byte[] (1024*1024)
+          $index=0
+          try{
+            while($stream.Position -lt $stream.Length){
+              $index++
+              $destination=Join-Path (Get-Location) ('artifacts\transfer\Setup.part'+$index.ToString('00'))
+              $output=[IO.File]::Create($destination)
+              $bytes=0
+              try{
+                while($bytes -lt 20*1024*1024 -and $stream.Position -lt $stream.Length){
+                  $read=$stream.Read($buffer,0,[Math]::Min($buffer.Length,20*1024*1024-$bytes))
+                  if($read -le 0){throw 'Installer aktarım parçası okunamadı.'}
+                  $output.Write($buffer,0,$read);$bytes+=$read
+                }
+              }finally{$output.Dispose()}
+            }
+          }finally{$stream.Dispose()}
+          if($index -ne 2){throw 'Bu sürümün installer aktarım parçası sayısı beklenenden farklı.'}
+      - name: Transfer part 01
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: Windows-Setup-part01
+          path: artifacts/transfer/Setup.part01
+          compression-level: 0
+          if-no-files-found: error
+          retention-days: 30
+      - name: Transfer part 02
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: Windows-Setup-part02
+          path: artifacts/transfer/Setup.part02
+          compression-level: 0
+          if-no-files-found: error
+          retention-days: 30
       - name: Installer artifact
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
@@ -72,5 +116,8 @@ jobs:
             artifacts/*.binlog
             artifacts/*.log
             artifacts/payload-inventory.json
+            artifacts/*-verification.json
+            artifacts/payload/*.vsto
+            artifacts/payload/*.manifest
           if-no-files-found: warn
           retention-days: 30

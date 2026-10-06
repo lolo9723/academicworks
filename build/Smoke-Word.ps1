@@ -4,7 +4,7 @@ if(Get-Process WINWORD -ErrorAction SilentlyContinue){throw 'Bu test yeni bir Wo
 $word=New-Object -ComObject Word.Application
 $word.Visible=$true
 $doc=$null;$api=$null;$originalTracking=$false;$originalLinks=$true;$originalStrength=2
-$report=[ordered]@{ utc=(Get-Date).ToUniversalTime().ToString('o'); wordVersion=$word.Version; productVersion='1.0.0'; passed=$false; checks=@(); error=$null }
+$report=[ordered]@{ utc=(Get-Date).ToUniversalTime().ToString('o'); wordVersion=$word.Version; officeBitness=$null; productVersion='1.0.0'; passed=$false; checks=@(); error=$null }
 function Read-Format($range) {
  $font=$range.Font;$paragraph=$range.ParagraphFormat
  [ordered]@{ name=$font.Name; size=$font.Size; bold=$font.Bold; italic=$font.Italic; underline=$font.Underline; color=$font.Color; superscript=$font.Superscript; subscript=$font.Subscript; alignment=$paragraph.Alignment; firstLineIndent=$paragraph.FirstLineIndent; leftIndent=$paragraph.LeftIndent; rightIndent=$paragraph.RightIndent; spaceBefore=$paragraph.SpaceBefore; spaceAfter=$paragraph.SpaceAfter; lineSpacing=$paragraph.LineSpacing; lineSpacingRule=$paragraph.LineSpacingRule }
@@ -16,6 +16,14 @@ function Wait-Proposals {
 }
 
 try{
+ $reader=New-Object IO.BinaryReader([IO.File]::OpenRead((Join-Path $word.Path 'WINWORD.EXE')))
+ try{
+  if($reader.ReadUInt16() -ne 0x5a4d){throw 'Word yürütülebilir dosyasının PE başlığı okunamadı.'}
+  $reader.BaseStream.Position=0x3c;$pe=$reader.ReadInt32();$reader.BaseStream.Position=$pe
+  if($reader.ReadUInt32() -ne 0x00004550){throw 'Word PE imzası geçersiz.'}
+  $machine=$reader.ReadUInt16()
+  $report.officeBitness=switch($machine){0x14c {'x86'} 0x8664 {'x64'} 0xaa64 {'ARM64'} default {throw 'Word işlem mimarisi tanınmadı.'}}
+ }finally{$reader.Dispose()}
  $addin=$word.COMAddIns.Item('AcademicParaphraser.WordAddin')
  $addin.Connect=$true
  $api=$addin.Object
