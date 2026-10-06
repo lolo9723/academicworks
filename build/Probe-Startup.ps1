@@ -6,6 +6,7 @@
 $ErrorActionPreference='Stop'
 $report=[ordered]@{wordExecuted=$false;processArchitecture=$(if([Environment]::Is64BitProcess){'x64'}else{'x86'});startupCode='NOT_RECORDED';files=@();components=@();passed=$false}
 $domain=$null;$temporary=$null
+$probeStage='ENVIRONMENT'
 try {
  if($env:OS -ne 'Windows_NT' -or $PSVersionTable.PSEdition -eq 'Core'){throw 'Windows PowerShell ve .NET Framework gerekiyor.'}
  if(-not $Payload){
@@ -13,6 +14,7 @@ try {
   if($manifest){$Payload=Split-Path ([Uri]($manifest -replace '\|vstolocal$','')).LocalPath}
   if(-not $Payload){$Payload=Join-Path $env:LOCALAPPDATA 'Programs\AkademikParafraz'}
  }
+ $probeStage='PAYLOAD_PATH'
  $Payload=(Resolve-Path -LiteralPath $Payload).Path
  $startup=Join-Path $env:LOCALAPPDATA 'AkademikParafraz\logs\startup-diagnostics.txt'
  if((Test-Path $startup) -and (Get-Item $startup).Length -lt 4096){
@@ -22,6 +24,7 @@ try {
  foreach($relative in @('AcademicParaphraser.WordAddin.dll','AcademicParaphraser.WordAddin.dll.config','AcademicParaphraser.WordHost.dll','AcademicParaphraser.Infrastructure.dll','AcademicParaphraser.Core.dll','Microsoft.Data.Sqlite.dll','SQLitePCLRaw.core.dll','SQLitePCLRaw.batteries_v2.dll','SQLitePCLRaw.provider.dynamic_cdecl.dll','runtimes\win-x86\native\e_sqlite3.dll','runtimes\win-x64\native\e_sqlite3.dll','runtime\java\bin\java.exe','nlp\turkish-nlp-1.0.0.jar')){
   $report.files+=@{file=$relative;exists=(Test-Path -LiteralPath (Join-Path $Payload $relative) -PathType Leaf)}
  }
+ $probeStage='HELPER_COMPILE'
  $temporary=Join-Path ([IO.Path]::GetTempPath()) ('AcademicProbe-'+[Guid]::NewGuid().ToString('N'))
  New-Item $temporary -ItemType Directory | Out-Null
  $helper=Join-Path $temporary 'AcademicStartupProbe.dll'
@@ -83,16 +86,20 @@ public sealed class AcademicStartupProbe : MarshalByRefObject
     }
 }
 '@
+ $probeStage='FRAMEWORK_DOMAIN'
  $setup=New-Object AppDomainSetup
  $setup.ApplicationBase=$Payload
  $setup.ConfigurationFile=Join-Path $Payload 'AcademicParaphraser.WordAddin.dll.config'
  $domain=[AppDomain]::CreateDomain('AcademicStartupProbe',$null,$setup)
+ $probeStage='HELPER_LOAD'
  $probe=$domain.CreateInstanceFromAndUnwrap($helper,'AcademicStartupProbe')
+ $probeStage='COMPONENTS'
  $report.components=@($probe.Run($Payload,$temporary))
  $report.passed=(@($report.files | Where-Object {-not $_.exists}).Count -eq 0 -and @($report.components | Where-Object {$_ -match ':FAIL:'}).Count -eq 0 -and $report.components.Count -eq 6)
 }catch{
  $cause=$_.Exception.GetBaseException()
- $report.components+=('PROBE:FAIL:'+$cause.GetType().Name+':'+$cause.HResult.ToString('X8'))
+ $report.components+=('PROBE_'+$probeStage+':FAIL:'+$cause.GetType().Name+':'+$cause.HResult.ToString('X8'))
+ if($env:GITHUB_ACTIONS -eq 'true'){Write-Host $_.ToString();Write-Host $_.InvocationInfo.PositionMessage}
 }finally{
  if($domain){[AppDomain]::Unload($domain)}
  if($temporary){Remove-Item -LiteralPath $temporary -Recurse -Force -ErrorAction SilentlyContinue}

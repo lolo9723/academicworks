@@ -19,6 +19,7 @@ namespace AcademicParaphraser.WordAddin
         {
             controller = value;
             controller.StateChanged += (s, e) => ui?.Invalidate();
+            ui?.Invalidate();
         }
         public void OnLoad(Office.IRibbonUI ribbon) => ui = ribbon;
         public bool GetEnabled(Office.IRibbonControl control) => controller != null && !controller.Busy;
