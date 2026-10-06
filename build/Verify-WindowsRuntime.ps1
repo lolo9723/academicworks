@@ -28,6 +28,29 @@ foreach($native in @(@{path='runtimes\win-x86\native\e_sqlite3.dll';machine=0x14
 }
 
 Add-Type -AssemblyName System.Security
+# ClickOnce uses Microsoft's legacy SHA256 XMLDSig URIs. Map them to real RSA/PKCS1 and SHA256 verification.
+Add-Type -TypeDefinition @'
+using System.Security.Cryptography;
+public sealed class ClickOnceRsaSha256Description : SignatureDescription
+{
+    public ClickOnceRsaSha256Description() { KeyAlgorithm = typeof(RSA).AssemblyQualifiedName; }
+    public override HashAlgorithm CreateDigest() { return SHA256.Create(); }
+    public override AsymmetricSignatureDeformatter CreateDeformatter(AsymmetricAlgorithm key)
+    {
+        var result = new RSAPKCS1SignatureDeformatter(key);
+        result.SetHashAlgorithm("SHA256");
+        return result;
+    }
+    public override AsymmetricSignatureFormatter CreateFormatter(AsymmetricAlgorithm key)
+    {
+        var result = new RSAPKCS1SignatureFormatter(key);
+        result.SetHashAlgorithm("SHA256");
+        return result;
+    }
+}
+'@
+[Security.Cryptography.CryptoConfig]::AddAlgorithm([ClickOnceRsaSha256Description],'http://www.w3.org/2000/09/xmldsig#rsa-sha256')
+[Security.Cryptography.CryptoConfig]::AddAlgorithm([Security.Cryptography.SHA256CryptoServiceProvider],'http://www.w3.org/2000/09/xmldsig#sha256')
 foreach($name in @('AcademicParaphraser.WordAddin.dll.manifest','AcademicParaphraser.WordAddin.vsto')){
  $settings=New-Object Xml.XmlReaderSettings;$settings.DtdProcessing=[Xml.DtdProcessing]::Prohibit;$settings.XmlResolver=$null
  $reader=[Xml.XmlReader]::Create((Join-Path $Payload $name),$settings)
@@ -47,7 +70,7 @@ foreach($name in @('AcademicParaphraser.WordAddin.dll.manifest','AcademicParaphr
   if(-not $hash){throw "Dosyanın manifest özeti eksik: $relative"}
   $method=$hash.SelectSingleNode('./ds:DigestMethod',$ns).GetAttribute('Algorithm')
   $expected=$hash.SelectSingleNode('./ds:DigestValue',$ns).InnerText
-  $algorithm=switch($method){'http://www.w3.org/2000/09/xmldsig#sha1' {'SHA1'} 'http://www.w3.org/2001/04/xmlenc#sha256' {'SHA256'} default {throw "Bilinmeyen manifest özeti: $method"}}
+  $algorithm=switch($method){'http://www.w3.org/2000/09/xmldsig#sha1' {'SHA1'} 'http://www.w3.org/2001/04/xmlenc#sha256' {'SHA256'} 'http://www.w3.org/2000/09/xmldsig#sha256' {'SHA256'} default {throw "Bilinmeyen manifest özeti: $method"}}
   $hasher=[Security.Cryptography.HashAlgorithm]::Create($algorithm)
   $stream=[IO.File]::OpenRead($file)
   try{$actual=[Convert]::ToBase64String($hasher.ComputeHash($stream))}finally{$stream.Dispose();$hasher.Dispose()}
