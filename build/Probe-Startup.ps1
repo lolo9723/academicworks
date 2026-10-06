@@ -97,7 +97,7 @@ public sealed class AcademicStartupProbe : MarshalByRefObject
  $probe=$domain.CreateInstanceFromAndUnwrap($helper,'AcademicStartupProbe')
  $probeStage='COMPONENTS'
  # Windows PowerShell adapts the transparent proxy as MarshalByRefObject; invoke its actual contract.
- $report.components=@($runner.Invoke($probe,[object[]]@($Payload,$temporary)))
+ $report.components=@($runner.Invoke($probe,[string[]]@($Payload,$temporary)))
  $report.passed=(@($report.files | Where-Object {-not $_.exists}).Count -eq 0 -and @($report.components | Where-Object {$_ -match ':FAIL:'}).Count -eq 0 -and $report.components.Count -eq 6)
 }catch{
  $cause=$_.Exception.GetBaseException()
