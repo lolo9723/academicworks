@@ -82,6 +82,15 @@ namespace AcademicParaphraser.Tests
             Assert.Equal("kişisel tanım", reopened.GetRules().Single(r => r.Id == rule.Id).Target);
         }
         [Fact]
+        public void WebParserReadsOnlyLabelledInlineTurkishSynonyms()
+        {
+            var document = new HtmlDocument();
+            document.LoadHtml("<h2>English</h2><span class='nyms synonym'><a href='/wiki/wrong'>wrong</a></span><h2>Turkish</h2><h3>Noun</h3><ol><li><a href='/wiki/method'>method</a><span class='nyms synonym'><a href='/wiki/metot#Turkish'>metot</a></span><span class='nyms antonym'><a href='/wiki/wrong'>wrong</a></span></li></ol>");
+            var result = WikiLexicalParser.Parse(document);
+            Assert.True(result.SingleSense);
+            Assert.Equal(new[] { "metot" }, result.Synonyms);
+        }
+        [Fact]
         public void WebParserRequiresTurkishSectionAndCountsMeanings()
         {
             var document = new HtmlDocument();

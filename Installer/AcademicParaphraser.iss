@@ -1,4 +1,4 @@
-#ifndef PayloadDir
+﻿#ifndef PayloadDir
  #error PayloadDir must be supplied by Build-Windows.ps1
 #endif
 #ifndef OutputDir

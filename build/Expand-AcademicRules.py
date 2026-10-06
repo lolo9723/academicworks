@@ -5,7 +5,7 @@ Rule count is not a claim of independent syntactic families or measured accuracy
 from pathlib import Path
 import json,re
 root=Path(__file__).resolve().parent.parent;p=root/'src/AcademicParaphraser.Core/Data/rules.json'
-templates=json.loads((p.parent/'rule-templates.json').read_text())
+templates=json.loads((p.parent/'rule-templates.json').read_text(encoding='utf-8-sig'))
 rules=[];index=0
 context=templates['context']
 def add(pattern,target,family,strength=2,confidence=.95,academic=False):
@@ -57,13 +57,13 @@ for infinitive,acc,dat in [('ma','yı','ya'),('me','yi','ye')]:
 phrases=templates['phrases']
 for source,target,family in phrases:add(r'\b'+re.escape(source)+r'\b',target,family,2,.94)
 # Avoid presenting an uncompleted study as completed: purpose frames always keep present intention.
-ids={(r['Pattern'],r['Target']):1 for r in json.loads(p.read_text())};unique=[]
+ids={(r['Pattern'],r['Target']):1 for r in json.loads(p.read_text(encoding='utf-8-sig'))};unique=[]
 for r in rules:
  key=(r['Pattern'],r['Target'])
  if key not in ids:unique.append(r);ids[key]=1
 out=root/'artifacts/rules';out.mkdir(parents=True,exist_ok=True)
 import uuid
 working=out/('rules.'+uuid.uuid4().hex+'.tmp')
-working.write_text(json.dumps(unique,ensure_ascii=False,indent=2)+'\n')
+working.write_text(json.dumps(unique,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
 working.replace(out/'rules.extended.json')
 print(json.dumps({'totalRules':len(unique)+61,'newRules':len(unique),'templateFamilies':len({r['Family'] for r in unique})}))

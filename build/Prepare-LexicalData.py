@@ -7,7 +7,7 @@ from pathlib import Path
 
 def main():
  p=argparse.ArgumentParser();p.add_argument('--offline',action='store_true');args=p.parse_args()
- root=Path(__file__).resolve().parent.parent;pin=json.loads((root/'build/lexical-data.json').read_text())
+ root=Path(__file__).resolve().parent.parent;pin=json.loads((root/'build/lexical-data.json').read_text(encoding='utf-8-sig'))
  cache=root/'artifacts/lexical-download';cache.mkdir(parents=True,exist_ok=True);source=cache/pin['dataFile']
  if not source.exists():
   if args.offline:raise FileNotFoundError('Pinned KeNet source is not cached')
@@ -44,9 +44,9 @@ def main():
  for k,v in {**pin,**stats,'formatVersion':1}.items():db.execute('INSERT INTO metadata VALUES(?,?)',(k,str(v)))
  db.commit();db.execute('VACUUM');db.close();temporary.replace(target)
  evidence={**pin,**stats,'bytes':target.stat().st_size,'sqliteSha256':hashlib.sha256(target.read_bytes()).hexdigest()}
- (out/'lexical-data-verification.json').write_text(json.dumps(evidence,ensure_ascii=False,indent=2)+'\n')
+ (out/'lexical-data-verification.json').write_text(json.dumps(evidence,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
  notice=f"KeNet / Turkish WordNet — {pin['attribution']}\nSource: {pin['url']}\nSource SHA256: {pin['sha256']}\nLicense: CC BY-SA 4.0 — https://creativecommons.org/licenses/by-sa/4.0/\nLicense statement: {pin['licenseStatement']}\nChanges: XML sense/member records were normalized and indexed into SQLite. No source code from the upstream repository was incorporated. This derived lexical database is CC BY-SA 4.0.\n"
  (out/'KENET-NOTICE.txt').write_text(notice,encoding='utf-8-sig')
- print(json.dumps(evidence,ensure_ascii=False))
+ print(json.dumps(evidence,ensure_ascii=True))
 
 if __name__=='__main__':main()
