@@ -38,7 +38,6 @@ var VstoInstaller: String;
 function GetVstoInstaller(Param: String): String;
 begin
  if VstoInstaller = '' then begin
-  if not GetVersionNumbers(WordPath, WordVersionMS, WordVersionLS) or ((WordVersionMS shr 16) < 16) then begin Log('PREREQUISITE_WORD_VERSION_UNSUPPORTED'); SuppressibleMsgBox('Microsoft Word 2016 veya daha yeni bir masaüstü sürümü gerekiyor.',mbInformation,MB_OK,IDOK);exit;end;
  if not RegQueryStringValue(HKLM32,'SOFTWARE\Microsoft\VSTO Runtime Setup\v4','InstallerPath',VstoInstaller) then
    if not RegQueryStringValue(HKLM64,'SOFTWARE\Microsoft\VSTO Runtime Setup\v4','InstallerPath',VstoInstaller) then VstoInstaller := ExpandConstant('{commonpf}\Common Files\Microsoft Shared\VSTO\10.0\VSTOInstaller.exe');
  end;
@@ -52,6 +51,7 @@ begin
  if not RegQueryDWordValue(HKLM32,'SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full','Release',Release) or (Release < 528040) then begin SuppressibleMsgBox('.NET Framework 4.8 gerekiyor. Microsoft .NET Framework 4.8 kurulumunu tamamlayıp tekrar deneyin.',mbInformation,MB_OK,IDOK);exit;end;
  if not RegQueryStringValue(HKLM32,'SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\WINWORD.EXE','',WordPath) then
   if not RegQueryStringValue(HKLM64,'SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\WINWORD.EXE','',WordPath) then begin Log('PREREQUISITE_WORD_MISSING'); SuppressibleMsgBox('Windows masaüstü Microsoft Word bulunamadı. Word web bu VSTO paketini çalıştıramaz.',mbInformation,MB_OK,IDOK);exit;end;
+ if not GetVersionNumbers(WordPath, WordVersionMS, WordVersionLS) or ((WordVersionMS shr 16) < 16) then begin Log('PREREQUISITE_WORD_VERSION_UNSUPPORTED'); SuppressibleMsgBox('Microsoft Word 2016 veya daha yeni bir masaüstü sürümü gerekiyor.',mbInformation,MB_OK,IDOK);exit;end;
  if not RegQueryStringValue(HKLM32,'SOFTWARE\Microsoft\VSTO Runtime Setup\v4','InstallerPath',VstoInstaller) then
   if not RegQueryStringValue(HKLM64,'SOFTWARE\Microsoft\VSTO Runtime Setup\v4','InstallerPath',VstoInstaller) then VstoInstaller := ExpandConstant('{commonpf}\Common Files\Microsoft Shared\VSTO\10.0\VSTOInstaller.exe');
  if not FileExists(VstoInstaller) then begin SuppressibleMsgBox('Microsoft VSTO Runtime gerekiyor. Resmî indirme: https://www.microsoft.com/en-us/download/details.aspx?id=105522',mbInformation,MB_OK,IDOK);exit;end;
