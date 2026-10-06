@@ -4,11 +4,13 @@ Windows masaüstü Microsoft Word için C#/.NET Framework 4.8 ve VSTO mimarisind
 
 ## Teslim durumu
 
+**1.2.0 internet motoru:** “İnternetle Parafraz” komutu, uygun köklerin tamamını inceleyen ve eksiklerin tamamını internette arayan akış, Wikidata terim desteği ve SHA256 doğrulanan 25.104 birleşimlik cümle yapı bankası eklendi. [Canlı internet, gerçek çıktı ve Windows raporu](docs/Internet-Engine-1.2.0.md). Bu sayı bağımsız dilbilgisi ailelerinin sayısı değildir; her kelime/yapı için sonuç garantisi verilmez.
+
 **1.1.0 geniş motor:** 82.155 maddelik indeksli KeNet verisi, toplam 1.252 kural, cümle/amaç/neden/yöntem dönüşümleri ve bölünmez korumalı edit önerileri eklendi. [Gerçek paragraf çıktısı, Windows ölçümleri ve kurulum](docs/Expanded-Engine-1.1.0.md). Geniş veri bütün maddeler için otomatik değiştirme garantisi değildir.
 
 **1.0.2 açılış düzeltmesi:** Gerçek Windows Framework DLL önbelleğinde SQLite yükleme hatası yeniden oluşturuldu. Word işleminin mimarisine uygun native SQLite hazırlığı ve gerçek kurulum yolu çözümü eklendi. Önbellek ve doğrudan yükleme x86/x64 kontrolleri geçti. [Bulgu, test kanıtları ve kurulum](docs/Startup-Fix-1.0.2.md). Canlı Word sonucu henüz doğrulanmadı.
 
-Gerçek Windows CI üzerinde Core, Infrastructure, .NET Framework WordHost ve VSTO WordAddin projeleri Debug/Release derlenmiş; gerçek SQLite ve Zemberek ile **89/89 motor testi her iki yapılandırmada geçmiştir**. `.vsto` ve `.dll.manifest` dosyaları imzalanmış, Inno Setup ile gerçek `AkademikParafraz-1.1.0-Setup.exe` üretilmiştir. Güncel doğrulanmış Windows koşusu: [37464862615](https://github.com/lolo9723/academicworks/actions/runs/37464862615). Windows DPAPI, native mimariler, VSTO XML imzaları/dosya özetleri ve eksik Word installer testi de geçti.
+Gerçek Windows CI üzerinde Core, Infrastructure, .NET Framework WordHost ve VSTO WordAddin projeleri Debug/Release derlenmiş; gerçek SQLite ve Zemberek ile **106/106 motor testi her iki yapılandırmada geçmiştir**. `.vsto` ve `.dll.manifest` dosyaları imzalanmış, Inno Setup ile gerçek `AkademikParafraz-1.2.0-Setup.exe` üretilmiştir. Güncel doğrulanmış Windows koşusu: [37468777249](https://github.com/lolo9723/academicworks/actions/runs/37468777249). Windows DPAPI, native mimariler, VSTO XML imzaları/dosya özetleri ve eksik Word installer testi de geçti.
 
 **Gerçek Word üzerinde kurulum, Ribbon yükleme, biçim/bağlantı/Undo/Track Changes kabulü henüz çalıştırılmamıştır.** Windows CI makinesinde Word yoktur. Bu ilk paket geliştirme yayıncı sertifikası kullanır; installer EXE için üretim Authenticode sertifikası sağlanmamıştır. Üretim kabulü tamamlanmış gibi sunulmaz. Son kullanıcı kılavuzu [UsersGuide.md](docs/UsersGuide.md), çalıştırılan kontroller [Verification.md](docs/Verification.md) ve canlı Word matrisi [Windows-Acceptance.md](docs/Windows-Acceptance.md) içindedir.
 
@@ -41,7 +43,7 @@ Ribbon; alternatif üretme/gezinme, önizleme, atıf/sayı/özel isim/teknik ter
 | Core / CitationProtection | Atıf, sayı, tanımlayıcı, özel isim ve kilit koruması |
 | Core / DocumentProtection | OOXML metin/run eşleme, biçim/alan/bağlantı sınırları |
 | Infrastructure / TurkishNlp | Otomatik Java sidecar yönetimi, iptal/zaman aşımı, UTF-8 stdio protokolü |
-| Infrastructure / LexicalKnowledge | Ayrı salt okunur KeNet indeksi, tür/anlam kümesi ve akademik kayıt filtresi |
+| Infrastructure / LexicalKnowledge | KeNet, tüm eksik köklerin internet taraması, SHA256 ile doğrulanmış ve gerektiğinde oluşturulan ek cümle kalıpları |
 | Infrastructure / Persistence | SQLite migration, kural/sözlük/ayarlar, cache, şifreli geçmiş |
 | Infrastructure / InternetDictionaryProviders | Anahtarsız açık sözlük sağlayıcıları, hata yalıtımı, offline cache |
 | Infrastructure / Diagnostics | Metinsiz hata kodları ve günlük rotasyonu |
@@ -63,7 +65,7 @@ Sayı/atıf tespiti kapsamlı regex ve yerel morfoloji kullanır; yeni atıf bi�
 
 ## Kural ve sözlük kapsamı
 
-1.1.0 başlangıç verisi **1.252 dönüşüm kuralı**, 39 yönetilebilir kişisel/teknik sözlük başlangıç kaydı ve ayrı, salt okunur **82.155 maddelik KeNet sözlük verisidir**. 61 temel kural korunmuş, `rule-templates.json` tablosundan 1.191 ek çekim ve cümle kalıbı üretilmiştir. Bu sayı 1.252 bağımsız sentaks ailesi veya bütün sözlük maddelerini otomatik değiştirme yeteneği demek değildir. Sözlükte 13 morfolojik alternatif kaydı ve 26 teknik terim vardır. Sözlük/kural yöneticisi bu kayıtları SQLite üzerinde düzenler. Genel akademik Türkçe kuralları ile turizm, rekreasyon, sosyal bilimler, eğitim, psikoloji, işletme ve yönetim alan etiketleri/teknik terimleri bulunur; her alan için kapsamlı bir dil modeli veya uzmanlık korpusu bulunmaz.
+1.2.0 yerel başlangıç verisi **1.252 dönüşüm kuralı**, 39 yönetilebilir kişisel/teknik sözlük başlangıç kaydı ve ayrı, salt okunur **82.155 maddelik KeNet sözlük verisidir**. 61 temel kural korunmuş, `rule-templates.json` tablosundan 1.191 ek çekim ve cümle kalıbı üretilmiştir. Bu sayı 1.252 bağımsız sentaks ailesi veya bütün sözlük maddelerini otomatik değiştirme yeteneği demek değildir. Sözlükte 13 morfolojik alternatif kaydı ve 26 teknik terim vardır. Sözlük/kural yöneticisi bu kayıtları SQLite üzerinde düzenler. Genel akademik Türkçe kuralları ile turizm, rekreasyon, sosyal bilimler, eğitim, psikoloji, işletme ve yönetim alan etiketleri/teknik terimleri bulunur; her alan için kapsamlı bir dil modeli veya uzmanlık korpusu bulunmaz.
 
 Motor kalıp/fiil/yüklem dönüşümleri, açık öznesi bulunan etken-edilgen dönüşümleri, isim-fiil, isim tamlaması, yan cümle, sıfat-fiil, zarf-fiil, bağlayıcı ifadeler, güvenli sıralama, bulgu/yöntem/literatür/karşılaştırma/sonuç kalıplarını işler. Bunlar sınırlı ve açıkça tanımlı kalıplardır; genel Türkçe sentaksının tamamını dönüştüren bir parser değildir. Özne uydurulmaz; tanınmayan veya belirsiz yapı bırakılır.
 
@@ -75,7 +77,7 @@ Hafif mod küçük/lexical kalıpları, Orta ilave sentaktik kalıpları, Güçl
 
 Varsayılan ayarlar: internet kapalı, offline açık, korumalar açık, Orta düzey, üç alternatif, minimum kural güveni 0,92. Parafraz için internet gerekmez.
 
-Sözlük ekranından kullanıcı tarafından girilen **tek kelime** isteğe bağlı olarak Türkçe Vikisözlük ve İngilizce Wiktionary'nin açık MediaWiki arayüzüne sorgulanabilir. API anahtarı/hesap gerekmez. Paragraf dışarı gönderilmez. Kullanıcı interneti açıp offline modu kapatırsa dönüşüm sırasında en fazla üç farklı kök kelime için toplam sekiz saniye bütçesiyle otomatik sözlük desteği denenir; karşılık yerel anlam kümesi ve akademik kayıt filtresinden geçmeden uygulanmaz. Sözcük bilgisi panelde kaynağıyla gösterilir; internetteki bilgi körlemesine otomatik dönüşüm kuralı yapılmaz. Kullanıcı uygun karşılığı yerel sözlüğe ekleyebilir.
+Sözlük ekranından kullanıcı tarafından girilen **tek kelime** isteğe bağlı olarak Türkçe Vikisözlük ve İngilizce Wiktionary'nin açık MediaWiki arayüzüne sorgulanabilir. Bunlar sonuç vermezse Wikidata'da tam Türkçe terim/alias kaydı denenir; terim açıklaması eş anlamlı sayılmaz. API anahtarı/hesap gerekmez. Kelime başına süre/boyut sınırı, kaynak kesintisinde beş dakika bekletme ve iptal desteği vardır; bulunan/eksik kök sayısı önizlemede gösterilir. Paragraf dışarı gönderilmez. Kullanıcı “İnternetle Parafraz” komutunu kullanırsa veya interneti açıp offline modu kapatırsa bütün uygun benzersiz kök/tür çiftleri incelenir, yerel karşılığı eksik kalanların tamamı internet kaynaklarında aranır; karşılık yerel anlam kümesi ve akademik kayıt filtresinden geçmeden uygulanmaz. Sözcük bilgisi panelde kaynağıyla gösterilir; internetteki bilgi körlemesine otomatik dönüşüm kuralı yapılmaz. Kullanıcı uygun karşılığı yerel sözlüğe ekleyebilir.
 
 İnternet açık olsa bile offline mod açıkken ağ isteği yapılmaz. Cache 30 gün geçerlidir. Tek bir sağlayıcının hata vermesi parafrazı durdurmaz. İnternette bulunma, ücretsiz erişim ve sağlayıcının gelecekteki sürekliliği garanti değildir.
 
@@ -109,11 +111,11 @@ Betik NLP JAR'ını derler, sabitlenmiş KeNet verisini kaynak SHA256 ile doğru
 
 Sertifika verilmezse geliştirme code-signing sertifikası oluşturulur. Kendinden imzalı geliştirme sertifikası otomatik güvenilir yapılmaz. VSTO'nun yayıncı/güven uyarısı çıkabilir; kurum politikasının bloklaması derleme ile çözülmüş sayılmaz. Setup.exe üretim Authenticode imzası bu teslimde üretilmemiştir. VSTO manifest imzası, installer exe imzasının yerine geçmez.
 
-Başarı çıktısı: `artifacts/installer/AkademikParafraz-1.1.0-Setup.exe`. **Bu dosya gerçek Windows CI koşusunda oluşturulmuştur.** VSTO hedefleri olmayan sistemde tam WordAddin derlemesi geçmez. Betik eksik artefaktları atlayıp başarı bildirmez.
+Başarı çıktısı: `artifacts/installer/AkademikParafraz-1.2.0-Setup.exe`. **Bu dosya gerçek Windows CI koşusunda oluşturulmuştur.** VSTO hedefleri olmayan sistemde tam WordAddin derlemesi geçmez. Betik eksik artefaktları atlayıp başarı bildirmez.
 
 ## Windows otomatik derleme
 
-`.github/workflows/windows-build.yml` her push veya manuel çalıştırmada `windows-2022` üzerinde çalışır. Gerçek Visual Studio VSTO bileşenini `Prepare-WindowsCI.ps1` ile tamamlar; Zemberek, motor ve VSTO projelerini Debug/Release derleyip test eder, manifestleri geliştirme sertifikasıyla imzalar, Inno Setup installer üretir. Başarılı koşu `AkademikParafraz-1.1.0-Windows-Setup` artefaktını, SHA256 dosyasını ve yayıncı açık sertifikasını sunar. İmzalama özel anahtarı artefakta dahil edilmez.
+`.github/workflows/windows-build.yml` her push veya manuel çalıştırmada `windows-2022` üzerinde çalışır. Gerçek Visual Studio VSTO bileşenini `Prepare-WindowsCI.ps1` ile tamamlar; Zemberek, motor ve VSTO projelerini Debug/Release derleyip test eder, manifestleri geliştirme sertifikasıyla imzalar, Inno Setup installer üretir. Başarılı koşu `AkademikParafraz-1.2.0-Windows-Setup` artefaktını, SHA256 dosyasını ve yayıncı açık sertifikasını sunar. İmzalama özel anahtarı artefakta dahil edilmez.
 
 GitHub Windows runner’da masaüstü Word yoktur; başarılı CI çalışması Word kabul testlerinin yerine geçmez. CI, installer üretiminden önce gerçek VSTO ve bütün bağımlılık çıktıları bulunmadığında başarısız olur. Action sürümleri commit SHA ile sabitlenmiştir; NuGet restore kilit dosyaları kullanır.
 

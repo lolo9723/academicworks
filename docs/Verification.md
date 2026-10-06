@@ -1,3 +1,5 @@
+Güncel 1.2.0 internet motoru: [Internet-Engine-1.2.0.md](Internet-Engine-1.2.0.md). Windows Debug/Release 106/106 test ve gerçek anahtarsız sözlük/yapı bankası HTTP kanıtı bu kayıttadır. Aşağıdaki önceki kayıtlar tarihsel olarak saklanır.
+
 Güncel 1.1.0 geniş motor: [Expanded-Engine-1.1.0.md](Expanded-Engine-1.1.0.md). Windows Debug/Release 89/89 test, KeNet verisi ve gerçek paragraf/bellek raporu bu kayıttadır; aşağıdaki temel sonuçlar tarihsel olarak korunur.
 
 # Akademik Parafraz — doğrulama raporu

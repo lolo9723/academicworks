@@ -122,3 +122,17 @@ Açılış tanısı hata aşaması, exception tipi, HRESULT, Word işlem mimaris
 `AnchoredRuleEdits`, kalıp içinde korunan sayı/terim/alan metnini sabit tutup çevresindeki değişimleri bölünmez bir öneri halinde üretir. Eksik/değişmiş veya sınırı aşan koruma tüm kalıbı reddeder. `CandidateIntegrity`, Word eşlemesinde her değişim uygulanabilir değilse tüm alternatifi reddeder; tekil edit silerek başka bir önizleme metnini uygulamaz.
 
 Test için gerçek `ACADEMIC_JAVA`, `ACADEMIC_NLP_JAR` ve `ACADEMIC_WORDNET` yolları gereklidir. `tools/AcademicParaphraser.QualityProbe` dört argüman alır: KeNet SQLite, Java, JAR ve çıktı klasörü. Sentetik altı cümle/10 paragraf için gerçek dönüşüm metni ve süreç çalışma belleği raporlanır; Word açılmaz, metin örneğinin değişim sayısı genel doğruluk yüzdesi olarak yorumlanmaz.
+
+## 1.2.0 internetle tam kök taraması ve yapı bankası
+
+`GenerateOnlineAsync` interneti açar, offline modu kapatır, Güçlü düzeyi kaydeder ve aynı Word yakalama/uygulama akışını kullanır. `EnrichmentContext` arka plan ilerlemesini UI synchronization context üzerinden bildirir; sonuç metadatası kök/başarısız kaynak/kullanılabilir yapı sayılarını taşır. Tanılama loguna kök veya paragraf yazılmaz.
+
+200 kök ve üç web kelimesi/sekiz saniye toplam sınırları kaldırılmıştır. Korunmayan benzersiz kök/türler taranır; yerel uygun karşılığı olmayanların tamamı sözlük servisine gider. Tek istek 12 saniye/boyut sınırına tabidir. Art arda üç erişim hatası aynı kaynağı beş dakika bekletir; diğer kaynaklar bağımsız devam eder. Eksik kelime sonucu bir saat, bulunan içerik 30 gün cache edilir. v2 cache anahtarı POS/anlam metadata içermeyen eski kayıtların otomatik kullanımını engeller. Terim/atıf/özel isim koruması ve kullanıcının sözlük önceliği sürer.
+
+Geniş sözlükte akademik hedef listesi artık bir sıralama tercihidir; argo/eskimiş anlam filtresi, tür/anlam kümesi ve gerçek çekim denetimi korunur. Yerel anlam kümesi olmayan sözcük için tek anlam/tür ve açık iki yönlü eş anlamlı ilişki gerekir. Bu doğrulama cümle semantiğinin tam kanıtı değildir.
+
+Wikidata fallback yalnızca diğer kaynaklarda kelime bilgisi yoksa çalışır. Tam Türkçe label/alias eşleşmesi gerekir; başka dilde/fuzzy eşleşme reddedilir. CC0 terim açıklaması İngilizce olabilir. Bu sağlayıcı boş synonyms/POS ve SingleSense=false döndürür; terim bilgisinden otomatik sözcük dönüşümü yapılmaz.
+
+`OnlineStructureSource` sabit HTTPS URL'den `data/internet-structures-v1.json` dosyasını indirir. Pin, Core'daki `internet-structures-source.json` kaynağındadır. 64 KiB yanıt sınırı ve 20 saniye timeout, SHA256 ve format kontrolü vardır. Yanlış kaynak özeti offline cache'e yazılmaz. GET isteğine kullanıcı metni veya kelime eklenmez. `.gitattributes` banka fikstürünün Windows checkout sırasında wire SHA'yı bozacak CRLF dönüşümünü önler. Banka 25.104 sonlu birleşim içerir; yalnızca seçime uygun olanlar RuleDefinition olur. Açık sürümlü proje kaynağıdır; arama motorundan regex/kural çalıştırma ve sınırsız web'den dil öğrenme yoktur. Yeni bankayı farklı dosya/sürüm adı ve pin ile yayımlayın.
+
+QualityProbe `--online` modu gerçek HTTP ile beş açık örnek kelime, bütün kökleri tarayan gerçek KeNet akışı ve yerelde bulunmayan tam cümle çerçevesinin banka ile dönüşümünü raporlar. Sözlük sitesi kesintisi dictionaryAvailable/ProviderErrors alanlarında açıkça kaydedilir; banka indirme/dönüşüm başarısı ayrıca zorunludur. Windows 1.2.0 CI'da 106/106 test iki yapılandırmada geçti; gerçek Word masaüstü çalıştırılmadı.
