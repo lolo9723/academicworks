@@ -107,6 +107,12 @@ Kaynakların rollerinin, bağlamın ve vurgu farklarının tümünü kanıtlayan
 
 LLM etkinleştirilmedi; paragraf internete gönderilmedi. Sözlük ve denetlenmiş internet yapı bankası mevcut kaynaklarla devam eder. Eklenen 126 yerel şema az sayıda incelenmiş dilbilgisi ailesinin biçimleridir; 126 bağımsız sentaks veya yüz binlerce insan kalitesinde kural değildir.
 
-Yerel Release motor sınaması: **152/152**, sıfır hata ve sıfır atlanan test. Gerçek WordAddin kaynakları ve bildirilmiş referanslar derlendi. Windows kurulum ve CI doğrulaması paket oluşturulurken ayrıca tamamlanacaktır. Canlı Word belge kabulü bu ortamda yapılmadı. 8 GB kullanıcının bilgisayarındaki performans ölçülmedi; Java heap sınırı 512 MiB kalır.
+Gerçek Windows CI: [koşu 37579070472](https://github.com/lolo9723/academicworks/actions/runs/37579070472), kaynak `f808d31e082a89d4d5525edad677499a45ffd0ae`. **Debug ve Release yapılandırmalarının her birinde 152/152 test**, sıfır hata ve sıfır atlanan test. Gerçek Framework/VSTO projeleri derlendi; imzalı manifestlerin ve eklentinin sürümleri `1.4.0.0` olarak eşleşti. Manifest dosya özetleri, Windows DPAPI, native mimariler, 32/64 bit doğrudan ve DLL önbelleğinden açılış kontrolleri geçti. Dört ayrı açılış sürecinin her birinde 9 bileşen geçti. Eski SQLite hata yolu negatif kontrol olarak yeniden üretildi; eksik Word için kurulum engeli de doğrulandı. Canlı anahtarsız internet sınaması geçti; sözlük yanıtı 6/5, doğrulanmış banka 25.104 birleşim. Beş alanın Windows çıktıları yukarıdaki yerel çıktılarla birebir eşleşti.
+
+Beş metin koşusunda gözlenen .NET + adı Java olan süreçlerin toplam çalışma kümesi yaklaşık **396.57 MiB** idi. Word bu ölçümde yoktur; 8 GB kullanıcının bilgisayarındaki hız/bellek ölçülmedi. Java heap sınırı 512 MiB kalır.
+
+**Canlı Word belge kabulü yapılmadı.** Ribbon, fontlar, tıklanabilir bağlantılar, Undo ve Track Changes bu CI makinesinde denenmedi. Kurulum geliştirme yayıncı sertifikası içerir; üretim Authenticode imzası değildir. Bu sınırlamalar devam eder.
+
+Installer: `AkademikParafraz-1.4.0-Setup.exe`, 43,846,188 bayt. SHA256: `557bb34538188872edab473a0d18d2ae314fe522681a825f82a8b650685d604c`. İndirilen dört aktarım arşivinin GitHub özetleri, ZIP CRC'leri ve birleştirilen EXE'nin Windows'ta yazılmış özeti doğrulandı.
 
 Tekrar üretim: `dotnet run --project tools/AcademicParaphraser.QualityProbe -c Release -- <kenet.sqlite> <java> <nlp.jar> <rapor-klasörü> --domains`. Ham sonuçlar `domain-verification.json` içine yazılır. Korpus: [multidomain-v1.json](../tests/fixtures/multidomain-v1.json).
