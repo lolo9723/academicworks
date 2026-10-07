@@ -2,7 +2,8 @@
 $ErrorActionPreference='Stop'
 if ($env:OS -ne 'Windows_NT') {throw 'Gerçek Windows çalışma ortamı gerekiyor.'}
 $Payload=(Resolve-Path $Payload).Path
-$report=[ordered]@{windows=$true; frameworkVersion=[Environment]::Version.ToString(); dpapiRoundTrip=$false; dpapiTamperRejected=$false; nativeArchitectures=@(); manifests=@(); wordExecuted=$false}
+$productVersion=[Reflection.AssemblyName]::GetAssemblyName((Join-Path $Payload 'AcademicParaphraser.WordAddin.dll')).Version.ToString()
+$report=[ordered]@{windows=$true; frameworkVersion=[Environment]::Version.ToString(); productVersion=$productVersion; dpapiRoundTrip=$false; dpapiTamperRejected=$false; nativeArchitectures=@(); manifests=@(); wordExecuted=$false}
 
 [Reflection.Assembly]::LoadFrom((Join-Path $Payload 'AcademicParaphraser.Infrastructure.dll')) | Out-Null
 $protector=New-Object AcademicParaphraser.Infrastructure.Persistence.WindowsTextProtector
@@ -56,6 +57,8 @@ foreach($name in @('AcademicParaphraser.WordAddin.dll.manifest','AcademicParaphr
  $reader=[Xml.XmlReader]::Create((Join-Path $Payload $name),$settings)
  $xml=New-Object Xml.XmlDocument;$xml.PreserveWhitespace=$true;$xml.XmlResolver=$null
  try{$xml.Load($reader)}finally{$reader.Dispose()}
+ $identity=$xml.SelectSingleNode('/*/*[local-name()="assemblyIdentity"]')
+ if(-not $identity -or $identity.GetAttribute('version') -ne $productVersion){throw "Manifest ile eklenti sürümü uyuşmuyor: $name"}
  $ns=New-Object Xml.XmlNamespaceManager($xml.NameTable);$ns.AddNamespace('ds','http://www.w3.org/2000/09/xmldsig#')
  $signature=$xml.SelectSingleNode('/*/ds:Signature',$ns)
  if(-not $signature){throw "Manifestte gerçek XML imzası yok: $name"}
@@ -77,7 +80,7 @@ foreach($name in @('AcademicParaphraser.WordAddin.dll.manifest','AcademicParaphr
   if($actual -ne $expected){throw "Manifest dosya özeti uyuşmuyor: $relative"}
   $checked++
  }
- $report.manifests+=@{path=$name;signatureValid=$true;verifiedFiles=$checked}
+ $report.manifests+=@{path=$name;version=$identity.GetAttribute('version');signatureValid=$true;verifiedFiles=$checked}
 }
 $report | ConvertTo-Json -Depth 6 | Set-Content artifacts/windows-runtime-verification.json -Encoding UTF8
 Write-Host 'PASS: gerçek Windows DPAPI, native mimariler, VSTO XML imzaları ve manifest dosya özetleri.'

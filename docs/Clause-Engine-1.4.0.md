@@ -27,6 +27,7 @@ Bu bir işlev ve sorun bulma sınamasıdır; geniş bir yazar örneklemi veya k�
 5. “Çalışma/inceleme” sözcüğünün olumsuz emir sanılması: belirsiz emir okuması otomatik anlam-kaybı kanıtı sayılmıyor. “İse” bağlacının koşul eki sayılması da ayrılıyor.
 6. “Deneysel olarak, bu çalışmada” gibi ağır sıralama: bağlam taşınırken tarz belirteci yüklem yanında tutuluyor.
 7. Uzun süren kişisel regex: o kural eleniyor; diğer cümle önerileri sürdürülebiliyor.
+8. Dağıtım manifestinde kalan eski sürüm: uygulama sürümü derleme sürümüne bağlandı. Windows kontrolü manifest ve eklenti DLL sürümleri uyuşmuyorsa paketi reddediyor.
 
 ## Gerçek öncesi/sonrası çıktıları
 
