@@ -14,6 +14,8 @@ internal static class DomainEvaluation
         using var stream = typeof(DomainEvaluation).Assembly.GetManifestResourceStream("multidomain-v1.json")!;
         using var bytes = new MemoryStream(); stream.CopyTo(bytes);
         byte[] corpus = bytes.ToArray();
+        const string frozenCorpusSha256 = "49c45d2b010fa0716d8ff3a8aa950335fe14b09db4c582a52a0591bc42601870";
+        if (Hash(corpus) != frozenCorpusSha256) throw new InvalidOperationException("The frozen v1 corpus changed; do not silently replace evaluation texts.");
         var fixtures = JsonSerializer.Deserialize<Fixture[]>(corpus, new JsonSerializerOptions { PropertyNameCaseInsensitive = true })!;
         var reports = new List<object>(); bool allPassed = true; var settings = new UserSettings { DefaultStrength = Strength.Strong };
         foreach (var fixture in fixtures)
