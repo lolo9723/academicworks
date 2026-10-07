@@ -17,6 +17,8 @@ namespace AcademicParaphraser.Core.Rewriting
         public int LexicalEntries { get; set; }
         public int StructureInventory { get; set; }
         public int ApplicableStructures { get; set; }
+        public int RejectedForMeaningSignals { get; set; }
+        public int RejectedForRuleTimeouts { get; set; }
         public string StructureStatus { get; set; } = "kapalı";
     }
     public sealed class EnrichmentContext

@@ -93,6 +93,8 @@ namespace AcademicParaphraser.Core
     }
     public sealed class RuleDefinition
     {
+        public bool SentenceBound { get; set; }
+        public List<GroupConstraint> GroupConstraints { get; set; } = new List<GroupConstraint>();
         public string Id { get; set; } = ""; public string Pattern { get; set; } = ""; public string Target { get; set; } = "";
         public string Family { get; set; } = ""; public string PosConstraint { get; set; } = "";
         public string ContextPattern { get; set; } = "";
@@ -107,6 +109,18 @@ namespace AcademicParaphraser.Core
         {
             get; set;
         }
+    }
+    public sealed class GroupConstraint
+    {
+        public string Group { get; set; } = "";
+        public string Pos { get; set; } = "";
+        public List<string> Required { get; set; } = new List<string>();
+        public List<string> Any { get; set; } = new List<string>();
+        public List<string> Forbidden { get; set; } = new List<string>();
+    }
+    public interface ITurkishStructuralInflector
+    {
+        System.Threading.Tasks.Task<string?> TransformStructureAsync(MorphToken source, string mode, System.Threading.CancellationToken cancellation);
     }
     public sealed class LexiconEntry
     {

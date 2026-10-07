@@ -9,7 +9,7 @@ using AcademicParaphraser.Infrastructure.TurkishNlp;
 using AcademicParaphraser.Infrastructure.InternetDictionaryProviders;
 using AcademicParaphraser.Core.Rewriting;
 
-if(args.Length != 4 && !(args.Length == 5 && (args[4] == "--online" || args[4] == "--clinical")) && !(args.Length == 6 && args[4] == "--input")) throw new ArgumentException("wordnet.sqlite java nlp.jar output-folder [--online | --clinical | --input local-file] required");
+if(args.Length != 4 && !(args.Length == 5 && (args[4] == "--online" || args[4] == "--clinical" || args[4] == "--domains")) && !(args.Length == 6 && args[4] == "--input")) throw new ArgumentException("wordnet.sqlite java nlp.jar output-folder [--online | --clinical | --domains | --input local-file] required");
 string output = Path.GetFullPath(args[3]); Directory.CreateDirectory(output);
 string temporary = Path.Combine(Path.GetTempPath(), "AcademicQuality-" + Guid.NewGuid().ToString("N"));
 Directory.CreateDirectory(temporary);
@@ -46,6 +46,11 @@ try {
     }
     var knowledge = new WordNetLexicalSource(Path.GetFullPath(args[0]));
     var engine = new TransformationEngine(repo, nlp, knowledge);
+    if (args.Length == 5 && args[4] == "--domains")
+    {
+        await DomainEvaluation.RunAsync(engine, nlp, output);
+        return;
+    }
     string source = "İçerik analizi, ziyaretçi deneyimlerini incelemenin en etkili yöntemlerinden biridir. Ziyaretçi deneyimlerini anlamayı mümkün kıldığı için bu araştırmada içerik analizi kullanılmıştır. Ziyaretçilerin çevrimiçi yorumları incelenmiştir. Araştırma alanı olarak 12 destinasyon belirlenmiştir. Bu yorumlarda deneyimlerin nasıl temsil edildiği analiz edilmiştir. Bu araştırmanın amacı, ziyaretçi deneyimlerini incelemektir (Alfa, 2022; N=120).";
     bool clinical = args.Length == 5 && args[4] == "--clinical";
     if (clinical) source = "Bu araştırmanın amacı, hasta dosyalarını kullanarak Ortodonti ve Periodontoloji bölümleri arasındaki iletişimi incelemektir. Araştırmanın ikincil amacı ise konsültasyon yanıtlarını uzman ve lisansüstü öğrenci gruplarına göre karşılaştırmaktır. Tıp fakültesi arşivindeki 286 hastaya ait konsültasyon kayıtları retrospektif olarak incelenmiş ve kategorize edilmiştir.";

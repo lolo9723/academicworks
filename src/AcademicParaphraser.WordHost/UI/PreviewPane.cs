@@ -66,6 +66,8 @@ namespace AcademicParaphraser.WordHost.UI
             var scan = candidate.Enrichment;
             if (scan != null && scan.RootsTotal > 0)
                 status.Text += $"\nUygun kök: {scan.RootsChecked}/{scan.RootsTotal} · bilgisi bulunan: {scan.RootsFound} · bulunamayan: {scan.RootsUnresolved}\nİnternette aranan: {scan.OnlineRootsQueried} · kaynak hatası: {scan.ProviderErrors}\nYapı bankası: {scan.StructureStatus} · {scan.StructureInventory} birleşim / {scan.ApplicableStructures} aday kalıp";
+            if (scan != null && scan.RejectedForMeaningSignals > 0)
+                status.Text += $"\nOlumsuzluk/olasılık denetiminde elenen öneri: {scan.RejectedForMeaningSignals}.";
             apply.Enabled = candidate.Edits.Count > 0;
             next.Enabled = count > 1;
         }

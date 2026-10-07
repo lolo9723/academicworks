@@ -49,8 +49,8 @@ jobs:
         run: dotnet run --project tools/AcademicParaphraser.QualityProbe/AcademicParaphraser.QualityProbe.csproj -c Release -- artifacts/lexical-data/kenet.sqlite runtime/java/bin/java.exe nlp/target/turkish-nlp-1.0.0.jar artifacts/quality
       - name: Verify live keyless dictionary and structure retrieval
         run: dotnet run --project tools/AcademicParaphraser.QualityProbe/AcademicParaphraser.QualityProbe.csproj -c Release -- artifacts/lexical-data/kenet.sqlite runtime/java/bin/java.exe nlp/target/turkish-nlp-1.0.0.jar artifacts/quality --online
-      - name: Verify clinical sentence rewrites with word replacement disabled
-        run: dotnet run --project tools/AcademicParaphraser.QualityProbe/AcademicParaphraser.QualityProbe.csproj -c Release -- artifacts/lexical-data/kenet.sqlite runtime/java/bin/java.exe nlp/target/turkish-nlp-1.0.0.jar artifacts/quality --clinical
+      - name: Verify five unrelated domains with structural paraphrasing
+        run: dotnet run --project tools/AcademicParaphraser.QualityProbe/AcademicParaphraser.QualityProbe.csproj -c Release -- artifacts/lexical-data/kenet.sqlite runtime/java/bin/java.exe nlp/target/turkish-nlp-1.0.0.jar artifacts/quality --domains
       - name: Verify Windows runtime and deployment
         run: .\build\Verify-WindowsRuntime.ps1 -Payload artifacts\payload
       - name: Reproduce SQLite failure under Framework shadow copy
@@ -73,7 +73,7 @@ jobs:
           }
       - name: Verify installer and write SHA256
         run: |
-          $installer=Get-Item artifacts\installer\AkademikParafraz-1.3.0-Setup.exe
+          $installer=Get-Item artifacts\installer\AkademikParafraz-1.4.0-Setup.exe
           if($installer.Length -lt 1000000){throw 'Installer çıktısı beklenenden küçük.'}
           $hash=(Get-FileHash $installer -Algorithm SHA256).Hash.ToLowerInvariant()
           "$hash  $($installer.Name)" | Set-Content -Encoding ASCII "$($installer.FullName).sha256"
@@ -89,10 +89,10 @@ jobs:
           Copy-Item build\Smoke-Word.ps1,build\Verify-Word.cmd,build\Probe-Startup.ps1,build\Tanila.cmd artifacts\installer
           Copy-Item docs\UsersGuide.md artifacts\installer
       - name: Test missing-Word prerequisite
-        run: .\build\Test-InstallerPrerequisites.ps1 -Installer artifacts\installer\AkademikParafraz-1.3.0-Setup.exe
+        run: .\build\Test-InstallerPrerequisites.ps1 -Installer artifacts\installer\AkademikParafraz-1.4.0-Setup.exe
       - name: Create bounded transfer parts
         run: |
-          $source=Get-Item artifacts\installer\AkademikParafraz-1.3.0-Setup.exe
+          $source=Get-Item artifacts\installer\AkademikParafraz-1.4.0-Setup.exe
           New-Item artifacts\transfer -ItemType Directory -Force | Out-Null
           $stream=[IO.File]::OpenRead($source.FullName)
           $buffer=New-Object byte[] (1024*1024)
@@ -140,7 +140,7 @@ jobs:
       - name: Installer artifact
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: AkademikParafraz-1.3.0-Windows-Setup
+          name: AkademikParafraz-1.4.0-Windows-Setup
           path: artifacts/installer/
           if-no-files-found: error
           retention-days: 30

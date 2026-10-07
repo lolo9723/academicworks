@@ -186,6 +186,9 @@ namespace AcademicParaphraser.Infrastructure.Persistence
             if (rule == null || string.IsNullOrWhiteSpace(rule.Id) || string.IsNullOrWhiteSpace(rule.Pattern) || rule.Pattern.Length > 2000 || string.IsNullOrWhiteSpace(rule.Target) || rule.Target.Length > 2000 || rule.Target.Any(char.IsControl) || rule.ContextPattern == null || rule.RequiredMorphemes == null || rule.ForbiddenMorphemes == null || rule.PosConstraint == null || string.IsNullOrWhiteSpace(rule.Domain) || !Enum.IsDefined(typeof(Strength), rule.Strength) || double.IsNaN(rule.Confidence) || rule.Confidence < .80 || rule.Confidence > 1)
                 throw new ArgumentException("Kural değerleri geçersiz.");
             var pattern = new Regex(rule.Pattern, RegexOptions.None, TimeSpan.FromMilliseconds(150));
+            if (rule.GroupConstraints == null || rule.GroupConstraints.Any(c => c == null || string.IsNullOrWhiteSpace(c.Group) || c.Pos == null || c.Required == null || c.Any == null || c.Forbidden == null ||
+                !pattern.GetGroupNames().Contains(c.Group) || c.Required.Concat(c.Any).Concat(c.Forbidden).Any(m => string.IsNullOrWhiteSpace(m))))
+                throw new ArgumentException("Kural grup koşulları geçersiz.");
             if (pattern.IsMatch(""))
                 throw new ArgumentException("Kural boş metinle eşleşmemeli.");
             new Regex(rule.ContextPattern, RegexOptions.None, TimeSpan.FromMilliseconds(150));

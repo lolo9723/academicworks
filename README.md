@@ -4,6 +4,8 @@ Windows masaüstü Microsoft Word için C#/.NET Framework 4.8 ve VSTO mimarisind
 
 ## Teslim durumu
 
+**1.4.0 yan cümle motoru:** Kelime konum hatası giderildi; bağlama göre morfolojik üretim, karşıtlık/bulgu/süreç yeniden kurma, anlam sinyali denetimi ve beş farklı alanın sabit sınaması eklendi. Aynı metinlerde 1.3.0 1/25, yeni motor 20/25 kaynak cümlesini değiştirdi. Bu oran anlam doğruluğu veya insan yazımı puanı değildir. [Öncesi/sonrası metinler, sorunlar ve sınırlar](docs/Clause-Engine-1.4.0.md).
+
 **1.3.0 cümle motoru:** Varsayılan parafrazda sözlük eş anlamlıları ve eski kurallardaki tek yüklem değiştirmeleri uygulanmaz. 303 yeni cümle biçimi, klinik terim/kurum adı korumaları, sıra değişimini tanıyan alternatif denetimi ve cümle kapsamı gösterimi eklendi. [Gerçek motor çıktısı, sınırlar ve Windows doğrulaması](docs/Sentence-Engine-1.3.0.md). Bu sürüm hâlâ kural temellidir; her paragrafı serbestçe yeniden yazan bir dil modeli içermez.
 
 **1.2.0 internet motoru:** “İnternetle Parafraz” komutu, uygun köklerin tamamını inceleyen ve eksiklerin tamamını internette arayan akış, Wikidata terim desteği ve SHA256 doğrulanan 25.104 birleşimlik cümle yapı bankası eklendi. [Canlı internet, gerçek çıktı ve Windows raporu](docs/Internet-Engine-1.2.0.md). Bu sayı bağımsız dilbilgisi ailelerinin sayısı değildir; her kelime/yapı için sonuç garantisi verilmez.

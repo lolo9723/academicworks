@@ -49,6 +49,7 @@ namespace AcademicParaphraser.Core.RuleEngine
             if (settings.PreserveNames)
                 protectedSpans.AddRange(morphology.Where(t => t.Proper).Select(t => new TextSpan { Start = t.Start, Length = t.Length, Reason = "morfolojik özel isim" }));
             protectedSpans = ProtectionDetector.Merge(protectedSpans).ToList();
+            var sentences = SentenceSegmentation.Find(text, protectedSpans);
             var lookup = lexicon.GroupBy(e => e.Lemma + "/" + e.Pos).ToDictionary(g => g.Key, g => g.First(), StringComparer.Ordinal);
             if (lexicalSource != null)
             {
@@ -59,6 +60,8 @@ namespace AcademicParaphraser.Core.RuleEngine
             var candidates = new List<List<TextEdit>>();
             string lowered = text.ToLower(Turkish);
             var availableRules = catalog.GetRules().ToList();
+            if (!settings.EnableWordChoice) availableRules.AddRange(ClauseStructureCatalog.Create());
+            var structuralInflections = new Dictionary<string, string?>(StringComparer.Ordinal);
             if (structureSource != null) availableRules.AddRange(await structureSource.FindAsync(text, settings, token, enrichment).ConfigureAwait(false));
             enrichment.Report("Cümle yapıları ve çekimler denetleniyor…");
             foreach (var rule in availableRules.Where(r => (int)r.Strength <= (int)settings.DefaultStrength && r.Confidence >= settings.MinimumConfidence && (r.Domain == "genel" || r.Domain == settings.Domain)))
@@ -69,19 +72,29 @@ namespace AcademicParaphraser.Core.RuleEngine
                 if (!rule.UserDefined && !string.IsNullOrEmpty(rule.RequiredText) && lowered.IndexOf(rule.RequiredText, StringComparison.Ordinal) < 0) continue;
                 if (patterns.Count > 4096) patterns.Clear();
                 var regex = patterns.GetOrAdd(rule.Pattern, key => new Regex(key, RegexOptions.None, TimeSpan.FromMilliseconds(150)));
-                foreach (Match match in regex.Matches(lowered))
+                List<Match> matches;
+                try { matches = regex.Matches(lowered).Cast<Match>().ToList(); }
+                catch (RegexMatchTimeoutException) { enrichment.Summary.RejectedForRuleTimeouts++; continue; }
+                foreach (Match match in matches)
                 {
+                    if (rule.SentenceBound && !SentenceSegmentation.ContainsWholeMatchAtStart(text, match.Index, match.Length, sentences)) continue;
                     if (match.Value.Any(char.IsControl))
                         continue;
                     var tokens = morphology.Where(t => t.Start >= match.Index && t.Start < match.Index + match.Length).ToList();
+                    if (!GroupsMatch(rule, match, tokens)) continue;
                     if (rule.PosConstraint.Length > 0 && !tokens.Any(t => t.Pos == rule.PosConstraint))
                         continue;
                     if (rule.RequiredMorphemes.Any(m => !tokens.Any(t => t.Morphemes.Contains(m))) || rule.ForbiddenMorphemes.Any(m => tokens.Any(t => t.Morphemes.Contains(m))))
                         continue;
-                    if (rule.ContextPattern.Length > 0 && !Regex.IsMatch(ParagraphAt(text, match.Index).ToLower(Turkish), rule.ContextPattern, RegexOptions.None, TimeSpan.FromMilliseconds(150)))
-                        continue;
+                    try
+                    {
+                        if (rule.ContextPattern.Length > 0 && !Regex.IsMatch(ParagraphAt(text, match.Index).ToLower(Turkish), rule.ContextPattern, RegexOptions.None, TimeSpan.FromMilliseconds(150))) continue;
+                    }
+                    catch (RegexMatchTimeoutException) { enrichment.Summary.RejectedForRuleTimeouts++; continue; }
                     string original = text.Substring(match.Index, match.Length);
-                    string replacement = ExpandTarget(rule.Target, match, text);
+                    string? expanded = await ExpandStructuralTargetAsync(rule.Target, match, text, tokens, structuralInflections, token).ConfigureAwait(false);
+                    if (expanded == null) continue;
+                    string replacement = expanded;
                     replacement = CaseLike(original, replacement);
                     if (replacement.Any(char.IsControl))
                         continue;
@@ -116,7 +129,6 @@ namespace AcademicParaphraser.Core.RuleEngine
                     candidates.Add(new List<TextEdit> { new TextEdit { Start = word.Start, Length = word.Length, Original = word.Surface, Replacement = replacement, RuleId = "lemma:" + word.Lemma + ":" + synonym, Family = "morfolojik eş anlam", Confidence = entry.Confidence } });
                 }
             }
-            var sentences = SentenceSpans(text, protectedSpans);
             if (candidates.Count == 0)
                 return new[] { new Candidate { Text = text, SentenceCount = sentences.Count, Enrichment = enrichment.Summary, Score = new CandidateScore { SemanticSafety = 1, GrammarConfidence = 1, AcademicStyle = 1 } } };
             var proposals = new List<Candidate>();
@@ -136,9 +148,10 @@ namespace AcademicParaphraser.Core.RuleEngine
                     // A variant must not demote a whole-sentence rewrite to a word substitution.
                     int bestRank = Rank(options[0], settings.DefaultStrength);
                     options = options.Where(e => Rank(e, settings.DefaultStrength) == bestRank).ToList();
-                    var selected = options[(variant + groups.IndexOf(group)) % options.Count];
-                    if (selected.Any(x => edits.Any(e => e.Start < x.Start + x.Length && e.Start + e.Length > x.Start)))
-                        continue;
+                    int rotation = (variant + groups.IndexOf(group)) % options.Count;
+                    var selected = Enumerable.Range(0, options.Count).Select(i => options[(rotation + i) % options.Count])
+                        .FirstOrDefault(option => !option.Any(x => edits.Any(e => e.Start < x.Start + x.Length && e.Start + e.Length > x.Start)));
+                    if (selected == null) continue;
                     if (variant >= 6 && groups.Count > 1 && (groups.IndexOf(group) + variant) % 3 == 0)
                         continue;
                     edits.AddRange(selected);
@@ -152,14 +165,68 @@ namespace AcademicParaphraser.Core.RuleEngine
                 int rewritten = sentences.Count(s => edits.Any(e => StructuralFamilies.Contains(e.Family) && s.Intersects(e.Start, e.Length)));
                 proposals.Add(new Candidate { Text = result, Edits = edits, Score = score, Enrichment = enrichment.Summary, SentenceCount = sentences.Count, RewrittenSentences = rewritten });
             }
-            int bestCoverage = proposals.Max(p => p.RewrittenSentences);
-            return proposals.Where(p => p.RewrittenSentences == bestCoverage).OrderByDescending(p => p.Score.StructuralDifference).ThenByDescending(p => OrderedDifference(text, p.Text)).ThenByDescending(p => p.Score.SemanticSafety).Take(settings.Alternatives).ToList();
+            var ordered = proposals.OrderByDescending(p => p.RewrittenSentences).ThenByDescending(p => p.Score.StructuralDifference).ThenByDescending(p => OrderedDifference(text, p.Text)).ThenByDescending(p => p.Score.SemanticSafety).ToList();
+            var verified = new List<Candidate>();
+            foreach (var proposal in ordered)
+            {
+                token.ThrowIfCancellationRequested();
+                if (!settings.EnableWordChoice && proposal.Edits.Count > 0)
+                {
+                    var after = new List<MorphToken>();
+                    foreach (Match paragraph in Regex.Matches(proposal.Text, @"[^\r\n\a]+"))
+                    {
+                        string analysisText = new string(paragraph.Value.Select(c => char.IsControl(c) ? ' ' : c).ToArray());
+                        after.AddRange(await nlp.AnalyzeAsync(analysisText, token).ConfigureAwait(false));
+                    }
+                    if (!MeaningSignalGuard.Preserved(text, proposal.Text, morphology, after)) { enrichment.Summary.RejectedForMeaningSignals++; continue; }
+                }
+                if (verified.Count > 0 && proposal.RewrittenSentences < verified[0].RewrittenSentences) break;
+                verified.Add(proposal);
+                if (verified.Count >= settings.Alternatives) break;
+            }
+            return verified.Count > 0 ? verified : new[] { new Candidate { Text = text, SentenceCount = sentences.Count, Enrichment = enrichment.Summary } };
         }
         private static int Rank(List<TextEdit> edits, Strength strength)
         {
+            if (edits.Any(e => e.RuleId.StartsWith("clause-v1-", StringComparison.Ordinal))) return 4;
             if (edits.Any(e => e.Family == "cümle kuruluşu" || e.RuleId.StartsWith("online-frame:", StringComparison.Ordinal))) return 3;
             if (strength == Strength.Strong && edits.Any(e => e.Family == "güvenli sıralama")) return 2;
             return strength != Strength.Light && edits.Any(e => StructuralFamilies.Contains(e.Family)) ? 1 : 0;
+        }
+        private static bool GroupsMatch(RuleDefinition rule, Match match, IReadOnlyList<MorphToken> tokens)
+        {
+            foreach (var constraint in rule.GroupConstraints)
+            {
+                var group = match.Groups[constraint.Group];
+                // Complement groups omit the final accusative suffix but start at the same token.
+                var word = tokens.FirstOrDefault(t => t.Start == group.Index && t.Length >= group.Length && t.Length - group.Length <= 2);
+                if (!group.Success || word == null || word.Proper || (constraint.Pos.Length > 0 && word.Pos != constraint.Pos) ||
+                    constraint.Required.Any(m => !word.Morphemes.Contains(m)) ||
+                    (constraint.Any.Count > 0 && !constraint.Any.Any(word.Morphemes.Contains)) || constraint.Forbidden.Any(word.Morphemes.Contains)) return false;
+            }
+            return true;
+        }
+        private async Task<string?> ExpandStructuralTargetAsync(string target, Match match, string original, IReadOnlyList<MorphToken> tokens, Dictionary<string, string?> cache, CancellationToken cancellation)
+        {
+            var placeholders = Regex.Matches(target, @"\$\{structure:(?<mode>Gen|Passive|Nominal):(?<group>[A-Za-z0-9_]+)\}").Cast<Match>().ToList();
+            foreach (var placeholder in placeholders)
+            {
+                if (!(nlp is ITurkishStructuralInflector inflector)) return null;
+                var group = match.Groups[placeholder.Groups["group"].Value];
+                if (!group.Success) return null;
+                string source = original.Substring(group.Index, group.Length), mode = placeholder.Groups["mode"].Value;
+                var morphology = tokens.FirstOrDefault(t => t.Start == group.Index && t.Length == group.Length);
+                if (morphology == null) return null;
+                string key = mode + "/" + source + "/" + morphology.Lemma + "/" + string.Join(",", morphology.Morphemes);
+                if (!cache.TryGetValue(key, out var surface))
+                {
+                    surface = await inflector.TransformStructureAsync(morphology, mode, cancellation).ConfigureAwait(false);
+                    cache[key] = surface;
+                }
+                if (string.IsNullOrWhiteSpace(surface)) return null;
+                target = target.Replace(placeholder.Value, CaseLike(source, surface!));
+            }
+            return ExpandTarget(target, match, original);
         }
         private static string ExpandTarget(string target, Match match, string original)
         {
@@ -217,20 +284,6 @@ namespace AcademicParaphraser.Core.RuleEngine
             }
             var x = Pairs(a); var y = Pairs(b);
             return 1 - x.Intersect(y).Count() / (double)Math.Max(1, x.Union(y).Count());
-        }
-        private static List<TextSpan> SentenceSpans(string text, IReadOnlyList<TextSpan> protections)
-        {
-            var result = new List<TextSpan>(); int start = 0;
-            for (int i = 0; i <= text.Length; i++)
-            {
-                bool end = i == text.Length || text[i] == '\r' || text[i] == '\n' || text[i] == '\a' ||
-                    ((text[i] == '.' || text[i] == '!' || text[i] == '?') && (i + 1 == text.Length || char.IsWhiteSpace(text[i + 1])) && !protections.Any(s => s.Intersects(i, 1)));
-                if (!end) continue;
-                int length = i == text.Length ? i - start : i + 1 - start;
-                if (length > 0 && text.Substring(start, length).Any(char.IsLetter)) result.Add(new TextSpan { Start = start, Length = length });
-                start = i + 1;
-            }
-            return result;
         }
     }
 }

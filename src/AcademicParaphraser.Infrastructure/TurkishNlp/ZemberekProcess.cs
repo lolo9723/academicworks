@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 namespace AcademicParaphraser.Infrastructure.TurkishNlp
 {
-    public sealed class ZemberekProcess : ITurkishNlp
+    public sealed class ZemberekProcess : ITurkishNlp, ITurkishStructuralInflector
     {
         private readonly string executable, jar; private readonly SemaphoreSlim gate = new SemaphoreSlim(1, 1); private Process? process; private StreamWriter? input; private bool disposed;
         public string Status { get; private set; } = "Başlatılmadı";
@@ -92,6 +92,19 @@ namespace AcademicParaphraser.Infrastructure.TurkishNlp
                 target = targetLemma,
                 pos
             }, cancellation).ConfigureAwait(false);
+            return result.Value<string>("surface");
+        }
+        public async Task<string?> TransformStructureAsync(string source, string mode, CancellationToken cancellation)
+        {
+            if (mode != "Gen" && mode != "Passive" && mode != "Nominal") throw new ArgumentException("Yapısal çekim türü geçersiz.");
+            var result = await RequestAsync(new { op = "structure", source, mode }, cancellation).ConfigureAwait(false);
+            return result.Value<string>("surface");
+        }
+        public async Task<string?> TransformStructureAsync(MorphToken source, string mode, CancellationToken cancellation)
+        {
+            if (mode != "Gen" && mode != "Passive" && mode != "Nominal") throw new ArgumentException("Yapısal çekim türü geçersiz.");
+            if (source.Proper) return null;
+            var result = await RequestAsync(new { op = "structure", source = source.Surface, mode, lemma = source.Lemma, morphemes = source.Morphemes }, cancellation).ConfigureAwait(false);
             return result.Value<string>("surface");
         }
         private void Kill()

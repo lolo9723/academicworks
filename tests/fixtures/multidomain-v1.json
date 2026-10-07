@@ -1,0 +1,37 @@
+[
+  {
+    "id": "law",
+    "domain": "Hukuk",
+    "source": "İdari yaptırımların hukuka uygunluğu, ölçülülük ilkesi bakımından incelenmiştir. Bulgular, gerekçesi açıklanmayan kararların daha sık iptal edildiğini göstermektedir. İncelemede 48 karar ele alınmış olmakla birlikte, bunların yalnızca 11'i iptal edilmiştir. Ankara İdare Mahkemesi arşivinde tarafların savunmaları karşılaştırılırken, delillerin sunuluş sırası ayrıca kaydedilmiştir. Bir kararın iptal edilmiş olması, benzer her uyuşmazlığın aynı biçimde sonuçlanacağını kanıtlamaz.",
+    "anchors": ["ölçülülük ilkesi", "48", "11", "Ankara İdare Mahkemesi"],
+    "minimumChangedSentences": 2
+  },
+  {
+    "id": "engineering",
+    "domain": "Mühendislik",
+    "source": "Bu çalışmada kompozit kirişlerin yorulma davranışı deneysel olarak incelenmiştir. Ölçüm sonuçları, lif oranının artırılmasının her durumda dayanımı yükseltmediğini göstermektedir. Numunelerin yüzeyleri incelenirken, çatlakların başlangıç konumları kaydedilmiştir. Deneyler 25 °C sıcaklıkta ve 12 kN yük altında yürütülmüş olmakla birlikte, saha koşulları ayrıca değerlendirilmemiştir. Ortaya çıkan farklar üretim toleranslarıyla ilişkili olabilir; bu nedenle tek bir ölçümden kesin bir tasarım sınırı çıkarılmamalıdır.",
+    "anchors": ["kompozit", "25", "°C", "12", "kN", "her durumda", "olabilir"],
+    "minimumChangedSentences": 2
+  },
+  {
+    "id": "economics",
+    "domain": "Ekonomi",
+    "source": "Hanehalklarının tüketim harcamaları, gelir grupları açısından karşılaştırılmıştır. Veriler, fiyat artışlarının düşük gelirli haneleri daha fazla etkilediğini göstermektedir. Örneklemde 620 hane bulunmuş olmakla birlikte, kayıt dışı gelirler doğrudan ölçülmemiştir. Tüketim düzeyi hesaplanırken, eşdeğer hane büyüklüğü dikkate alınmıştır. Gözlenen ilişkinin nedensel bir etkiyi kanıtladığı söylenemez; sonuçlar yalnızca incelenen döneme ilişkin bir değerlendirme sunmaktadır.",
+    "anchors": ["620", "kayıt dışı", "eşdeğer hane büyüklüğü", "yalnızca"],
+    "minimumChangedSentences": 2
+  },
+  {
+    "id": "education",
+    "domain": "Eğitim",
+    "source": "Öğrencilerin okuduğunu anlama becerileri, öğretim yöntemleri bakımından değerlendirilmiştir. Araştırma bulguları, geribildirimin bütün öğrencilerde aynı düzeyde etkili olmadığını göstermektedir. Uygulama 8 hafta sürmüş olmakla birlikte, katılımcılar gruplara rastgele atanmamıştır. Sınav sonuçları karşılaştırılırken, başlangıç puanları dikkate alınmıştır. Mavişehir Ortaokulu öğrencilerinden elde edilen sonuçların diğer okullara doğrudan genellenmesi uygun olmayabilir.",
+    "anchors": ["8", "rastgele", "başlangıç puanları", "Mavişehir Ortaokulu"],
+    "minimumChangedSentences": 2
+  },
+  {
+    "id": "environment",
+    "domain": "Çevre bilimleri",
+    "source": "Toprak nemi, bitki örtüsü bakımından incelenmiştir. Sonuçlar, yüzey sıcaklığının kurak dönemde daha hızlı yükseldiğini göstermektedir. Ölçümler 36 istasyonda yapılmış olmakla birlikte, yüksek rakımlı alanlar örnekleme dahil edilmemiştir. Nem düzeyi ölçülürken, sensörlerin kalibrasyon kayıtları ayrıca kontrol edilmiştir. Yağış miktarı değişirse gözlenen örüntü farklılaşabilir; mevcut veriler, bütün bölgelerde aynı sonucun ortaya çıkacağını göstermemektedir.",
+    "anchors": ["36", "kalibrasyon", "dahil edilmemiştir"],
+    "minimumChangedSentences": 2
+  }
+]
