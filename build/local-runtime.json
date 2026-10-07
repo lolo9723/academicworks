@@ -1,0 +1,8 @@
+{
+  "tag": "b11460",
+  "url": "https://github.com/ggml-org/llama.cpp/releases/download/b11460/llama-b11460-bin-win-cpu-x64.zip",
+  "sha256": "84a33849268b2e421a481abe88d0a9dd3d664a31058b9c7ffcc9c8d048cb9840",
+  "bytes": 19437248,
+  "cpuOnly": true,
+  "source": "https://github.com/ggml-org/llama.cpp/tree/b11460"
+}

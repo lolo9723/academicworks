@@ -48,6 +48,10 @@ namespace AcademicParaphraser.WordHost.DocumentProtection
             XmlOffset = offset;
             Protected = spans;
         }
+        public IReadOnlyList<TextSpan> Writable => RunMap.EditableSpans
+            .Where(s => s.Intersects(XmlOffset, Text.Length))
+            .Select(s => new TextSpan { Start = Math.Max(s.Start, XmlOffset) - XmlOffset,
+                Length = Math.Min(s.End, XmlOffset + Text.Length) - Math.Max(s.Start, XmlOffset) }).ToList();
         public bool CanEdit(TextEdit edit) => RunMap.CanEdit(XmlOffset + edit.Start, edit.Length);
         public void Dispose()
         {

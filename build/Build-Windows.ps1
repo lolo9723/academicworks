@@ -44,6 +44,7 @@ if(-not(Test-Path (Join-Path $jre.FullName 'bin\java.exe'))){throw 'Java paket d
 New-Item runtime -ItemType Directory -Force | Out-Null
 if(Test-Path runtime/java){Remove-Item runtime/java -Recurse -Force}
 Copy-Item $jre.FullName runtime/java -Recurse
+& (Join-Path $PSScriptRoot 'Prepare-LocalRuntime.ps1') -VisualStudioRoot $vs
 $env:ACADEMIC_JAVA=(Join-Path $root 'runtime\java\bin\java.exe')
 $env:ACADEMIC_NLP_JAR=(Join-Path $root 'nlp\target\turkish-nlp-1.0.0.jar')
 & dotnet restore AcademicParaphraser.Engine.sln --locked-mode
@@ -66,7 +67,7 @@ foreach($mode in @('Debug','Release')) {
  if($LASTEXITCODE -ne 0){throw "$mode VSTO derlemesi / manifest imzalama başarısız."}
 }
 $output=Join-Path $root "src\AcademicParaphraser.WordAddin\bin\$Configuration"
-foreach($file in @('AcademicParaphraser.WordAddin.dll','AcademicParaphraser.WordAddin.vsto','AcademicParaphraser.WordAddin.dll.manifest','runtimes\win-x86\native\e_sqlite3.dll','runtimes\win-x64\native\e_sqlite3.dll','runtime\java\bin\java.exe','nlp\turkish-nlp-1.0.0.jar','data\kenet.sqlite','data\KENET-NOTICE.txt')){if(-not(Test-Path (Join-Path $output $file))){throw "Dağıtım çıktısı eksik: $file"}}
+foreach($file in @('AcademicParaphraser.WordAddin.dll','AcademicParaphraser.WordAddin.vsto','AcademicParaphraser.WordAddin.dll.manifest','runtimes\win-x86\native\e_sqlite3.dll','runtimes\win-x64\native\e_sqlite3.dll','runtime\java\bin\java.exe','nlp\turkish-nlp-1.0.0.jar','data\kenet.sqlite','data\KENET-NOTICE.txt','runtime\llama\llama-server.exe','runtime\llama\llama-server-impl.dll')){if(-not(Test-Path (Join-Path $output $file))){throw "Dağıtım çıktısı eksik: $file"}}
 $payload=Join-Path $root 'artifacts\payload'
 if(Test-Path $payload){Remove-Item $payload -Recurse -Force}
 Copy-Item $output $payload -Recurse

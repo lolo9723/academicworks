@@ -163,7 +163,7 @@ namespace AcademicParaphraser.Infrastructure.Persistence
         }
         public static void ValidateSettings(UserSettings settings)
         {
-            if (settings == null || settings.CustomProtectionPatterns == null || string.IsNullOrWhiteSpace(settings.Domain) || settings.Alternatives < 1 || settings.Alternatives > 5 || double.IsNaN(settings.MinimumConfidence) || settings.MinimumConfidence < .80 || settings.MinimumConfidence > 1 || !Enum.IsDefined(typeof(Strength), settings.DefaultStrength))
+            if (settings == null || settings.CustomProtectionPatterns == null || string.IsNullOrWhiteSpace(settings.Domain) || settings.Alternatives < 1 || settings.Alternatives > 5 || double.IsNaN(settings.MinimumConfidence) || settings.MinimumConfidence < .80 || settings.MinimumConfidence > 1 || !Enum.IsDefined(typeof(Strength), settings.DefaultStrength) || !Enum.IsDefined(typeof(MetinDili), settings.InputLanguage))
                 throw new ArgumentException("Ayar değerleri geçersiz.");
             foreach (var p in settings.CustomProtectionPatterns)
                 new Regex(p, RegexOptions.None, TimeSpan.FromMilliseconds(150));

@@ -30,3 +30,9 @@ Zemberek ve Java transitif JAR lisans/NOTICE dosyalarının kopyaları `licenses
 Turkish WordNet / KeNet, Starlang Software and contributors. Upstream data is separately licensed CC BY-SA 4.0; upstream GPL source code is not incorporated. The pinned native XML is normalized into `data/kenet.sqlite`, which retains CC BY-SA 4.0. Attribution, exact source URL/commit and changes are in `data/KENET-NOTICE.txt`; build pin is `build/lexical-data.json`. License: https://creativecommons.org/licenses/by-sa/4.0/. Source: https://github.com/StarlangSoftware/TurkishWordNet.
 
 Wikidata term-information fallback uses CC0 structured data via the public MediaWiki interface (https://www.wikidata.org/wiki/Wikidata:Licensing). Only an exact Turkish term/alias match is shown, with the entity source URL; fuzzy or other-language matches are rejected. These descriptions are not used as synonyms or rewriting rules.
+
+## Yerel yeniden yazım
+
+Qwen3.5-9B (Qwen, Apache-2.0), Unsloth topluluk UD-IQ3_XXS GGUF dönüşümü. Model deposu: https://huggingface.co/unsloth/Qwen3.5-9B-GGUF ; sabit revision 3885219b6810b007914f3a7950a8d1b469d598a5. SHA256 ve boyut `LocalModelStore.cs` içinde sabittir. Model uygulama EXE'sine dahil değildir; kullanıcı düğmeyle indirir. Lisans ve sabit model kartı bağlantısı `licenses/local-model` dizinindedir. Nicemleme Qwen'in resmi GGUF sürümü diye sunulmaz.
+
+llama.cpp b11460, MIT, CPU x64 binary: https://github.com/ggml-org/llama.cpp/tree/b11460 . Sabit Windows arşivi ve SHA256 `build/local-runtime.json` içindedir. MIT ve LLVM/OpenMP lisans dosyaları pakette korunur. Microsoft Word ve uygulama çalışırken yerel sunucu yalnızca loopback adresinde, geçici yerel erişim anahtarıyla açılır; belgeyi buluta göndermez. Bu anahtar kullanıcının satın aldığı bir API anahtarı değildir.

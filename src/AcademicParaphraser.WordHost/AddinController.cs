@@ -13,6 +13,7 @@ using AcademicParaphraser.Infrastructure.InternetDictionaryProviders;
 using AcademicParaphraser.Infrastructure.Persistence;
 using AcademicParaphraser.Infrastructure.LexicalKnowledge;
 using AcademicParaphraser.Infrastructure.TurkishNlp;
+using AcademicParaphraser.Infrastructure.LocalRewriting;
 using AcademicParaphraser.WordHost.DocumentProtection;
 using AcademicParaphraser.WordHost.UI;
 using Word = Microsoft.Office.Interop.Word;
@@ -20,6 +21,8 @@ namespace AcademicParaphraser.WordHost
 {
     public sealed class AddinController : IDisposable
     {
+        private readonly LocalModelStore modelStore;
+        private readonly LocalRewriteEngine localEngine;
         private readonly WordNetLexicalSource knowledge;
         private readonly OnlineStructureSource structures;
         private readonly WikidataTermProvider termProvider;
@@ -51,6 +54,9 @@ namespace AcademicParaphraser.WordHost
             knowledge = new WordNetLexicalSource(Path.Combine(installDirectory, "data", "kenet.sqlite"), dictionary);
             structures = new OnlineStructureSource(repo);
             engine = new TransformationEngine(repo, nlp, knowledge, structures);
+            modelStore = new LocalModelStore(Path.Combine(data, "models"));
+            localEngine = new LocalRewriteEngine(repo, nlp, new LocalLlamaModel(Path.Combine(installDirectory, "runtime", "llama", "llama-server.exe"), modelStore), knowledge);
+            Preview.DownloadRequested += async (s, e) => await DownloadModelAsync();
             Preview.ApplyRequested += (s, e) => Guard(Apply);
             Preview.NextRequested += (s, e) => Guard(() => Next(1));
             Preview.CancelRequested += (s, e) => { operation?.Cancel(); candidates = new List<Candidate>(); Preview.ShowMessage("İşlem iptal edildi; belge değişmedi."); StateChanged?.Invoke(this, EventArgs.Empty); };
@@ -132,7 +138,10 @@ namespace AcademicParaphraser.WordHost
                 var settings = Settings;
                 var token = operation.Token;
                 var enrichment = new EnrichmentContext { Progress = new Progress<string>(message => { if (!disposed && busy && !token.IsCancellationRequested) Preview.ShowProgress(message); }) };
-                var result = await Task.Run(() => engine.GenerateAsync(current.Text, settings, current.Protected, token, enrichment), token);
+                var diagnostics = new RewriteDiagnostics();
+                IReadOnlyList<Candidate> result = settings.UseLocalRewriting
+                    ? await Task.Run(() => localEngine.GenerateAsync(current.Text, settings, current.Writable, current.Protected, token, enrichment.Progress, diagnostics), token)
+                    : await Task.Run(() => engine.GenerateAsync(current.Text, settings, current.Protected, token, enrichment), token);
                 if (disposed)
                     return;
                 token.ThrowIfCancellationRequested();
@@ -140,13 +149,31 @@ namespace AcademicParaphraser.WordHost
                 candidates = result.Where(c => CandidateIntegrity.IsApplicable(current.Text, c, edit => current.CanEdit(edit) && !current.Protected.Any(p => p.Intersects(edit.Start, edit.Length)))).GroupBy(c => c.Text, StringComparer.Ordinal).Select(g => g.First()).ToList();
                 alternative = 0;
                 if (candidates.Count == 0)
-                    Preview.ShowMessage("Bu seçim için anlamı ve biçimi güvenle koruyan dönüşüm bulunamadı. Metin olduğu gibi bırakıldı.");
+                    Preview.ShowMessage("Bu seçim için denetimlerden geçen dönüşüm bulunamadı. Metin olduğu gibi bırakıldı." +
+                        (diagnostics.Reasons.Count > 0 ? "\n" + diagnostics.Reasons.Last() : ""));
                 else
                     Display();
             }
             catch (OperationCanceledException) { if (!disposed) Preview.ShowMessage("İşlem iptal edildi; belge değişmedi."); }
-            catch (Exception ex) { log.Write("GENERATE_FAILED", ex); if (!disposed) ShowError(ex, "Parafraz işlemi tamamlanamadı. Metin değişmedi."); }
-            finally { busy = false; if (!disposed) { Preview.SetBusy(false); if (candidates.Count == 0) Preview.ShowMessage("Uygulanabilir öneri yok; belge değişmedi."); else Display(); StateChanged?.Invoke(this, EventArgs.Empty); } operation?.Dispose(); operation = null; }
+            catch (Exception ex) { log.Write("GENERATE_FAILED", ex); if (!disposed) Preview.ShowMessage(ex is InvalidOperationException || ex is ArgumentException ? ex.Message : "Parafraz işlemi tamamlanamadı. Metin değişmedi."); }
+            finally { busy = false; if (!disposed) { Preview.SetBusy(false); if (candidates.Count > 0) Display(); StateChanged?.Invoke(this, EventArgs.Empty); } operation?.Dispose(); operation = null; }
+        }
+        public async Task DownloadModelAsync()
+        {
+            if (busy || disposed) return;
+            if (SynchronizationContext.Current == null) SynchronizationContext.SetSynchronizationContext(new WindowsFormsSynchronizationContext());
+            busy = true; candidates = new List<Candidate>(); operation = new CancellationTokenSource();
+            Preview.SetBusy(true); StateChanged?.Invoke(this, EventArgs.Empty);
+            try
+            {
+                var token = operation.Token;
+                var progress = new Progress<string>(message => { if (!disposed && !token.IsCancellationRequested) Preview.ShowProgress(message); });
+                await Task.Run(() => modelStore.DownloadAsync(progress, token), token);
+                if (!disposed) Preview.ShowMessage("Gelişmiş motor hazır. Metni seçip Parafraz düğmesine basın. İlk kullanım yavaş olabilir; metin bilgisayarınızda işlenir.");
+            }
+            catch (OperationCanceledException) { if (!disposed) Preview.ShowMessage("Model indirmesi iptal edildi. Yeniden başlatabilirsiniz; belge değişmedi."); }
+            catch (Exception ex) { log.Write("MODEL_DOWNLOAD_FAILED", ex); if (!disposed) Preview.ShowMessage("Model indirilemedi: " + (ex is InvalidOperationException ? ex.Message : "İnternet bağlantısını, boş disk alanını ve Hugging Face erişimini kontrol edin.")); }
+            finally { busy = false; if (!disposed) { Preview.SetBusy(false); StateChanged?.Invoke(this, EventArgs.Empty); } operation?.Dispose(); operation = null; }
         }
         public void Next(int step)
         {
@@ -178,7 +205,7 @@ namespace AcademicParaphraser.WordHost
         }
         public void Undo() => Guard(() => { adapter.Undo(snapshot); candidates = new List<Candidate>(); Preview.ShowMessage("Son parafraz geri alındı."); });
         public void LockSelected() => Guard(() => { repo.LockTerm(adapter.SelectedText()); Preview.ShowMessage("Seçili terim kişisel koruma sözlüğüne eklendi."); }); public void UnlockSelected() => Guard(() => repo.UnlockTerm(adapter.SelectedText()));
-        public void OpenSettings() => Guard(() => { string diagnostics = "Word: " + app.Version + Environment.NewLine + "Office işlemi: " + (Environment.Is64BitProcess ? "64 bit" : "32 bit") + Environment.NewLine + "Eklenti: " + typeof(AddinController).Assembly.GetName().Version + Environment.NewLine + "NLP: " + nlp.Status + Environment.NewLine + "Veritabanı: hazır (migration 1)" + Environment.NewLine + "Kurallar: " + repo.GetRules().Count + Environment.NewLine + "Kişisel/akademik sözcükler: " + repo.GetLexicon().Count + Environment.NewLine + "Geniş sözlük: " + knowledge.Describe() + Environment.NewLine + "İnternet: " + (Settings.InternetEnabled && !Settings.OfflineMode ? "isteğe bağlı açık" : "kapalı"); using (var form = new SettingsForm(repo, diagnostics)) form.ShowDialog(); StateChanged?.Invoke(this, EventArgs.Empty); });
+        public void OpenSettings() => Guard(() => { string diagnostics = "Word: " + app.Version + Environment.NewLine + "Office işlemi: " + (Environment.Is64BitProcess ? "64 bit" : "32 bit") + Environment.NewLine + "Eklenti: " + typeof(AddinController).Assembly.GetName().Version + Environment.NewLine + "Gelişmiş motor: " + (modelStore.IsDownloaded ? "indirildi (kullanımda SHA256 doğrulanır)" : "henüz indirilmedi") + Environment.NewLine + "NLP: " + nlp.Status + Environment.NewLine + "Veritabanı: hazır (migration 1)" + Environment.NewLine + "Kurallar: " + repo.GetRules().Count + Environment.NewLine + "Kişisel/akademik sözcükler: " + repo.GetLexicon().Count + Environment.NewLine + "Geniş sözlük: " + knowledge.Describe() + Environment.NewLine + "İnternet: " + (Settings.InternetEnabled && !Settings.OfflineMode ? "isteğe bağlı açık" : "kapalı"); using (var form = new SettingsForm(repo, diagnostics)) form.ShowDialog(); StateChanged?.Invoke(this, EventArgs.Empty); });
         public void OpenDictionary() => Guard(() => { using (var form = new DictionaryForm(repo, dictionary)) form.ShowDialog(); }); public void OpenHistory() => Guard(() => { using (var form = new HistoryForm(repo)) form.ShowDialog(); });
         public void Guard(Action action)
         {

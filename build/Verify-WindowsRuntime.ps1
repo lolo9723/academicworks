@@ -3,7 +3,7 @@ $ErrorActionPreference='Stop'
 if ($env:OS -ne 'Windows_NT') {throw 'Gerçek Windows çalışma ortamı gerekiyor.'}
 $Payload=(Resolve-Path $Payload).Path
 $productVersion=[Reflection.AssemblyName]::GetAssemblyName((Join-Path $Payload 'AcademicParaphraser.WordAddin.dll')).Version.ToString()
-$report=[ordered]@{windows=$true; frameworkVersion=[Environment]::Version.ToString(); productVersion=$productVersion; dpapiRoundTrip=$false; dpapiTamperRejected=$false; nativeArchitectures=@(); manifests=@(); wordExecuted=$false}
+$report=[ordered]@{windows=$true; frameworkVersion=[Environment]::Version.ToString(); productVersion=$productVersion; dpapiRoundTrip=$false; dpapiTamperRejected=$false; nativeArchitectures=@(); localRuntimeVersion=$null; manifests=@(); wordExecuted=$false}
 
 [Reflection.Assembly]::LoadFrom((Join-Path $Payload 'AcademicParaphraser.Infrastructure.dll')) | Out-Null
 $protector=New-Object AcademicParaphraser.Infrastructure.Persistence.WindowsTextProtector
@@ -18,7 +18,7 @@ try{$protector.Unprotect($encrypted) | Out-Null}catch{
 }
 if(-not $report.dpapiTamperRejected){throw 'Değiştirilmiş DPAPI verisi reddedilmedi.'}
 
-foreach($native in @(@{path='runtimes\win-x86\native\e_sqlite3.dll';machine=0x14c},@{path='runtimes\win-x64\native\e_sqlite3.dll';machine=0x8664},@{path='runtime\java\bin\java.exe';machine=0x8664})){
+foreach($native in @(@{path='runtimes\win-x86\native\e_sqlite3.dll';machine=0x14c},@{path='runtimes\win-x64\native\e_sqlite3.dll';machine=0x8664},@{path='runtime\java\bin\java.exe';machine=0x8664},@{path='runtime\llama\llama-server.exe';machine=0x8664},@{path='runtime\llama\llama-server-impl.dll';machine=0x8664},@{path='runtime\llama\llama-common.dll';machine=0x8664})){
  $reader=New-Object IO.BinaryReader([IO.File]::OpenRead((Join-Path $Payload $native.path)))
  try{
   if($reader.ReadUInt16() -ne 0x5a4d){throw 'Native dosyada DOS başlığı yok.'}
@@ -27,6 +27,22 @@ foreach($native in @(@{path='runtimes\win-x86\native\e_sqlite3.dll';machine=0x14
  }finally{$reader.Dispose()}
  $report.nativeArchitectures+=@{path=$native.path;machine=$native.machine}
 }
+
+$nativeProcess=New-Object Diagnostics.Process
+$nativeProcess.StartInfo.FileName=Join-Path $Payload 'runtime\llama\llama-server.exe'
+$nativeProcess.StartInfo.WorkingDirectory=Join-Path $Payload 'runtime\llama'
+$nativeProcess.StartInfo.Arguments='--version'
+$nativeProcess.StartInfo.UseShellExecute=$false
+$nativeProcess.StartInfo.CreateNoWindow=$true
+$nativeProcess.StartInfo.RedirectStandardOutput=$true
+$nativeProcess.StartInfo.RedirectStandardError=$true
+try{
+ $nativeProcess.Start() | Out-Null
+ $versionText=$nativeProcess.StandardOutput.ReadToEnd()+$nativeProcess.StandardError.ReadToEnd()
+ $nativeProcess.WaitForExit()
+ if($nativeProcess.ExitCode -ne 0 -or $versionText -notmatch '11460'){throw 'Paketlenen CPU çalışma ortamı açılmadı veya sürümü değişti.'}
+ $report.localRuntimeVersion=$versionText.Trim()
+}finally{$nativeProcess.Dispose()}
 
 Add-Type -AssemblyName System.Security
 # ClickOnce uses Microsoft's legacy SHA256 XMLDSig URIs. Map them to real RSA/PKCS1 and SHA256 verification.

@@ -13,6 +13,10 @@ namespace AcademicParaphraser.Infrastructure.TurkishNlp
     public sealed class ZemberekProcess : ITurkishNlp, ITurkishStructuralInflector
     {
         private readonly string executable, jar; private readonly SemaphoreSlim gate = new SemaphoreSlim(1, 1); private Process? process; private StreamWriter? input; private bool disposed;
+        public long WorkingSetBytes
+        {
+            get { try { var child = process; if (child == null || child.HasExited) return 0; child.Refresh(); return child.WorkingSet64; } catch (InvalidOperationException) { return 0; } }
+        }
         public string Status { get; private set; } = "Başlatılmadı";
         public ZemberekProcess(string executable, string jar)
         {

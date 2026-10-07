@@ -1,0 +1,27 @@
+[
+  {
+    "id": "hukuk",
+    "language": "tr",
+    "text": "Kurul, başvuruyu süresi içinde yapılması koşuluyla değerlendirecektir. Başvuru dosyasındaki belgelerin eksiksiz olması, talebin kabul edildiği anlamına gelmez."
+  },
+  {
+    "id": "muhendislik",
+    "language": "tr",
+    "text": "Deney sırasında sensörün kaydettiği sıcaklık 42 °C olarak ölçülmüştür. Bu ölçüm, parçanın uzun süreli kullanımda aynı sıcaklıkta kalacağını göstermemektedir."
+  },
+  {
+    "id": "tarih",
+    "language": "tr",
+    "text": "Arşivde bulunan mektuplar, dönemin ticari ilişkileri hakkında bilgi sağlamaktadır. Ancak belgelerde bir olayın yer almaması, o olayın hiç yaşanmadığını kanıtlamaz."
+  },
+  {
+    "id": "egitim",
+    "language": "tr",
+    "text": "Öğrencilerden alınan geri bildirimler, dersin değerlendirme yönteminin açık olduğunu göstermiştir. Araştırmacılar, bu bulgunun öğrencilerin başarı düzeyine ilişkin bir sonuç olarak yorumlanmaması gerektiğini belirtmiştir."
+  },
+  {
+    "id": "environment",
+    "language": "en",
+    "text": "The survey identified an association between tree cover and lower reported heat exposure. Because the data were observational, the authors did not claim that planting trees caused the difference."
+  }
+]

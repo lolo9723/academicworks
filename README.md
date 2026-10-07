@@ -1,6 +1,6 @@
 # Akademik Parafraz — Academic Paraphraser for Word
 
-Windows masaüstü Microsoft Word için C#/.NET Framework 4.8 ve VSTO mimarisinde, yerel Zemberek morfolojisi ve yönetilebilir akademik dönüşüm kuralları kullanan Türkçe parafraz projesi. Belgeyi bir sunucuya göndermez. LLM, üretken yapay zekâ, ücretli model servisi veya model API anahtarı kullanmaz.
+Windows masaüstü Microsoft Word için C#/.NET Framework 4.8 ve VSTO mimarisinde Türkçe/İngilizce parafraz projesi. 1.5.0 geliştirmesi, yeni kullanıcı yönlendirmesiyle yerel nicemlenmiş dil modelini cümle çözümleme, Word aralık planlaması ve ayrı anlam denetimine bağlar. Metin bilgisayarda işlenir; ücretli bulut servisi veya API anahtarı gerekmez. Önceki üretken-model yasağı bu yeni çalışma modu için değiştirilmiştir. Ayarlardan sınırlı kural motoru ayrıca seçilebilir.
 
 ## Teslim durumu
 
@@ -18,7 +18,11 @@ Gerçek Windows CI üzerinde Core, Infrastructure, .NET Framework WordHost ve VS
 
 **Gerçek Word üzerinde kurulum, Ribbon yükleme, biçim/bağlantı/Undo/Track Changes kabulü henüz çalıştırılmamıştır.** Windows CI makinesinde Word yoktur. Bu ilk paket geliştirme yayıncı sertifikası kullanır; installer EXE için üretim Authenticode sertifikası sağlanmamıştır. Üretim kabulü tamamlanmış gibi sunulmaz. Son kullanıcı kılavuzu [UsersGuide.md](docs/UsersGuide.md), çalıştırılan kontroller [Verification.md](docs/Verification.md) ve canlı Word matrisi [Windows-Acceptance.md](docs/Windows-Acceptance.md) içindedir.
 
-Bu sürümün kapsamı son şartnameye göre **akademik Türkçe parafrazdır**. İngilizce çeviri veya İngilizce parafraz motoru içermez. İngilizce Wiktionary sağlayıcısı sadece isteğe bağlı kelime bilgisi içindir. Kullanıcının kişisel üslubunu öğrenen bir model yoktur; kullanıcı sözlüğü ve kurallarıyla ifade tercihleri ayarlanır. Her metni baştan yazma veya kusursuz anlam eşdeğerliği garantisi verilmez.
+1.5.0 yerel modu aynı dilde Türkçe/İngilizce yeniden yazım içindir; çeviri modu henüz eklenmedi. 1.4.0 kural modu akademik Türkçe ile sınırlıdır. Kullanıcının kişisel üslubunu öğrenen bir model yoktur; kullanıcı sözlüğü ve kurallarıyla ifade tercihleri ayarlanır. Her metni baştan yazma veya kusursuz anlam eşdeğerliği garantisi verilmez.
+
+## 1.5.0 gelişmiş motor
+
+Bir defalık **4 GB** model indirmesi önizleme panelindeki düğmeyle yapılır. Paket CPU çalışma ortamını içerir; model dosyasını içermez. Qwen3.5-9B UD-IQ3_XXS, sabit commit ve SHA256 ile doğrulanır. Model sunucusu yalnızca 127.0.0.1 adresine bağlanır, proxy kullanmaz ve her işlem bittiğinde kapatılır. Üretimden sonra ayrı bir model geçişi yeni bilgi, eksiltme, özne, olumsuzluk, neden ilişkisi ve kesinliği inceler. Otomatik kontrol anlam garantisi değildir. Her paragraf en fazla 2.400 karakter olmalıdır; uzun veya çok parçalı biçim seçimleri atlanabilir. [Teknik sınırlar ve kabul planı](docs/Local-Engine-1.5.0.md).
 
 ## Word kullanım akışı
 

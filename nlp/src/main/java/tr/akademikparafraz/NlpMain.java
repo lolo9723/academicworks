@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 import zemberek.morphology.TurkishMorphology;
+import zemberek.core.turkish.RootAttribute;
 import zemberek.morphology.analysis.SingleAnalysis;
 import zemberek.morphology.analysis.SentenceWordAnalysis;
 import zemberek.morphology.lexicon.DictionaryItem;
@@ -13,6 +14,7 @@ import zemberek.morphology.morphotactics.TurkishMorphotactics;
 
 /** Single-threaded UTF-8 stdio protocol: no network listener, no text logging. */
 public final class NlpMain {
+ private static boolean personal(SingleAnalysis a){return a.getMorphemes().stream().anyMatch(m->Arrays.asList("A1sg","A1pl","A2sg","A2pl","P1sg","P1pl","P2sg","P2pl").contains(m.id));}
  public static void main(String[] args)throws Exception{
   TurkishMorphology morphology=TurkishMorphology.createWithDefaults();
   PrintWriter out=new PrintWriter(new OutputStreamWriter(System.out,StandardCharsets.UTF_8),true);
@@ -35,6 +37,9 @@ public final class NlpMain {
       int start=folded.indexOf(surface.toLowerCase(tr),cursor);
       if(start<0)continue;cursor=start+surface.length();DictionaryItem item=a.getDictionaryItem();JsonObject t=new JsonObject();
       t.addProperty("Start",start);t.addProperty("Length",surface.length());t.addProperty("Surface",text.substring(start,cursor));t.addProperty("Lemma",item.lemma);t.addProperty("Pos",a.getPos().name());
+      boolean properAmbiguous=surface.length()>0&&Character.isLowerCase(surface.codePointAt(0))&&morphology.analyze(surface).getAnalysisResults().stream().anyMatch(v->!v.getDictionaryItem().secondaryPos.name().equals("ProperNoun")&&!v.getDictionaryItem().secondaryPos.name().equals("Abbreviation")&&!v.getDictionaryItem().hasAttribute(RootAttribute.Runtime));
+      boolean personalAmbiguous=personal(a)&&morphology.analyze(surface).getAnalysisResults().stream().anyMatch(v->!personal(v)&&!v.getDictionaryItem().hasAttribute(RootAttribute.Runtime));
+      t.addProperty("AmbiguousPersonal",personalAmbiguous);t.addProperty("AmbiguousProper",properAmbiguous);t.addProperty("RuntimeGuess",item.hasAttribute(RootAttribute.Runtime));
       t.addProperty("Proper",item.secondaryPos.name().equals("ProperNoun")||item.secondaryPos.name().equals("Abbreviation"));JsonArray ms=new JsonArray();a.getMorphemes().forEach(m->ms.add(m.id));t.add("Morphemes",ms);tokens.add(t);
      }JsonObject result=new JsonObject();result.add("tokens",tokens);out.println(result);
     }else if(op.equals("inflect")){

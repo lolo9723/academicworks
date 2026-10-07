@@ -8,8 +8,11 @@ namespace AcademicParaphraser.Core
     {
         Light = 1, Moderate = 2, Strong = 3
     }
+    public enum MetinDili { Otomatik, Türkçe, İngilizce }
     public sealed class UserSettings
     {
+        public MetinDili InputLanguage { get; set; } = MetinDili.Otomatik;
+        public bool UseLocalRewriting { get; set; } = true;
         public Strength DefaultStrength { get; set; } = Strength.Moderate;
         public bool PreserveCitations { get; set; } = true;
         public bool PreserveNumbers { get; set; } = true;
@@ -86,6 +89,7 @@ namespace AcademicParaphraser.Core
     }
     public sealed class Candidate
     {
+        public string ReviewNote { get; set; } = "";
         public int SentenceCount { get; set; }
         public int RewrittenSentences { get; set; }
         public Rewriting.EnrichmentSummary? Enrichment { get; set; }
@@ -147,6 +151,9 @@ namespace AcademicParaphraser.Core
         {
             get; set;
         }
+        public bool AmbiguousPersonal { get; set; }
+        public bool AmbiguousProper { get; set; }
+        public bool RuntimeGuess { get; set; }
         public string Surface { get; set; } = ""; public string Lemma { get; set; } = "";
         public string Pos { get; set; } = ""; public List<string> Morphemes { get; set; } = new List<string>(); public bool Proper
         {

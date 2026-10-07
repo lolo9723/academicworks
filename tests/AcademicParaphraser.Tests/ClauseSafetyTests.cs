@@ -27,6 +27,14 @@ namespace AcademicParaphraser.Tests
         public void Dispose() { Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools(); Directory.Delete(directory, true); }
         private Task<IReadOnlyList<Candidate>> Rewrite(string source, IEnumerable<TextSpan>? spans = null) => new TransformationEngine(repo, fixture.Nlp).GenerateAsync(source, new UserSettings { DefaultStrength = Strength.Strong }, spans, CancellationToken.None);
 
+        [Fact]
+        public async Task AmbiguousInferenceNounCannotEstablishAPersonalActor()
+        {
+            var words=await fixture.Nlp.AnalyzeAsync("Bu çıkarım, sonuçların yorumlanmasını sağlar.",CancellationToken.None);
+            var word=words.Single(t=>t.Surface=="çıkarım");
+            if(word.Morphemes.Contains("P1sg"))Assert.True(word.AmbiguousPersonal);
+            Assert.Contains(words,t=>t.Surface=="sağlar");
+        }
         [Theory]
         [InlineData("süreç", "Gen", "sürecin")]
         [InlineData("savunması", "Gen", "savunmasının")]

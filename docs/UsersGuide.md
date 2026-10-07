@@ -2,9 +2,17 @@
 
 Bu Windows kurulum paketi geliştirme sürümüdür. Gerçek Word içindeki kurulum, biçim, bağlantı ve geri alma kabulü henüz tamamlanmamıştır. Paket geliştirme yayıncı sertifikası kullanır; kurulumda yayıncı/güven sorusu görülebilir.
 
+## Gelişmiş motoru ilk kez hazırlama
+
+Kurulumdan sonra Word'de Akademik Parafraz önizleme panelini açın ve **Gelişmiş motoru indir (4 GB)** düğmesine basın. Bu işlem yalnızca sabit model dosyasını indirir, belgeyi yüklemez; hesap veya API anahtarı istemez. İndirmenin bitmesi ve SHA256 doğrulaması gerekir. En az 6 GB boş disk alanı bırakın. İptal ederseniz indirme sonraki denemede baştan başlar. Model `%LOCALAPPDATA%\AkademikParafraz\models` dizininde kalır; uygulama güncellemesi modeli silmez. Kaldırınca kişisel verileri temizleme seçeneği modelleri de silebilir.
+
+Sonraki üretim internet olmadan yapılabilir. CPU ile üretim yavaş olabilir; diğer ağır uygulamaları kapatın. Seçilen her paragraf en fazla 2.400 karakter olmalıdır. Model bütünlüğü ilk kullanımda okunarak doğrulanır; bu da zaman alabilir. Metin üretimi bilgisayardaki ayrı süreçte yapılır, işlem sonunda model belleği serbest bırakılır.
+
+Ayarlar > **Gelişmiş yerel yeniden yazımı kullan** açık olmalıdır. **Metnin dili** otomatik, Türkçe veya İngilizce seçilebilir. Otomatik tespit kısa/karma metinlerde yanılabilir; dili elle seçin. Gelişmiş modu kapatmak yalnızca eski, sınırlı Türkçe kural motoruna döner. Model bulunamadığında bu geçiş gizlice yapılmaz.
+
 ## Kurulum
 
-Windows 10/11 x64 ve masaüstü Word 2016 veya daha yeni bir sürüm gerekir. Word 32 veya 64 bit olabilir. Açık belgelerinizi kaydedip Word'ü kapatın ve `AkademikParafraz-1.4.0-Setup.exe` dosyasını açın. Kurulum eksik .NET Framework 4.8, Word veya Microsoft VSTO Runtime bileşenini bildirirse önce o bileşeni tamamlayın. VSTO Runtime'ın resmi indirmesi: https://www.microsoft.com/en-us/download/details.aspx?id=105522
+Windows 10/11 x64 ve masaüstü Word 2016 veya daha yeni bir sürüm gerekir. Word 32 veya 64 bit olabilir. Açık belgelerinizi kaydedip Word'ü kapatın ve `AkademikParafraz-1.5.0-Setup.exe` dosyasını açın. Kurulum eksik .NET Framework 4.8, Word veya Microsoft VSTO Runtime bileşenini bildirirse önce o bileşeni tamamlayın. VSTO Runtime'ın resmi indirmesi: https://www.microsoft.com/en-us/download/details.aspx?id=105522
 
 Java, NLP motoru ve sözlük pakete dahildir. Visual Studio, SDK, Maven veya ayrıca Java kurmanız gerekmez. Yayıncı sertifikası otomatik güvenilir yapılmaz; kurumsal bilgisayarınız kurulumu engellerse kurumunuzun yazılım yöneticisiyle ilerleyin.
 
@@ -12,19 +20,21 @@ Java, NLP motoru ve sözlük pakete dahildir. Visual Studio, SDK, Maven veya ayr
 
 1. Word'ü açın ve bir cümle, paragraf veya birkaç paragraf seçin.
 2. İnternet desteği için **AKADEMİK PARAFRAZ > İnternetle Parafraz** komutunu kullanın. Bu komut interneti açar, çevrimdışı modu kapatır ve Güçlü düzeye geçer. İnternetsiz çalışmak için Ayarlar’dan interneti kapatıp normal **Parafraz Et** komutunu kullanın.
-3. Önizlemede öneriyi okuyun; gerekirse sonraki alternatife geçin.
+3. Önizlemede öneriyi okuyun; kural modunda birden çok öneri varsa sonraki alternatife geçin.
 4. **Uygula** öneriyi belgeye yazar. **İptal** belgeyi değiştirmez.
 5. Son işlemi **Ctrl+Z** veya eklentinin **Geri Al** komutuyla geri alın.
 
 Koruma seçenekleri varsayılan olarak açıktır. Bağlantının görünen metnini değiştirmek için **Bağlantıları Koru** seçeneğini kapatın; URL hedefini değiştirmek amaçlanmaz. **Değişiklikleri İzleyerek Parafraz Et** seçeneği Word'ün doğal değişiklik izleme özelliğini kullanır. Korunmasını istediğiniz özel ifadeyi seçip **Terimi Kilitle** komutuyla sözlüğünüze ekleyin.
 
-## Yeni cümle motoru
+## Cümle ve paragraf motorları
 
-1.4.0, kelime konumlarını ve bağlama göre çekimleri düzeltir; bulgu cümlelerini, karşıtlıkları ve işlem anlatımını yeniden kurabilir. Olumsuzluk, olasılık ve koşul sinyalleri değişen öneriler elenir. Bu denetim bütün anlam ilişkilerini kanıtlamaz. Tek bir uygun dönüşüm varsa tek alternatif gösterilebilir; kapsam dışındaki cümleler değişmeden kalır. Önizlemedeki cümle sayacı bir kalite puanı değildir. İngilizce çeviri veya kişisel üslup öğrenimi bu sürümde yoktur.
+1.5.0 gelişmiş mod, cümle kuruluşunu değiştiren tek bir denetimli öneri sunar. Uygun öneri bulunmayan paragraflar korunur. Otomatik denetim kusursuz değildir; özellikle yeni eylem, yorum ve kesinlik değişimlerini önizlemede okuyun. 8 GB Windows ve Word toplamında gerçek kabul henüz yoktur. CPU üzerinde birkaç cümle için bile dakikalar sürebilir.
+
+Sınırlı kural modunda 1.4.0, kelime konumlarını ve bağlama göre çekimleri düzeltir; bulgu cümlelerini, karşıtlıkları ve işlem anlatımını yeniden kurabilir. Olumsuzluk, olasılık ve koşul sinyalleri değişen öneriler elenir. Bu denetim bütün anlam ilişkilerini kanıtlamaz. Tek bir uygun dönüşüm varsa tek alternatif gösterilebilir; kapsam dışındaki cümleler değişmeden kalır. Önizlemedeki cümle sayacı bir kalite puanı değildir. İngilizce çeviri veya kişisel üslup öğrenimi bu sürümde yoktur.
 
 ## İnternet ve kapsam
 
-Parafraz yerelde çalışır; LLM veya ücretli API anahtarı kullanılmaz. Dahili ekran kartı yeterlidir; büyük model indirilmez. 8 GB RAM için ağır model yerine diskte indeksli sözlük kullanılır. Java işleminin azami heap ayarı 512 MB'dır; toplam bellek bunun üzerinde olabilir ve Word belgenizin büyüklüğüne göre değişir.
+Gelişmiş parafraz, küçük nicemlenmiş yerel dil modeli ve koruma/denetim motoruyla çalışır; ücretli API anahtarı gerekmez. CPU kullanılır, GPU şart değildir. İlk model dosyası birkaç GB indirilecektir. 8 GB bilgisayarda Word ile birlikte gerçek toplam bellek ve hız ayrıca doğrulanmalıdır. Java işleminin azami heap ayarı 512 MB'dır; toplam bellek bunun üzerinde olabilir ve Word belgenizin büyüklüğüne göre değişir.
 
 1.4.0 paketinde KeNet'ten 82.155 farklı madde içeren yerel sözlük ve 1.555 yönetilebilir dönüşüm kaydı ve 126 ek yan cümle şeması bulunur. Bu sayı 1.555 bağımsız dilbilgisi fikri demek değildir: yöntem, amaç, neden, edilgen anlatım ve benzeri kalıpların zaman/olumsuzluk biçimleri de ayrı kurallardır. Varsayılan parafraz cümle kuruluşunu değiştirir; sözlük eş anlamlıları otomatik uygulanmaz. Ayarlar’daki “Eş anlamlı kelime değişimlerini ayrıca uygula” seçeneği kapalı kalmalıdır; yalnızca özellikle kelime önerisi istiyorsanız açın. Kurum/bölüm adları ve klinik terimler ayrıca korunur. Akademik terimler, kilitli ifadeler, sayılar ve atıflar korunduğunda değişim miktarı sınırlanabilir. Kişisel sözlük ve değiştirdiğiniz kurallar güncellemede korunur.
 
@@ -34,7 +44,7 @@ Yalnızca kelime kökü gönderilir; paragraf yüklenmez. Vikisözlük/Wiktionar
 
 İnternet yapı bankası 25.104 birleşim içerir: edilgen raporlama, çalışma/araştırma bağlamı, özne/yüklem sırası, zaman/olumsuzluk ve amaç kalıpları. Bunlar 25.104 bağımsız dilbilgisi ailesi değildir. Banka projenin sürümlü, denetlenmiş JSON kaynağından HTTPS ile alınır ve SHA256 ile doğrulanır; bu isteğe belge veya kelime eklenmez. Seçime uygun kalıplar gerektiğinde oluşturulur; binlerce regex aynı anda belleğe yüklenmez. İndirilen banka sonraki çevrimdışı işlemde de kullanılabilir. Yeni bir yerel tam cümle kalıbı yoksa bankanın ek kalıbı işe yarayabilir; banka da yapıyı kapsamıyorsa uygulama rastgele web cümlesinden anlam eşdeğerliği öğrenmez. Arama motoru sonuçlarını otomatik kurala dönüştürme ve kendiliğinden sınırsız dil öğrenme yoktur.
 
-Bu sürüm akademik Türkçe içindir; İngilizce çeviri/parafraz ve kişisel üslup öğrenmesi içermez. Sözlük, cümle bağlamını eksiksiz anlayan bir çeviri motoru değildir. Güvenli öneri bulunmayan ifadeler değişmeden kalır. Her önerinin anlamını uygulamadan önce okuyun; sayısal bir anlam doğruluğu yüzdesi gösterilmez.
+Gelişmiş mod aynı dilde Türkçe ve İngilizce parafraz içindir. Çeviri veya kişisel üslup eğitimi henüz eklenmedi. Eski kural modu Türkçe ile sınırlıdır. Sözlük, cümle bağlamını eksiksiz anlayan bir çeviri motoru değildir. Güvenli öneri bulunmayan ifadeler değişmeden kalır. Her önerinin anlamını uygulamadan önce okuyun; sayısal bir anlam doğruluğu yüzdesi gösterilmez.
 
 ## Word doğrulaması
 

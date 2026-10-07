@@ -62,6 +62,11 @@ namespace AcademicParaphraser.WordHost.UI
         {
             get => s.DefaultStrength; set => s.DefaultStrength = value;
         }
+        [System.ComponentModel.DisplayName("Gelişmiş yerel yeniden yazımı kullan")]
+        [System.ComponentModel.Description("Bir defalık yaklaşık 4 GB model indirmesi gerekir. Metin dışarı gönderilmez. Kapatılırsa sınırlı kural motoru kullanılır.")]
+        public bool GelişmişMotor { get => s.UseLocalRewriting; set => s.UseLocalRewriting = value; }
+        [System.ComponentModel.DisplayName("Metnin dili")]
+        public MetinDili Dil { get => s.InputLanguage; set => s.InputLanguage = value; }
         public bool AtıflarıKoru
         {
             get => s.PreserveCitations; set => s.PreserveCitations = value;
@@ -82,7 +87,8 @@ namespace AcademicParaphraser.WordHost.UI
         {
             get => s.PreserveLinks; set => s.PreserveLinks = value;
         }
-        [System.ComponentModel.DisplayName("İnternet erişimini tamamen kapat")]
+        [System.ComponentModel.DisplayName("İnternet sözlüğünü kapat")]
+        [System.ComponentModel.Description("Sözcük sorgularını kapatır. Gelişmiş motoru indir düğmesi ayrı bir indirme işlemidir.")]
         public bool İnternetiKapat
         {
             get => !s.InternetEnabled; set => s.InternetEnabled = !value;
@@ -102,6 +108,7 @@ namespace AcademicParaphraser.WordHost.UI
         [System.ComponentModel.DisplayName("Eş anlamlı kelime değişimlerini ayrıca uygula")]
         [System.ComponentModel.Description("Varsayılan olarak kapalıdır. Açılırsa cümle dönüşümlerine sözlükten kelime önerileri eklenir; terimleri ve ifadeleri dikkatle kontrol edin.")]
         public bool SözcükÖnerileri { get => s.EnableWordChoice; set => s.EnableWordChoice = value; }
+        [System.ComponentModel.Description("Sınırlı kural modu içindir. Gelişmiş motor her işlemde denetimden geçen tek öneri sunar.")]
         public int AlternatifSayısı
         {
             get => s.Alternatives; set => s.Alternatives = value;

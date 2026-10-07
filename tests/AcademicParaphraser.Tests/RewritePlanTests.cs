@@ -83,6 +83,68 @@ namespace AcademicParaphraser.Tests
         }
 
         [Fact]
+        public void ProtectedNameCannotBeDuplicatedInsideAnEditableBlock()
+        {
+            const string source="Kayıtlar Ankara arşivinde saklanır.";
+            var plan=RewritePlan.Create(source,new[]{new TextSpan{Start=0,Length=source.Length}},new[]{new TextSpan{Start=9,Length=6}});
+            Assert.NotEmpty(plan.CheckFixedTextMultiplicity("Ankara kayıtları Ankara arşivinde saklanır."));
+            Assert.Empty(plan.CheckFixedTextMultiplicity(source));
+        }
+        [Fact]
+        public void MaskedParagraphCompilerKeepsQuantitiesAndWordBlocks()
+        {
+            const string source="Sensör 42 °C ölçtü.";
+            var plan=RewritePlan.Create(source,new[]{new TextSpan{Start=0,Length=source.Length}},new[]{new TextSpan{Start=7,Length=5}});
+            var marker=RewritePlan.Marker(plan.Blocks.Single(b=>!b.Editable));
+            var values=plan.ExtractMaskedReplacements("Sıcaklık sensörle "+marker+"olarak ölçüldü.");
+            Assert.Equal("Sıcaklık sensörle 42 °C olarak ölçüldü.",plan.BuildCandidate(values,"test").Text);
+            Assert.Throws<ArgumentException>(()=>plan.ExtractMaskedReplacements("Sıcaklık "+marker+marker+" ölçüldü."));
+            Assert.Throws<ArgumentException>(()=>plan.ExtractMaskedReplacements("Sıcaklık 42 °C ölçüldü."));
+        }
+        [Fact]
+        public void NaturalParagraphCanBeCompiledWithoutHidingItsEvidencePredicate()
+        {
+            const string source="Sensör 42 °C ölçtü.";
+            var plan=RewritePlan.Create(source,new[]{new TextSpan{Start=0,Length=source.Length}},new[]{new TextSpan{Start=7,Length=5}});
+            Assert.True(plan.CanCompileNaturalText);
+            const string target="Sıcaklık sensörle 42 °C olarak ölçüldü.";
+            var candidate=plan.BuildCandidate(plan.CompileNaturalText(target),"test");
+            Assert.Equal(target,candidate.Text);
+            Assert.All(candidate.Edits,e=>Assert.False(new TextSpan{Start=7,Length=5}.Intersects(e.Start,e.Length)));
+            Assert.Throws<ArgumentException>(()=>plan.CompileNaturalText("Sıcaklık 42 °F olarak ölçüldü."));
+        }
+        [Fact]
+        public void AdjacentWordFormatRunsHaveAnExplicitBoundaryInsteadOfAnAmbiguousSplit()
+        {
+            const string source="Örnekmetin.";
+            var plan=RewritePlan.Create(source,new[]{new TextSpan{Start=0,Length=5},new TextSpan{Start=5,Length=6}},Array.Empty<TextSpan>());
+            Assert.False(plan.CanCompileNaturalText);
+            string marker=RewritePlan.Marker(plan.Blocks.Single(b=>!b.Editable));
+            var candidate=plan.BuildCandidate(plan.ExtractMaskedReplacements("Başka"+marker+"ifade."),"test");
+            Assert.Equal("Başkaifade.",candidate.Text);
+            Assert.Equal(2,candidate.Edits.Count);
+            Assert.Throws<ArgumentException>(()=>plan.CompileNaturalText("Başka ifade."));
+        }
+        [Fact]
+        public void OnlyDuplicatedTerminalPunctuationCanBeNormalizedAfterAFixedMarker()
+        {
+            const string source="Kayıt yokluğu bunu kanıtlamaz.";
+            int start=source.IndexOf("kanıtlamaz",StringComparison.Ordinal);
+            var plan=RewritePlan.Create(source,new[]{new TextSpan{Start=0,Length=source.Length}},new[]{new TextSpan{Start=start,Length=10}});
+            string marker=RewritePlan.Marker(plan.Blocks.Last());
+            var values=plan.ExtractMaskedReplacements("Bunu kayıt yokluğu "+marker+" .");
+            Assert.Equal("Bunu kayıt yokluğu kanıtlamaz.",plan.BuildCandidate(values,"test").Text);
+            Assert.Throws<ArgumentException>(()=>plan.ExtractMaskedReplacements("Bunu kayıt yokluğu "+marker+" Ek bilgi."));
+        }
+        [Fact]
+        public void FixedFormattingOrderCannotBeChanged()
+        {
+            const string source="Bir isim sonra başka isim.";
+            var plan=RewritePlan.Create(source,new[]{new TextSpan{Start=0,Length=source.Length}},new[]{new TextSpan{Start=4,Length=4},new TextSpan{Start=20,Length=4}});
+            var markers=plan.Blocks.Where(b=>!b.Editable).Select(RewritePlan.Marker).ToArray();
+            Assert.Throws<ArgumentException>(()=>plan.ExtractMaskedReplacements("Metin "+markers[1]+" ve "+markers[0]+"."));
+        }
+        [Fact]
         public void PreviewMustExactlyMatchAllProposedEdits()
         {
             var candidate = new Candidate { Text = "Başka bir önizleme", Edits = new List<TextEdit> { new TextEdit { Start = 0, Length = 5, Original = "Örnek", Replacement = "Farklı" } } };
