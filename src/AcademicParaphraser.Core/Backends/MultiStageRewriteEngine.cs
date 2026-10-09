@@ -12,10 +12,12 @@ namespace AcademicParaphraser.Core.Backends
     {
         private readonly IRuleCatalog catalog;private readonly ILinguisticBackend analysis;private readonly IGrammarBackend grammar;
         private readonly IConstructionBackend construction;private readonly IMeaningBackend meaning;private readonly IFinalEvaluationBackend evaluation;
-        public MultiStageRewriteEngine(IRuleCatalog catalog,ILinguisticBackend analysis,IGrammarBackend grammar,IConstructionBackend? construction=null,IMeaningBackend? meaning=null,IFinalEvaluationBackend? evaluation=null)
+        private readonly ISemanticBackend? semantic;
+        public MultiStageRewriteEngine(IRuleCatalog catalog,ILinguisticBackend analysis,IGrammarBackend grammar,IConstructionBackend? construction=null,IMeaningBackend? meaning=null,IFinalEvaluationBackend? evaluation=null,ISemanticBackend? semantic=null)
         {
             this.catalog=catalog;this.analysis=analysis;this.grammar=grammar;
             this.construction=construction??new DependencyConstructionBackend();this.meaning=meaning??new DerivationMeaningBackend();this.evaluation=evaluation??new IndependentFinalEvaluationBackend();
+            this.semantic=semantic;
         }
         public async Task<IReadOnlyList<Candidate>> GenerateAsync(string source,UserSettings settings,IEnumerable<TextSpan> writable,IEnumerable<TextSpan> external,CancellationToken cancellation,IProgress<string>? progress=null,MultiStageDiagnostics? diagnostics=null)
         {
@@ -51,6 +53,19 @@ namespace AcademicParaphraser.Core.Backends
                     progress?.Report("Anlam bütünlüğü ve yeni dil bilgisi hataları denetleniyor…");
                     var rewritten=await analysis.AnalyzeAsync(proposal.Text,language,cancellation).ConfigureAwait(false);
                     var issues=await grammar.CheckAsync(rewritten,cancellation).ConfigureAwait(false);
+                    context.SemanticEvidence=null;
+                    if(semantic!=null)
+                    {
+                        var review=new BackendEvidence{Stage="bidirectional-local-nli",Passed=true};
+                        if(parsed.Sentences.Count!=rewritten.Sentences.Count){review.Passed=false;review.Problems.Add("Anlam kontrolünde cümle sınırları değişti.");}
+                        else foreach(var op in proposal.Operations)
+                        {
+                            var a=parsed.Sentences[op.SentenceIndex];var b=rewritten.Sentences[op.SentenceIndex];
+                            var part=await semantic.CompareAsync(parsed.Text.Substring(a.Start,a.Length),rewritten.Text.Substring(b.Start,b.Length),language,cancellation).ConfigureAwait(false);
+                            review.Passed&=part.Passed;review.Problems.AddRange(part.Problems);review.Notes.AddRange(part.Notes);
+                        }
+                        context.SemanticEvidence=review;
+                    }
                     var result=evaluation.Evaluate(context,rewritten,proposal,issues,meaning.Compare(context,rewritten,proposal));
                     diagnostics.Attempts.Add(new BackendAttempt{Text=proposal.Text,Operations=proposal.Operations,Evaluation=result});
                     if(!result.Accepted||candidate.Edits.Count==0)continue;

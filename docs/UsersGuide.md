@@ -4,9 +4,9 @@ Bu Windows kurulum paketi geliştirme sürümüdür. Gerçek Word içindeki kuru
 
 ## Çok aşamalı motor
 
-1.6.0 varsayılan olarak **Ayarlar > Parafraz motoru > ÇokAşamalı** seçeneğini kullanır. Eğitilmiş küçük çözümleyiciler ve İngilizce dil bilgisi bileşeni pakete dahildir; 2,5 GB model indirmesi gerekmez. Cümleler bütün öbekler üzerinden yeniden kurulur, ardından anlam sinyalleri, özne/nesne ilişkileri ve yeni dil bilgisi sorunları ayrı denetlenir. Otomatik denetim anlam garantisi değildir. Biçim sınırına sığmayan veya kapsam dışındaki dönüşüm elenir. Türkçe dil bilgisi kontrolü sınırlıdır.
+1.6.0 varsayılan olarak **Ayarlar > Parafraz motoru > ÇokAşamalı** seçeneğini kullanır. Eğitilmiş küçük çözümleyiciler, İngilizce dil bilgisi bileşeni ve yaklaşık 355 MB eğitimli anlam denetleyicisi pakete dahildir; ayrıca 2,5 GB üretici model indirmesi gerekmez. Cümleler bütün öbekler üzerinden yeniden kurulur, ardından anlam sinyalleri, özne/nesne ilişkileri ve yeni dil bilgisi sorunları ayrı denetlenir. Otomatik denetim anlam garantisi değildir. Biçim sınırına sığmayan veya kapsam dışındaki dönüşüm elenir. Türkçe dil bilgisi kontrolü sınırlıdır.
 
-Metnin dilini otomatik, Türkçe veya İngilizce seçebilirsiniz. Otomatik tespit kısa/karma metinde yanılabilir. Küçük çözümleyiciler kullanıcının bilgisayarında eğitilmez; hazır eğitimli dosyalar yerel CPU'da çalışır. Metin buluta gönderilmez.
+Metnin dilini otomatik, Türkçe veya İngilizce seçebilirsiniz. Otomatik tespit kısa/karma metinde yanılabilir. Küçük çözümleyiciler ve anlam denetleyicisi kullanıcının bilgisayarında eğitilmez; eğitimli dosyalar yerel CPU'da çalışır. Metin buluta gönderilmez.
 
 ## İsteğe bağlı yerel dil modeli
 
@@ -40,7 +40,7 @@ Sınırlı kural modunda 1.4.0, kelime konumlarını ve bağlama göre çekimler
 
 ## İnternet ve kapsam
 
-Gelişmiş parafraz, küçük nicemlenmiş yerel dil modeli ve koruma/denetim motoruyla çalışır; ücretli API anahtarı gerekmez. CPU kullanılır, GPU şart değildir. İlk model dosyası birkaç GB indirilecektir. 8 GB bilgisayarda Word ile birlikte gerçek toplam bellek ve hız ayrıca doğrulanmalıdır. Java işleminin azami heap ayarı 512 MB'dır; toplam bellek bunun üzerinde olabilir ve Word belgenizin büyüklüğüne göre değişir.
+Varsayılan çok aşamalı parafraz; çözümleyici, cümle kuruluşu, dil bilgisi, ayrı yerel anlam sınıflandırıcısı ve koruma kontrolleriyle çalışır; ücretli API anahtarı gerekmez. CPU kullanılır, GPU şart değildir. Bu bileşenler kurulumda gelir. Birkaç GB indirme yalnızca isteğe bağlı YerelDilModeli modu içindir. 8 GB bilgisayarda Word ile birlikte gerçek toplam bellek ve hız ayrıca doğrulanmalıdır. Java işleminin azami heap ayarı 512 MB'dır; toplam bellek bunun üzerinde olabilir ve Word belgenizin büyüklüğüne göre değişir.
 
 1.4.0 paketinde KeNet'ten 82.155 farklı madde içeren yerel sözlük ve 1.555 yönetilebilir dönüşüm kaydı ve 126 ek yan cümle şeması bulunur. Bu sayı 1.555 bağımsız dilbilgisi fikri demek değildir: yöntem, amaç, neden, edilgen anlatım ve benzeri kalıpların zaman/olumsuzluk biçimleri de ayrı kurallardır. Varsayılan parafraz cümle kuruluşunu değiştirir; sözlük eş anlamlıları otomatik uygulanmaz. Ayarlar’daki “Eş anlamlı kelime değişimlerini ayrıca uygula” seçeneği kapalı kalmalıdır; yalnızca özellikle kelime önerisi istiyorsanız açın. Kurum/bölüm adları ve klinik terimler ayrıca korunur. Akademik terimler, kilitli ifadeler, sayılar ve atıflar korunduğunda değişim miktarı sınırlanabilir. Kişisel sözlük ve değiştirdiğiniz kurallar güncellemede korunur.
 

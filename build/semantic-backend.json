@@ -1,0 +1,34 @@
+{
+  "model": "MoritzLaurer/mDeBERTa-v3-base-mnli-xnli",
+  "revision": "8adb042d524ecd5c26d3e3ba0e3fbcf7e2d0864c",
+  "license": "MIT",
+  "onnxRuntime": "1.20.0",
+  "djlTokenizers": "0.32.0",
+  "assets": [
+    {
+      "file": "onnx/model_quantized.onnx",
+      "sha256": "27c39e884c14b03cf46cfc5485971b6db70ff330220d93dfe729c63fde43af0e",
+      "bytes": 338679133
+    },
+    {
+      "file": "tokenizer.json",
+      "sha256": "3aca3ce69a0a35aeb144a52c4f1d41c4246b8785f8f398315cc8fb6b24057810",
+      "bytes": 16331396
+    },
+    {
+      "file": "config.json",
+      "sha256": "4e4430c95100d613df80fa01276f231931e1b535557cf62fbb3cc50323e50cca",
+      "bytes": 1066
+    },
+    {
+      "file": "tokenizer_config.json",
+      "sha256": "df9fd3a4482cc4a866788244824573fab8e74dadd1609d4f0e5997f9e96921dc",
+      "bytes": 1256
+    },
+    {
+      "file": "README.md",
+      "sha256": "c6cc8ca44d55e6ff3dd75672c8fcc41c22ca18b551aa52fb5d611d720a5f966b",
+      "bytes": 6514
+    }
+  ]
+}

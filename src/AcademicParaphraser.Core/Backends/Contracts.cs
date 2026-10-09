@@ -60,6 +60,7 @@ namespace AcademicParaphraser.Core.Backends
         public RewritePlan Plan { get; set; } = null!;
         public IReadOnlyList<GrammarIssue> OriginalGrammar { get; set; } = Array.Empty<GrammarIssue>();
         public IReadOnlyList<LexiconEntry> Lexicon { get; set; } = Array.Empty<LexiconEntry>();
+        public BackendEvidence? SemanticEvidence { get; set; }
     }
     public sealed class BackendEvaluation
     {
@@ -74,6 +75,10 @@ namespace AcademicParaphraser.Core.Backends
     public interface IGrammarBackend : IDisposable
     {
         Task<IReadOnlyList<GrammarIssue>> CheckAsync(LinguisticAnalysis analysis,CancellationToken cancellation);
+    }
+    public interface ISemanticBackend : IDisposable
+    {
+        Task<BackendEvidence> CompareAsync(string source,string target,string language,CancellationToken cancellation);
     }
     public interface IConstructionBackend
     {

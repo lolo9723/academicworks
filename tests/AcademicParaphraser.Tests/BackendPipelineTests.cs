@@ -108,6 +108,54 @@ namespace AcademicParaphraser.Tests
             Assert.Equal(0,parser.Calls);
         }
         private static BackendContext Context()=>new BackendContext{Source=ConlluReader.Parse(Source,Tree,"tr"),Plan=RewritePlan.Create(Source,new[]{new TextSpan{Start=0,Length=Source.Length}},Array.Empty<TextSpan>())};
+        [Fact]
+        public void MarkedMovementNeedsBothUnchangedMorphologyAndIndependentSemanticSupport()
+        {
+            var context=Context();var target=Target();AddMorphology(context.Source);AddMorphology(target);
+            var proposal=new DependencyConstructionBackend().Generate(context,new UserSettings(),CancellationToken.None).Single();
+            target.Sentences[0].Words[0].Relation="nsubj";target.Sentences[0].Words[1].Relation="obj";
+            var judge=new DerivationMeaningBackend();
+            Assert.False(judge.Compare(context,target,proposal).Passed);
+            context.SemanticEvidence=new BackendEvidence{Stage="test-semantic",Passed=true};
+            Assert.True(judge.Compare(context,target,proposal).Passed);
+            target.Morphology.Single(t=>t.Lemma=="rapor").Morphemes.Remove("Acc");
+            Assert.False(judge.Compare(context,target,proposal).Passed);
+            AddMorphology(target);target.Morphology=target.Morphology.Where(t=>t.Lemma!="heyet").ToList();
+            Assert.False(judge.Compare(context,target,proposal).Passed);
+        }
+        [Fact]
+        public void SemanticSupportCannotAuthorizeAnUnmarkedObjectWhenTreesDisagree()
+        {
+            var context=Context();var target=Target();AddMorphology(context.Source);AddMorphology(target);
+            context.Source.Morphology.Single(t=>t.Lemma=="rapor").Morphemes.Remove("Acc");
+            target.Morphology.Single(t=>t.Lemma=="rapor").Morphemes.Remove("Acc");
+            var proposal=new DependencyConstructionBackend().Generate(context,new UserSettings(),CancellationToken.None).Single();
+            target.Sentences[0].Words[0].Relation="nsubj";target.Sentences[0].Words[1].Relation="obj";
+            context.SemanticEvidence=new BackendEvidence{Passed=true};
+            Assert.False(new DerivationMeaningBackend().Compare(context,target,proposal).Passed);
+        }
+        [Fact]
+        public void AClassifierCannotOverrideAnInventedActionOrAFailedReplay()
+        {
+            var context=Context();context.SemanticEvidence=new BackendEvidence{Passed=true};AddMorphology(context.Source);
+            var proposal=new DependencyConstructionBackend().Generate(context,new UserSettings(),CancellationToken.None).Single();
+            proposal.Text="Heyet raporu onayladı.";
+            var target=ConlluReader.Parse(proposal.Text,Tree.Replace("inceledi","onayladı").Replace("incele\t","onayla\t"),"tr");AddMorphology(target);
+            Assert.False(new DerivationMeaningBackend().Compare(context,target,proposal).Passed);
+        }
+        [Fact]
+        public void AFailedSemanticCheckVetoesAnOtherwiseValidConstruction()
+        {
+            var context=Context();context.SemanticEvidence=new BackendEvidence{Passed=false,Problems=new List<string>{"Test semantic veto"}};
+            var proposal=new DependencyConstructionBackend().Generate(context,new UserSettings(),CancellationToken.None).Single();
+            var meaning=new DerivationMeaningBackend().Compare(context,Target(),proposal);
+            Assert.False(new IndependentFinalEvaluationBackend().Evaluate(context,Target(),proposal,Array.Empty<GrammarIssue>(),meaning).Accepted);
+        }
+        private static void AddMorphology(LinguisticAnalysis parsed)
+        {
+            parsed.Morphology=parsed.Sentences.SelectMany(s=>s.Words).Select(w=>new MorphToken{Start=w.Start,Length=w.Length,Surface=w.Form,Lemma=w.Lemma,Pos=w.Pos=="NOUN"?"Noun":w.Pos=="VERB"?"Verb":"Punctuation",Morphemes=w.Pos=="VERB"?new List<string>{"Verb","Past","A3sg"}:w.Pos=="NOUN"?new List<string>{"Noun","A3sg"}:new List<string>{"Punc"}}).ToList();
+            foreach(var token in parsed.Morphology.Where(t=>t.Lemma=="rapor"))token.Morphemes.Add("Acc");
+        }
         private static LinguisticAnalysis Target()=>ConlluReader.Parse("Raporu heyet inceledi.","1\tRaporu\trapor\tNOUN\t_\tCase=Acc\t3\tobj\t_\t_\n2\theyet\theyet\tNOUN\t_\tCase=Nom\t3\tnsubj\t_\t_\n3\tinceledi\tincele\tVERB\t_\tTense=Past|VerbForm=Fin\t0\troot\t_\t_\n4\t.\t.\tPUNCT\t_\t_\t3\tpunct\t_\t_\n","tr");
         private sealed class Parser:ILinguisticBackend
         {

@@ -15,7 +15,16 @@ namespace AcademicParaphraser.Core.Backends
             if(replay==null||!string.Equals(replay,proposal.Text,StringComparison.Ordinal)||target.Text!=proposal.Text)
                 evidence.Problems.Add("Kuruluş işlemleri kaynak ve sonuçla bire bir eşleşmiyor.");
             evidence.Problems.AddRange(context.Plan.CheckFixedTextMultiplicity(target.Text));
-            evidence.Problems.AddRange(CompareFacts(context.Source,target,context.Lexicon).Problems);
+            var facts=CompareFacts(context.Source,target,context.Lexicon);
+            // Only a precisely replayed Turkish, case-marked constituent movement may
+            // use the independent morphology + NLI route. Free text, unmarked objects
+            // and English voice conversions still require agreement of the fact graph.
+            bool markedMovement=replay==proposal.Text&&target.Text==proposal.Text
+                &&context.SemanticEvidence?.Passed==true
+                &&TurkishMovementIntegrity.Check(context.Source,target,proposal).Passed;
+            if(!facts.Passed&&!markedMovement)evidence.Problems.AddRange(facts.Problems);
+            else if(!facts.Passed)evidence.Notes.AddRange(facts.Problems.Select(p=>"Çözümleyici uyuşmazlığı (ekli öbek/yerel NLI yolu): "+p));
+            if(context.SemanticEvidence!=null&&!context.SemanticEvidence.Passed)evidence.Problems.AddRange(context.SemanticEvidence.Problems);
             evidence.Notes.Add("Kayıtlı kuruluş işlemi yeniden uygulandı; Word sabit alanları, miktar, olumsuzluk, zaman ve roller karşılaştırıldı.");
             evidence.Notes.Add("Bağımlılık ağacı ve kuruluş izi genel anlam eşdeğerliğinin matematiksel kanıtı değildir.");
             evidence.Passed=evidence.Problems.Count==0;return evidence;
@@ -88,6 +97,7 @@ namespace AcademicParaphraser.Core.Backends
         public BackendEvaluation Evaluate(BackendContext context,LinguisticAnalysis target,ConstructionProposal proposal,IReadOnlyList<GrammarIssue> grammar,BackendEvidence meaning)
         {
             var result=new BackendEvaluation();result.Evidence.Add(meaning);
+            if(context.SemanticEvidence!=null)result.Evidence.Add(context.SemanticEvidence);
             var grammarEvidence=new BackendEvidence{Stage="grammar"};
             var baseline=context.OriginalGrammar.GroupBy(IssueKey).ToDictionary(g=>g.Key,g=>g.Count(),StringComparer.Ordinal);
             foreach(var group in grammar.GroupBy(IssueKey))

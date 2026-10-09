@@ -18,7 +18,7 @@ try{$protector.Unprotect($encrypted) | Out-Null}catch{
 }
 if(-not $report.dpapiTamperRejected){throw 'Değiştirilmiş DPAPI verisi reddedilmedi.'}
 
-foreach($native in @(@{path='runtimes\win-x86\native\e_sqlite3.dll';machine=0x14c},@{path='runtimes\win-x64\native\e_sqlite3.dll';machine=0x8664},@{path='runtime\java\bin\java.exe';machine=0x8664},@{path='runtime\llama\llama-server.exe';machine=0x8664},@{path='runtime\llama\llama-server-impl.dll';machine=0x8664},@{path='runtime\llama\llama-common.dll';machine=0x8664},@{path='runtime\udpipe\udpipe.exe';machine=0x8664})){
+foreach($native in @(@{path='runtimes\win-x86\native\e_sqlite3.dll';machine=0x14c},@{path='runtimes\win-x64\native\e_sqlite3.dll';machine=0x8664},@{path='runtime\java\bin\java.exe';machine=0x8664},@{path='runtime\llama\llama-server.exe';machine=0x8664},@{path='runtime\llama\llama-server-impl.dll';machine=0x8664},@{path='runtime\llama\llama-common.dll';machine=0x8664},@{path='runtime\udpipe\udpipe.exe';machine=0x8664},@{path='runtime\semantic\native\onnxruntime.dll';machine=0x8664},@{path='runtime\semantic\native\onnxruntime4j_jni.dll';machine=0x8664},@{path='runtime\semantic\native\tokenizers.dll';machine=0x8664},@{path='runtime\java\bin\msvcp140_1.dll';machine=0x8664})){
  $reader=New-Object IO.BinaryReader([IO.File]::OpenRead((Join-Path $Payload $native.path)))
  try{
   if($reader.ReadUInt16() -ne 0x5a4d){throw 'Native dosyada DOS başlığı yok.'}

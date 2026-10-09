@@ -27,6 +27,7 @@ namespace AcademicParaphraser.WordHost
         private readonly LocalRewriteEngine localEngine;
         private readonly UdpipeBackend syntaxBackend;
         private readonly SeparateGrammarBackend grammarBackend;
+        private readonly LocalSemanticBackend semanticBackend;
         private readonly MultiStageRewriteEngine multiStageEngine;
         private readonly WordNetLexicalSource knowledge;
         private readonly OnlineStructureSource structures;
@@ -63,7 +64,9 @@ namespace AcademicParaphraser.WordHost
             localEngine = new LocalRewriteEngine(repo, nlp, new LocalLlamaModel(Path.Combine(installDirectory, "runtime", "llama", "llama-server.exe"), modelStore), knowledge,structures);
             syntaxBackend = new UdpipeBackend(Path.Combine(installDirectory,"runtime","udpipe","udpipe.exe"),Path.Combine(installDirectory,"runtime","udpipe"),nlp);
             grammarBackend = new SeparateGrammarBackend(Path.Combine(installDirectory,"runtime","java","bin","java.exe"),Path.Combine(installDirectory,"runtime","grammar","english-grammar-1.0.0.jar"));
-            multiStageEngine = new MultiStageRewriteEngine(repo,syntaxBackend,grammarBackend);
+            string semanticDirectory=Path.Combine(installDirectory,"runtime","semantic");
+            semanticBackend=new LocalSemanticBackend(Path.Combine(installDirectory,"runtime","java","bin","java.exe"),Path.Combine(semanticDirectory,"local-semantic-1.0.0.jar"),Path.Combine(semanticDirectory,"model_quantized.onnx"),Path.Combine(semanticDirectory,"tokenizer.json"));
+            multiStageEngine = new MultiStageRewriteEngine(repo,syntaxBackend,grammarBackend,semantic:semanticBackend);
             Preview.DownloadRequested += async (s, e) => await DownloadModelAsync();
             Preview.ApplyRequested += (s, e) => Guard(Apply);
             Preview.NextRequested += (s, e) => Guard(() => Next(1));
@@ -239,6 +242,7 @@ namespace AcademicParaphraser.WordHost
             snapshot?.Dispose();
             syntaxBackend.Dispose();
             grammarBackend.Dispose();
+            semanticBackend.Dispose();
             nlp.Dispose();
             structures.Dispose();
             termProvider.Dispose();

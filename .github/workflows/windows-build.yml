@@ -58,7 +58,7 @@ jobs:
         run: dotnet run --project tools/AcademicParaphraser.QualityProbe/AcademicParaphraser.QualityProbe.csproj -c Release -- artifacts/lexical-data/kenet.sqlite runtime/java/bin/java.exe nlp/target/turkish-nlp-1.0.0.jar artifacts/quality --domains
       - name: Verify actual multi-stage backend and five-domain rewriting
         run: |
-          dotnet run --project tools/AcademicParaphraser.BackendProbe -c Release -- artifacts/payload/runtime/udpipe/udpipe.exe artifacts/payload/runtime/udpipe artifacts/payload/runtime/java/bin/java.exe artifacts/payload/nlp/turkish-nlp-1.0.0.jar artifacts/payload/runtime/grammar/english-grammar-1.0.0.jar artifacts/backend-quality
+          dotnet run --project tools/AcademicParaphraser.BackendProbe -c Release -- artifacts/payload/runtime/udpipe/udpipe.exe artifacts/payload/runtime/udpipe artifacts/payload/runtime/java/bin/java.exe artifacts/payload/nlp/turkish-nlp-1.0.0.jar artifacts/payload/runtime/grammar/english-grammar-1.0.0.jar artifacts/payload/runtime/semantic artifacts/backend-quality
           if($LASTEXITCODE -ne 0){throw 'Actual Windows backend or independent fact graph verification failed.'}
       - name: Verify Windows runtime and deployment
         run: .\build\Verify-WindowsRuntime.ps1 -Payload artifacts\payload
@@ -121,7 +121,7 @@ jobs:
               }finally{$output.Dispose()}
             }
           }finally{$stream.Dispose()}
-          if($index -lt 2 -or $index -gt 12){throw 'Installer aktarım parçası sayısı beklenenden farklı.'}
+          if($index -lt 2 -or $index -gt 32){throw 'Installer aktarım parçası sayısı beklenenden farklı.'}
       - name: Transfer part 01
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
@@ -218,6 +218,166 @@ jobs:
           compression-level: 0
           if-no-files-found: warn
           retention-days: 30
+      - name: Transfer part 13
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: Windows-Setup-part13
+          path: artifacts/transfer/Setup.part13
+          compression-level: 0
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Transfer part 14
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: Windows-Setup-part14
+          path: artifacts/transfer/Setup.part14
+          compression-level: 0
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Transfer part 15
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: Windows-Setup-part15
+          path: artifacts/transfer/Setup.part15
+          compression-level: 0
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Transfer part 16
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: Windows-Setup-part16
+          path: artifacts/transfer/Setup.part16
+          compression-level: 0
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Transfer part 17
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: Windows-Setup-part17
+          path: artifacts/transfer/Setup.part17
+          compression-level: 0
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Transfer part 18
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: Windows-Setup-part18
+          path: artifacts/transfer/Setup.part18
+          compression-level: 0
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Transfer part 19
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: Windows-Setup-part19
+          path: artifacts/transfer/Setup.part19
+          compression-level: 0
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Transfer part 20
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: Windows-Setup-part20
+          path: artifacts/transfer/Setup.part20
+          compression-level: 0
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Transfer part 21
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: Windows-Setup-part21
+          path: artifacts/transfer/Setup.part21
+          compression-level: 0
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Transfer part 22
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: Windows-Setup-part22
+          path: artifacts/transfer/Setup.part22
+          compression-level: 0
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Transfer part 23
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: Windows-Setup-part23
+          path: artifacts/transfer/Setup.part23
+          compression-level: 0
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Transfer part 24
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: Windows-Setup-part24
+          path: artifacts/transfer/Setup.part24
+          compression-level: 0
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Transfer part 25
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: Windows-Setup-part25
+          path: artifacts/transfer/Setup.part25
+          compression-level: 0
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Transfer part 26
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: Windows-Setup-part26
+          path: artifacts/transfer/Setup.part26
+          compression-level: 0
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Transfer part 27
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: Windows-Setup-part27
+          path: artifacts/transfer/Setup.part27
+          compression-level: 0
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Transfer part 28
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: Windows-Setup-part28
+          path: artifacts/transfer/Setup.part28
+          compression-level: 0
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Transfer part 29
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: Windows-Setup-part29
+          path: artifacts/transfer/Setup.part29
+          compression-level: 0
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Transfer part 30
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: Windows-Setup-part30
+          path: artifacts/transfer/Setup.part30
+          compression-level: 0
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Transfer part 31
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: Windows-Setup-part31
+          path: artifacts/transfer/Setup.part31
+          compression-level: 0
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Transfer part 32
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: Windows-Setup-part32
+          path: artifacts/transfer/Setup.part32
+          compression-level: 0
+          if-no-files-found: warn
+          retention-days: 30
       - name: Installer artifact
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
@@ -243,6 +403,8 @@ jobs:
             artifacts/backend-quality/*.log
             artifacts/dependency-models/*.log
             artifacts/dependency-models/*.json
+            artifacts/semantic-research/*verification.json
+            artifacts/semantic-research/*.log
             artifacts/*-verification.json
             artifacts/payload/*.vsto
             artifacts/payload/*.manifest

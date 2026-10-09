@@ -78,7 +78,7 @@ namespace AcademicParaphraser.Core.Backends
             var s=source.Sentences[operation.SentenceIndex];var root=s.Root;
             // Focus particles and coordinated predicates can change scope under movement.
             // Reject these ambiguous cases instead of relocating a bare word.
-            if(s.Words.Any(w=>new[]{"yalnızca","sadece","only","even"}.Contains(w.Form.ToLowerInvariant()))
+            if(s.Words.Any(w=>new[]{"yalnızca","sadece","bile","dahi","only","even"}.Contains(w.Form.ToLowerInvariant()))
                 ||s.Words.Any(w=>w.Relation=="conj"&&w.Pos=="VERB")
                 ||s.Words.Any(w=>w.Pos=="PUNCT"&&new[]{"\"","“","”","«","»"}.Contains(w.Form)))return null;
             var arg=s.Words.SingleOrDefault(w=>w.Id==operation.ArgumentId);
