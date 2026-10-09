@@ -83,7 +83,7 @@ namespace AcademicParaphraser.Core.Backends
                 ||s.Words.Any(w=>w.Pos=="PUNCT"&&new[]{"\"","“","”","«","»"}.Contains(w.Form)))return null;
             var arg=s.Words.SingleOrDefault(w=>w.Id==operation.ArgumentId);
             if(root==null||arg==null||arg.Head!=root.Id||s.Words.Count>100||s.Words.Any(w=>w.Pos=="SYM"&&w.Form!="°"&&w.Form!="%"))return null;
-            var branch=s.Subtree(arg.Id).Where(w=>w.Pos!="PUNCT").ToList();
+            var branch=(source.Language=="en"&&operation.Kind=="en-active-passive"?EnglishNominalConstituents.Patient(s,arg):s.Subtree(arg.Id)).Where(w=>w.Pos!="PUNCT").ToList();
             if(branch.Count==0)return null;
             int lo=branch.Min(w=>w.Start),hi=branch.Max(w=>w.End);
             // A non-projective or overlapping subtree cannot be cut as one phrase.

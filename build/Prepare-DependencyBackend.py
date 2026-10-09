@@ -34,7 +34,7 @@ def main():
   language,repo,prefix=spec;model=models/(language+'-boun-ewt.udpipe');data=training/repo;started=time.monotonic()
   if not args.reuse_training or not model.exists() or model.stat().st_size==0:
    command=[str(exe),'--train','--heldout='+str(data/(prefix+'-ud-dev.conllu'))]+['--'+k+'='+v for k,v in pin['parameters'].items()]+[str(model),str(data/(prefix+'-ud-train.conllu'))]
-   with (models/(language+'-training.log')).open('w',encoding='utf-8') as log:subprocess.run(command,stdout=log,stderr=subprocess.STDOUT,check=True,timeout=5400)
+   with (models/(language+'-training.log')).open('w',encoding='utf-8') as log:subprocess.run(command,stdout=log,stderr=subprocess.STDOUT,check=True,timeout=7200)
   accuracy=models/(language+'-heldout-test.log')
   with accuracy.open('w',encoding='utf-8') as log:subprocess.run([str(exe),'--tag','--parse','--accuracy',str(model),str(data/(prefix+'-ud-test.conllu'))],stdout=log,stderr=subprocess.STDOUT,check=True,timeout=300)
   shutil.copyfile(model,destination/model.name)

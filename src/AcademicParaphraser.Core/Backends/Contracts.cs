@@ -80,6 +80,10 @@ namespace AcademicParaphraser.Core.Backends
     {
         Task<BackendEvidence> CompareAsync(string source,string target,string language,CancellationToken cancellation);
     }
+    public interface IEnglishMorphologyBackend
+    {
+        Task RefineVerbLemmasAsync(LinguisticAnalysis analysis,CancellationToken cancellation);
+    }
     public interface IConstructionBackend
     {
         IReadOnlyList<ConstructionProposal> Generate(BackendContext context,UserSettings settings,CancellationToken cancellation);

@@ -14,12 +14,12 @@ permissions:
 
 concurrency:
   group: windows-build-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   build:
     runs-on: windows-2022
-    timeout-minutes: 120
+    timeout-minutes: 180
     defaults:
       run:
         shell: powershell
@@ -43,13 +43,20 @@ jobs:
           java-version: '17'
       - name: Prepare official VSTO tools
         run: .\build\Prepare-WindowsCI.ps1
-      - name: Cache trained dependency backends
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+      - name: Restore trained dependency backends
+        id: dependency-cache
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: artifacts/dependency-models
           key: dependency-models-windows-v1-${{ hashFiles('build/dependency-backend.json') }}
       - name: Build, test and package
         run: .\build\Build-Windows.ps1
+      - name: Save verified training even if later packaging checks fail
+        if: always() && hashFiles('artifacts/dependency-models/dependency-model-verification.json') != '' && steps.dependency-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: artifacts/dependency-models
+          key: dependency-models-windows-v1-${{ hashFiles('build/dependency-backend.json') }}
       - name: Measure real paragraph output and process memory
         run: dotnet run --project tools/AcademicParaphraser.QualityProbe/AcademicParaphraser.QualityProbe.csproj -c Release -- artifacts/lexical-data/kenet.sqlite runtime/java/bin/java.exe nlp/target/turkish-nlp-1.0.0.jar artifacts/quality
       - name: Verify live keyless dictionary and structure retrieval

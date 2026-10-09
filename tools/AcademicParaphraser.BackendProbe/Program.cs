@@ -27,6 +27,7 @@ try
  {
   Console.WriteLine("START "+f.Id);var timer=Stopwatch.StartNew();var diagnostics=new MultiStageDiagnostics();
   var sourceTree=await parser.AnalyzeAsync(f.Text,f.Language,CancellationToken.None);
+  if(f.Language=="en")await grammar.RefineVerbLemmasAsync(sourceTree,CancellationToken.None);
   var results=await engine.GenerateAsync(f.Text,new UserSettings{DefaultStrength=Strength.Strong},new[]{new TextSpan{Start=0,Length=f.Text.Length}},Array.Empty<TextSpan>(),CancellationToken.None,new Progress<string>(s=>Console.WriteLine(f.Id+": "+s)),diagnostics);
   var record=new{f.Id,f.Language,original=f.Text,outputs=results.Select(c=>c.Text).ToArray(),rewrittenSentences=results.Select(c=>c.RewrittenSentences).ToArray(),elapsedSeconds=timer.Elapsed.TotalSeconds,sourceTree,diagnostics};records.Add(record);
   Console.WriteLine("OUTPUT "+JsonSerializer.Serialize(record));File.WriteAllText(Path.Combine(output,"backend-partial.json"),JsonSerializer.Serialize(records,options));
@@ -52,6 +53,7 @@ try
  foreach(var pair in pairs)
  {
   var before=await parser.AnalyzeAsync(pair.Source,pair.Language,CancellationToken.None);var after=await parser.AnalyzeAsync(pair.Target,pair.Language,CancellationToken.None);
+  if(pair.Language=="en"){await grammar.RefineVerbLemmasAsync(before,CancellationToken.None);await grammar.RefineVerbLemmasAsync(after,CancellationToken.None);}
   var review=meaning.CompareFacts(before,after,repo.GetLexicon());if(review.Passed&&!pair.Equivalent)falseAccepts++;if(!review.Passed&&pair.Equivalent)falseRejects++;
   var semanticReview=await semantic.CompareAsync(pair.Source,pair.Target,pair.Language,CancellationToken.None);
   if(semanticReview.Passed&&!pair.Equivalent)semanticFalseAccepts++;if(!semanticReview.Passed&&pair.Equivalent)semanticFalseRejects++;

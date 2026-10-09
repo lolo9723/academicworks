@@ -59,7 +59,7 @@ namespace AcademicParaphraser.Core.Backends
                 if(a.Root.Features.TryGetValue("Tense",out var oldTense)&&b.Root.Features.TryGetValue("Tense",out var newTense)&&oldTense!=newTense)
                     evidence.Problems.Add("Yüklemin zamanı değişti.");
                 CompareRole("eyleyen",Actor(a,sourcePassive),Actor(b,passive),source.Language,evidence);
-                CompareRole("nesne/önerme",Patient(a,sourcePassive),Patient(b,passive),source.Language,evidence);
+                CompareRole("nesne/önerme",Patient(a,sourcePassive,source.Language),Patient(b,passive,source.Language),source.Language,evidence);
                 foreach(var clause in a.Words.Where(w=>w.Relation=="advcl"||w.Relation=="ccomp"||w.Relation=="xcomp"))
                 {
                     string form=Normalize(clause.Form,source.Language);
@@ -80,9 +80,9 @@ namespace AcademicParaphraser.Core.Backends
         {
             var root=s.Root!;return s.Words.Where(w=>w.Head==root.Id&&(passive?w.Relation=="obl:agent"||w.Relation=="nmod:agent":w.Relation=="nsubj"||w.Relation=="csubj")).SelectMany(w=>s.Subtree(w.Id)).Where(w=>w.Pos!="PUNCT"&&!(passive&&w.Relation=="case"&&w.Form.Equals("by",StringComparison.OrdinalIgnoreCase))).ToList();
         }
-        private static List<DependencyWord> Patient(DependencySentence s,bool passive)
+        private static List<DependencyWord> Patient(DependencySentence s,bool passive,string language)
         {
-            var root=s.Root!;return s.Words.Where(w=>w.Head==root.Id&&(passive?w.Relation.StartsWith("nsubj",StringComparison.Ordinal)||w.Relation.StartsWith("csubj",StringComparison.Ordinal):w.Relation=="obj"||w.Relation=="ccomp")).SelectMany(w=>s.Subtree(w.Id)).Where(w=>w.Pos!="PUNCT").ToList();
+            var root=s.Root!;return s.Words.Where(w=>w.Head==root.Id&&(passive?w.Relation.StartsWith("nsubj",StringComparison.Ordinal)||w.Relation.StartsWith("csubj",StringComparison.Ordinal):w.Relation=="obj"||w.Relation=="ccomp")).SelectMany(w=>language=="en"?EnglishNominalConstituents.Patient(s,w):s.Subtree(w.Id)).Where(w=>w.Pos!="PUNCT").ToList();
         }
         private static void CompareRole(string name,List<DependencyWord> before,List<DependencyWord> after,string language,BackendEvidence evidence)
         {

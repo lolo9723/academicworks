@@ -156,6 +156,26 @@ namespace AcademicParaphraser.Tests
             parsed.Morphology=parsed.Sentences.SelectMany(s=>s.Words).Select(w=>new MorphToken{Start=w.Start,Length=w.Length,Surface=w.Form,Lemma=w.Lemma,Pos=w.Pos=="NOUN"?"Noun":w.Pos=="VERB"?"Verb":"Punctuation",Morphemes=w.Pos=="VERB"?new List<string>{"Verb","Past","A3sg"}:w.Pos=="NOUN"?new List<string>{"Noun","A3sg"}:new List<string>{"Punc"}}).ToList();
             foreach(var token in parsed.Morphology.Where(t=>t.Lemma=="rapor"))token.Morphemes.Add("Acc");
         }
+        [Fact]
+        public void EnglishPairedNominalCoordinationKeepsBothEndpointsDuringVoiceConversion()
+        {
+            const string text="The audit found a gap between sales and stock.";
+            const string tree="1\tThe\tthe\tDET\t_\t_\t2\tdet\t_\t_\n2\taudit\taudit\tNOUN\t_\tNumber=Sing\t3\tnsubj\t_\t_\n3\tfound\tfind\tVERB\t_\tTense=Past|VerbForm=Fin\t0\troot\t_\t_\n4\ta\ta\tDET\t_\t_\t5\tdet\t_\t_\n5\tgap\tgap\tNOUN\t_\tNumber=Sing\t3\tobj\t_\t_\n6\tbetween\tbetween\tADP\t_\t_\t7\tcase\t_\t_\n7\tsales\tsale\tNOUN\t_\tNumber=Plur\t5\tnmod\t_\t_\n8\tand\tand\tCCONJ\t_\t_\t9\tcc\t_\t_\n9\tstock\tstock\tNOUN\t_\tNumber=Sing\t3\tconj\t_\t_\n10\t.\t.\tPUNCT\t_\t_\t3\tpunct\t_\t_\n";
+            var source=ConlluReader.Parse(text,tree,"en");var context=new BackendContext{Source=source,Plan=RewritePlan.Create(text,new[]{new TextSpan{Start=0,Length=text.Length}},Array.Empty<TextSpan>())};
+            var proposal=Assert.Single(new DependencyConstructionBackend().Generate(context,new UserSettings(),CancellationToken.None));
+            Assert.Equal("A gap between sales and stock was found by the audit.",proposal.Text);
+            const string targetTree="1\tA\ta\tDET\t_\t_\t2\tdet\t_\t_\n2\tgap\tgap\tNOUN\t_\tNumber=Sing\t8\tnsubj:pass\t_\t_\n3\tbetween\tbetween\tADP\t_\t_\t4\tcase\t_\t_\n4\tsales\tsale\tNOUN\t_\tNumber=Plur\t2\tnmod\t_\t_\n5\tand\tand\tCCONJ\t_\t_\t6\tcc\t_\t_\n6\tstock\tstock\tNOUN\t_\tNumber=Sing\t4\tconj\t_\t_\n7\twas\tbe\tAUX\t_\tTense=Past\t8\taux:pass\t_\t_\n8\tfound\tfind\tVERB\t_\tTense=Past|VerbForm=Part|Voice=Pass\t0\troot\t_\t_\n9\tby\tby\tADP\t_\t_\t11\tcase\t_\t_\n10\tthe\tthe\tDET\t_\t_\t11\tdet\t_\t_\n11\taudit\taudit\tNOUN\t_\tNumber=Sing\t8\tobl:agent\t_\t_\n12\t.\t.\tPUNCT\t_\t_\t8\tpunct\t_\t_\n";
+            var target=ConlluReader.Parse(proposal.Text,targetTree,"en");
+            Assert.True(new DerivationMeaningBackend().Compare(context,target,proposal).Passed);
+        }
+        [Fact]
+        public void AnAlreadyCompleteBetweenPhraseDoesNotAbsorbAnAdditionalMatrixObject()
+        {
+            const string text="The audit found a gap between sales and stock and a loss.";
+            const string tree="1\tThe\tthe\tDET\t_\t_\t2\tdet\t_\t_\n2\taudit\taudit\tNOUN\t_\tNumber=Sing\t3\tnsubj\t_\t_\n3\tfound\tfind\tVERB\t_\tTense=Past|VerbForm=Fin\t0\troot\t_\t_\n4\ta\ta\tDET\t_\t_\t5\tdet\t_\t_\n5\tgap\tgap\tNOUN\t_\tNumber=Sing\t3\tobj\t_\t_\n6\tbetween\tbetween\tADP\t_\t_\t7\tcase\t_\t_\n7\tsales\tsale\tNOUN\t_\tNumber=Plur\t5\tnmod\t_\t_\n8\tand\tand\tCCONJ\t_\t_\t9\tcc\t_\t_\n9\tstock\tstock\tNOUN\t_\tNumber=Sing\t7\tconj\t_\t_\n10\tand\tand\tCCONJ\t_\t_\t12\tcc\t_\t_\n11\ta\ta\tDET\t_\t_\t12\tdet\t_\t_\n12\tloss\tloss\tNOUN\t_\tNumber=Sing\t3\tconj\t_\t_\n13\t.\t.\tPUNCT\t_\t_\t3\tpunct\t_\t_\n";
+            var source=ConlluReader.Parse(text,tree,"en");var context=new BackendContext{Source=source,Plan=RewritePlan.Create(text,new[]{new TextSpan{Start=0,Length=text.Length}},Array.Empty<TextSpan>())};
+            Assert.Empty(new DependencyConstructionBackend().Generate(context,new UserSettings(),CancellationToken.None));
+        }
         private static LinguisticAnalysis Target()=>ConlluReader.Parse("Raporu heyet inceledi.","1\tRaporu\trapor\tNOUN\t_\tCase=Acc\t3\tobj\t_\t_\n2\theyet\theyet\tNOUN\t_\tCase=Nom\t3\tnsubj\t_\t_\n3\tinceledi\tincele\tVERB\t_\tTense=Past|VerbForm=Fin\t0\troot\t_\t_\n4\t.\t.\tPUNCT\t_\t_\t3\tpunct\t_\t_\n","tr");
         private sealed class Parser:ILinguisticBackend
         {

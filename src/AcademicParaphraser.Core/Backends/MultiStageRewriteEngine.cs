@@ -32,6 +32,7 @@ namespace AcademicParaphraser.Core.Backends
                 string text=paragraph.Value;string language=LanguageProfile.IsEnglish(text,settings.InputLanguage)?"en":"tr";
                 progress?.Report("Cümleler ve dil bilgisi ilişkileri çözümleniyor…");
                 var parsed=await analysis.AnalyzeAsync(text,language,cancellation).ConfigureAwait(false);sentenceCount+=parsed.Sentences.Count;
+                if(language=="en"&&grammar is IEnglishMorphologyBackend english)await english.RefineVerbLemmasAsync(parsed,cancellation).ConfigureAwait(false);
                 var protectedSpans=Clip(fixedSpans,paragraph.Index,paragraph.Length);
                 if(settings.PreserveNames)
                 {
@@ -52,6 +53,7 @@ namespace AcademicParaphraser.Core.Backends
                     catch(ArgumentException ex){diagnostics.Attempts.Add(new BackendAttempt{Text=proposal.Text,Operations=proposal.Operations,Evaluation=new BackendEvaluation{Evidence=new List<BackendEvidence>{new BackendEvidence{Stage="word-mapping",Problems=new List<string>{ex.Message}}}}});continue;}
                     progress?.Report("Anlam bütünlüğü ve yeni dil bilgisi hataları denetleniyor…");
                     var rewritten=await analysis.AnalyzeAsync(proposal.Text,language,cancellation).ConfigureAwait(false);
+                    if(language=="en"&&grammar is IEnglishMorphologyBackend targetEnglish)await targetEnglish.RefineVerbLemmasAsync(rewritten,cancellation).ConfigureAwait(false);
                     var issues=await grammar.CheckAsync(rewritten,cancellation).ConfigureAwait(false);
                     context.SemanticEvidence=null;
                     if(semantic!=null)
