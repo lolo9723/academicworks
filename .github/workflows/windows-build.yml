@@ -14,12 +14,12 @@ permissions:
 
 concurrency:
   group: windows-build-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build:
     runs-on: windows-2022
-    timeout-minutes: 90
+    timeout-minutes: 120
     defaults:
       run:
         shell: powershell
@@ -43,6 +43,11 @@ jobs:
           java-version: '17'
       - name: Prepare official VSTO tools
         run: .\build\Prepare-WindowsCI.ps1
+      - name: Cache trained dependency backends
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: artifacts/dependency-models
+          key: dependency-models-windows-v1-${{ hashFiles('build/dependency-backend.json') }}
       - name: Build, test and package
         run: .\build\Build-Windows.ps1
       - name: Measure real paragraph output and process memory
@@ -51,11 +56,10 @@ jobs:
         run: dotnet run --project tools/AcademicParaphraser.QualityProbe/AcademicParaphraser.QualityProbe.csproj -c Release -- artifacts/lexical-data/kenet.sqlite runtime/java/bin/java.exe nlp/target/turkish-nlp-1.0.0.jar artifacts/quality --online
       - name: Verify five unrelated domains with structural paraphrasing
         run: dotnet run --project tools/AcademicParaphraser.QualityProbe/AcademicParaphraser.QualityProbe.csproj -c Release -- artifacts/lexical-data/kenet.sqlite runtime/java/bin/java.exe nlp/target/turkish-nlp-1.0.0.jar artifacts/quality --domains
-      - name: Verify actual CPU model and five-domain rewriting
+      - name: Verify actual multi-stage backend and five-domain rewriting
         run: |
-          dotnet run --project tools/AcademicParaphraser.LocalProbe -c Release -- --download-model artifacts/local-model
-          dotnet run --project tools/AcademicParaphraser.LocalProbe -c Release -- artifacts/payload/runtime/llama/llama-server.exe artifacts/local-model artifacts/payload/runtime/java/bin/java.exe artifacts/payload/nlp/turkish-nlp-1.0.0.jar artifacts/local-quality
-          if($LASTEXITCODE -ne 0){throw 'Actual Windows model or semantic trap evaluation failed.'}
+          dotnet run --project tools/AcademicParaphraser.BackendProbe -c Release -- artifacts/payload/runtime/udpipe/udpipe.exe artifacts/payload/runtime/udpipe artifacts/payload/runtime/java/bin/java.exe artifacts/payload/nlp/turkish-nlp-1.0.0.jar artifacts/payload/runtime/grammar/english-grammar-1.0.0.jar artifacts/backend-quality
+          if($LASTEXITCODE -ne 0){throw 'Actual Windows backend or independent fact graph verification failed.'}
       - name: Verify Windows runtime and deployment
         run: .\build\Verify-WindowsRuntime.ps1 -Payload artifacts\payload
       - name: Reproduce SQLite failure under Framework shadow copy
@@ -78,7 +82,7 @@ jobs:
           }
       - name: Verify installer and write SHA256
         run: |
-          $installer=Get-Item artifacts\installer\AkademikParafraz-1.5.0-Setup.exe
+          $installer=Get-Item artifacts\installer\AkademikParafraz-1.6.0-Setup.exe
           if($installer.Length -lt 1000000){throw 'Installer çıktısı beklenenden küçük.'}
           $hash=(Get-FileHash $installer -Algorithm SHA256).Hash.ToLowerInvariant()
           "$hash  $($installer.Name)" | Set-Content -Encoding ASCII "$($installer.FullName).sha256"
@@ -94,10 +98,10 @@ jobs:
           Copy-Item build\Smoke-Word.ps1,build\Verify-Word.cmd,build\Probe-Startup.ps1,build\Tanila.cmd artifacts\installer
           Copy-Item docs\UsersGuide.md artifacts\installer
       - name: Test missing-Word prerequisite
-        run: .\build\Test-InstallerPrerequisites.ps1 -Installer artifacts\installer\AkademikParafraz-1.5.0-Setup.exe
+        run: .\build\Test-InstallerPrerequisites.ps1 -Installer artifacts\installer\AkademikParafraz-1.6.0-Setup.exe
       - name: Create bounded transfer parts
         run: |
-          $source=Get-Item artifacts\installer\AkademikParafraz-1.5.0-Setup.exe
+          $source=Get-Item artifacts\installer\AkademikParafraz-1.6.0-Setup.exe
           New-Item artifacts\transfer -ItemType Directory -Force | Out-Null
           $stream=[IO.File]::OpenRead($source.FullName)
           $buffer=New-Object byte[] (1024*1024)
@@ -117,7 +121,7 @@ jobs:
               }finally{$output.Dispose()}
             }
           }finally{$stream.Dispose()}
-          if($index -lt 2 -or $index -gt 4){throw 'Installer aktarım parçası sayısı beklenenden farklı.'}
+          if($index -lt 2 -or $index -gt 12){throw 'Installer aktarım parçası sayısı beklenenden farklı.'}
       - name: Transfer part 01
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
@@ -150,10 +154,74 @@ jobs:
           compression-level: 0
           if-no-files-found: warn
           retention-days: 30
+      - name: Transfer part 05
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: Windows-Setup-part05
+          path: artifacts/transfer/Setup.part05
+          compression-level: 0
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Transfer part 06
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: Windows-Setup-part06
+          path: artifacts/transfer/Setup.part06
+          compression-level: 0
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Transfer part 07
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: Windows-Setup-part07
+          path: artifacts/transfer/Setup.part07
+          compression-level: 0
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Transfer part 08
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: Windows-Setup-part08
+          path: artifacts/transfer/Setup.part08
+          compression-level: 0
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Transfer part 09
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: Windows-Setup-part09
+          path: artifacts/transfer/Setup.part09
+          compression-level: 0
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Transfer part 10
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: Windows-Setup-part10
+          path: artifacts/transfer/Setup.part10
+          compression-level: 0
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Transfer part 11
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: Windows-Setup-part11
+          path: artifacts/transfer/Setup.part11
+          compression-level: 0
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Transfer part 12
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: Windows-Setup-part12
+          path: artifacts/transfer/Setup.part12
+          compression-level: 0
+          if-no-files-found: warn
+          retention-days: 30
       - name: Installer artifact
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: AkademikParafraz-1.5.0-Windows-Setup
+          name: AkademikParafraz-1.6.0-Windows-Setup
           path: artifacts/installer/
           if-no-files-found: error
           retention-days: 30
@@ -171,6 +239,10 @@ jobs:
             artifacts/quality/*.json
             artifacts/local-quality/*.json
             artifacts/local-quality/*.log
+            artifacts/backend-quality/*.json
+            artifacts/backend-quality/*.log
+            artifacts/dependency-models/*.log
+            artifacts/dependency-models/*.json
             artifacts/*-verification.json
             artifacts/payload/*.vsto
             artifacts/payload/*.manifest

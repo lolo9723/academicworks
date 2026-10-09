@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using AcademicParaphraser.Core;
 using AcademicParaphraser.Core.RuleEngine;
+using AcademicParaphraser.Core.Backends;
+using AcademicParaphraser.Infrastructure.Backends;
 using AcademicParaphraser.Core.Rewriting;
 using AcademicParaphraser.Infrastructure.Diagnostics;
 using AcademicParaphraser.Infrastructure.InternetDictionaryProviders;
@@ -23,6 +25,9 @@ namespace AcademicParaphraser.WordHost
     {
         private readonly LocalModelStore modelStore;
         private readonly LocalRewriteEngine localEngine;
+        private readonly UdpipeBackend syntaxBackend;
+        private readonly SeparateGrammarBackend grammarBackend;
+        private readonly MultiStageRewriteEngine multiStageEngine;
         private readonly WordNetLexicalSource knowledge;
         private readonly OnlineStructureSource structures;
         private readonly WikidataTermProvider termProvider;
@@ -56,6 +61,9 @@ namespace AcademicParaphraser.WordHost
             engine = new TransformationEngine(repo, nlp, knowledge, structures);
             modelStore = new LocalModelStore(Path.Combine(data, "models"));
             localEngine = new LocalRewriteEngine(repo, nlp, new LocalLlamaModel(Path.Combine(installDirectory, "runtime", "llama", "llama-server.exe"), modelStore), knowledge,structures);
+            syntaxBackend = new UdpipeBackend(Path.Combine(installDirectory,"runtime","udpipe","udpipe.exe"),Path.Combine(installDirectory,"runtime","udpipe"),nlp);
+            grammarBackend = new SeparateGrammarBackend(Path.Combine(installDirectory,"runtime","java","bin","java.exe"),Path.Combine(installDirectory,"runtime","grammar","english-grammar-1.0.0.jar"));
+            multiStageEngine = new MultiStageRewriteEngine(repo,syntaxBackend,grammarBackend);
             Preview.DownloadRequested += async (s, e) => await DownloadModelAsync();
             Preview.ApplyRequested += (s, e) => Guard(Apply);
             Preview.NextRequested += (s, e) => Guard(() => Next(1));
@@ -139,7 +147,9 @@ namespace AcademicParaphraser.WordHost
                 var token = operation.Token;
                 var enrichment = new EnrichmentContext { Progress = new Progress<string>(message => { if (!disposed && busy && !token.IsCancellationRequested) Preview.ShowProgress(message); }) };
                 var diagnostics = new RewriteDiagnostics();
-                IReadOnlyList<Candidate> result = settings.UseLocalRewriting
+                IReadOnlyList<Candidate> result = settings.Backend == ParafrazMotoru.ÇokAşamalı
+                    ? await Task.Run(() => multiStageEngine.GenerateAsync(current.Text, settings, current.Writable, current.Protected, token, enrichment.Progress), token)
+                    : settings.Backend == ParafrazMotoru.YerelDilModeli
                     ? await Task.Run(() => localEngine.GenerateAsync(current.Text, settings, current.Writable, current.Protected, token, enrichment.Progress, diagnostics), token)
                     : await Task.Run(() => engine.GenerateAsync(current.Text, settings, current.Protected, token, enrichment), token);
                 if (disposed)
@@ -227,6 +237,8 @@ namespace AcademicParaphraser.WordHost
             disposed = true;
             operation?.Cancel();
             snapshot?.Dispose();
+            syntaxBackend.Dispose();
+            grammarBackend.Dispose();
             nlp.Dispose();
             structures.Dispose();
             termProvider.Dispose();

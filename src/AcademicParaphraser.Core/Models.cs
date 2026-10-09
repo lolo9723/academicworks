@@ -8,9 +8,11 @@ namespace AcademicParaphraser.Core
     {
         Light = 1, Moderate = 2, Strong = 3
     }
+    public enum ParafrazMotoru { ÇokAşamalı, YerelDilModeli, SınırlıKurallar }
     public enum MetinDili { Otomatik, Türkçe, İngilizce }
     public sealed class UserSettings
     {
+        public ParafrazMotoru Backend { get; set; } = ParafrazMotoru.ÇokAşamalı;
         public MetinDili InputLanguage { get; set; } = MetinDili.Otomatik;
         public bool UseLocalRewriting { get; set; } = true;
         public Strength DefaultStrength { get; set; } = Strength.Moderate;

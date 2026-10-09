@@ -4,7 +4,7 @@ if(Get-Process WINWORD -ErrorAction SilentlyContinue){throw 'Bu test yeni bir Wo
 $word=New-Object -ComObject Word.Application
 $word.Visible=$true
 $doc=$null;$api=$null;$originalTracking=$false;$originalLinks=$true;$originalStrength=2
-$report=[ordered]@{ utc=(Get-Date).ToUniversalTime().ToString('o'); wordVersion=$word.Version; officeBitness=$null; productVersion='1.5.0'; passed=$false; checks=@(); error=$null }
+$report=[ordered]@{ utc=(Get-Date).ToUniversalTime().ToString('o'); wordVersion=$word.Version; officeBitness=$null; productVersion='1.6.0'; passed=$false; checks=@(); error=$null }
 function Read-Format($range) {
  $font=$range.Font;$paragraph=$range.ParagraphFormat
  [ordered]@{ name=$font.Name; size=$font.Size; bold=$font.Bold; italic=$font.Italic; underline=$font.Underline; color=$font.Color; superscript=$font.Superscript; subscript=$font.Subscript; alignment=$paragraph.Alignment; firstLineIndent=$paragraph.FirstLineIndent; leftIndent=$paragraph.LeftIndent; rightIndent=$paragraph.RightIndent; spaceBefore=$paragraph.SpaceBefore; spaceAfter=$paragraph.SpaceAfter; lineSpacing=$paragraph.LineSpacing; lineSpacingRule=$paragraph.LineSpacingRule }

@@ -33,6 +33,14 @@ Wikidata term-information fallback uses CC0 structured data via the public Media
 
 ## Yerel yeniden yazım
 
-Varsayılan Qwen3-4B-Instruct-2507 (Qwen, Apache-2.0), Unsloth topluluk Q4_K_M GGUF dönüşümü. Model deposu: https://huggingface.co/unsloth/Qwen3-4B-Instruct-2507-GGUF ; sabit revision a06e946bb6b655725eafa393f4a9745d460374c9. Deneysel Qwen3.5 4B/9B profillerinin sabit kaynakları MODEL-SOURCES.md içinde yer alır. SHA256 ve boyut `LocalModelStore.cs` içinde sabittir. Model uygulama EXE'sine dahil değildir; kullanıcı düğmeyle indirir. Lisans ve sabit model kartı bağlantısı `licenses/local-model` dizinindedir. Nicemleme Qwen'in resmi GGUF sürümü diye sunulmaz.
+İsteğe bağlı dil modeli modu için Qwen3-4B-Instruct-2507 (Qwen, Apache-2.0), Unsloth topluluk Q4_K_M GGUF dönüşümü. Model deposu: https://huggingface.co/unsloth/Qwen3-4B-Instruct-2507-GGUF ; sabit revision a06e946bb6b655725eafa393f4a9745d460374c9. Deneysel Qwen3.5 4B/9B profillerinin sabit kaynakları MODEL-SOURCES.md içinde yer alır. SHA256 ve boyut `LocalModelStore.cs` içinde sabittir. Model uygulama EXE'sine dahil değildir; kullanıcı düğmeyle indirir. Lisans ve sabit model kartı bağlantısı `licenses/local-model` dizinindedir. Nicemleme Qwen'in resmi GGUF sürümü diye sunulmaz.
 
 llama.cpp b11460, MIT, CPU x64 binary: https://github.com/ggml-org/llama.cpp/tree/b11460 . Sabit Windows arşivi ve SHA256 `build/local-runtime.json` içindedir. MIT ve LLVM/OpenMP lisans dosyaları pakette korunur. Microsoft Word ve uygulama çalışırken yerel sunucu yalnızca loopback adresinde, geçici yerel erişim anahtarıyla açılır; belgeyi buluta göndermez. Bu anahtar kullanıcının satın aldığı bir API anahtarı değildir.
+
+## Çok aşamalı backend
+
+UDPipe 1.3.0, UFAL and contributors, unmodified MPL-2.0 binary. Source release: https://github.com/ufal/udpipe/tree/v1.3.0. Full source is in the upstream pinned binary/source archive; runtime includes its license and source pointer. Ready-made non-commercial language models are not included.
+
+This project trains compact tokenization/tagging/parsing models using UD 2.17 Turkish-BOUN and English-EWT, CC BY-SA 4.0. The derived models retain CC BY-SA 4.0; dataset author attribution/readmes and license copies accompany them. Exact commits/data hashes/parameters are in build/dependency-backend.json, generated model hashes/test results in runtime/udpipe/dependency-model-verification.json. No user document is included in training.
+
+LanguageTool 6.6 English module, LGPL-2.1-or-later, source https://github.com/languagetool-org/languagetool/tree/v6.6. English grammar wrapper source and Maven build are in grammar/. Original dependency JARs are separate in runtime/grammar/lib, retain embedded license/NOTICE files and can be replaced/rebuilt. LGPL copy: licenses/backends/LanguageTool-LGPL-2.1.txt. This is local English checking, not a Turkish LanguageTool model or a hosted service. Transitive library versions and notices can be inspected in their JARs and grammar/pom.xml dependency tree.

@@ -1,0 +1,76 @@
+{
+  "runtime": {
+    "url": "https://github.com/ufal/udpipe/releases/download/v1.3.0/udpipe-1.3.0-bin.zip",
+    "sha256": "5295fc1fc9d222d1fdb94de69f220f3a817eccd2cca1e146274aba6fdba2571d",
+    "bytes": 13896302
+  },
+  "parameters": {
+    "tokenizer": "epochs=8;dimension=16;batch_size=100",
+    "tagger": "iterations=10;models=2",
+    "parser": "iterations=10;hidden_layer=100;structured_interval=0;transition_system=swap"
+  },
+  "inputs": [
+    {
+      "path": "UD_Turkish-BOUN/tr_boun-ud-train.conllu",
+      "url": "https://raw.githubusercontent.com/UniversalDependencies/UD_Turkish-BOUN/5cb7559d4efd63c22d253ff9e3fa2b0202b7913e/tr_boun-ud-train.conllu",
+      "sha256": "373fe39e3acdba3219521f54fa5ae768851fbb4bf9a31079ad1ca6590410650c",
+      "bytes": 7919910
+    },
+    {
+      "path": "UD_Turkish-BOUN/tr_boun-ud-dev.conllu",
+      "url": "https://raw.githubusercontent.com/UniversalDependencies/UD_Turkish-BOUN/5cb7559d4efd63c22d253ff9e3fa2b0202b7913e/tr_boun-ud-dev.conllu",
+      "sha256": "f6d1ed6e3b57b4e658177eb16089e9fb616bc68fb110eb0894c2b409e41b5c76",
+      "bytes": 967078
+    },
+    {
+      "path": "UD_Turkish-BOUN/tr_boun-ud-test.conllu",
+      "url": "https://raw.githubusercontent.com/UniversalDependencies/UD_Turkish-BOUN/5cb7559d4efd63c22d253ff9e3fa2b0202b7913e/tr_boun-ud-test.conllu",
+      "sha256": "4f74fc0f9efdd1285d781f3efd1e98cbf39cf4433df9eb4dc14162e8ed36773b",
+      "bytes": 955648
+    },
+    {
+      "path": "UD_Turkish-BOUN/LICENSE.txt",
+      "url": "https://raw.githubusercontent.com/UniversalDependencies/UD_Turkish-BOUN/5cb7559d4efd63c22d253ff9e3fa2b0202b7913e/LICENSE.txt",
+      "sha256": "899b1804a12ebc090b96339614eede1b64b686721b650a71430b55b5235f7f79",
+      "bytes": 202
+    },
+    {
+      "path": "UD_Turkish-BOUN/README.md",
+      "url": "https://raw.githubusercontent.com/UniversalDependencies/UD_Turkish-BOUN/5cb7559d4efd63c22d253ff9e3fa2b0202b7913e/README.md",
+      "sha256": "38b91ff42a16fef90e4b3ddd5f4f8cb77b2666070c8e7f14ee04064ddd05e9ce",
+      "bytes": 4262
+    },
+    {
+      "path": "UD_English-EWT/en_ewt-ud-train.conllu",
+      "url": "https://raw.githubusercontent.com/UniversalDependencies/UD_English-EWT/c5baffde1e106bcd828c520109eb905bfc3ac06f/en_ewt-ud-train.conllu",
+      "sha256": "6fe5692f2e02198262483daba0626efe346dd19f0ce6c3ee7728b08af9b90a9c",
+      "bytes": 15029817
+    },
+    {
+      "path": "UD_English-EWT/en_ewt-ud-dev.conllu",
+      "url": "https://raw.githubusercontent.com/UniversalDependencies/UD_English-EWT/c5baffde1e106bcd828c520109eb905bfc3ac06f/en_ewt-ud-dev.conllu",
+      "sha256": "de507882611c54f19934f9a65d654b37f55a5c315da1794b9f13348b28b39c12",
+      "bytes": 1898013
+    },
+    {
+      "path": "UD_English-EWT/en_ewt-ud-test.conllu",
+      "url": "https://raw.githubusercontent.com/UniversalDependencies/UD_English-EWT/c5baffde1e106bcd828c520109eb905bfc3ac06f/en_ewt-ud-test.conllu",
+      "sha256": "b837531faddd54f5c89cf5259cfe5306b075556a9ff19b2271393df29c6b02f8",
+      "bytes": 1899759
+    },
+    {
+      "path": "UD_English-EWT/LICENSE.txt",
+      "url": "https://raw.githubusercontent.com/UniversalDependencies/UD_English-EWT/c5baffde1e106bcd828c520109eb905bfc3ac06f/LICENSE.txt",
+      "sha256": "b3d1b0f4c6ae151f7eb78738f46ebd5ee140f8a7f76501ba26af123140d35ae7",
+      "bytes": 20014
+    },
+    {
+      "path": "UD_English-EWT/README.md",
+      "url": "https://raw.githubusercontent.com/UniversalDependencies/UD_English-EWT/c5baffde1e106bcd828c520109eb905bfc3ac06f/README.md",
+      "sha256": "dd74b1b70a6daa0ab3c7d6e53d2048aec1610c55071135ed619734e37500e463",
+      "bytes": 24450
+    }
+  ],
+  "treebankVersion": "UD 2.17",
+  "fixtureSha256": "a38b41287a8af00026c5e3b201f4eaf2f74019da7a0bcc129fa6a84e8a9c7187"
+}

@@ -29,6 +29,13 @@ try {
 if($jdkVersion -notmatch 'version "(?:17|18|19|2\d)\.') {throw 'Java JDK 17 veya üstü gerekiyor.'}
 & mvn -f nlp/pom.xml clean package
 if($LASTEXITCODE -ne 0){throw 'Türkçe NLP derlemesi başarısız.'}
+& mvn -f grammar/pom.xml package
+if($LASTEXITCODE -ne 0){throw 'English grammar backend build failed.'}
+New-Item runtime/grammar -ItemType Directory -Force | Out-Null
+Copy-Item grammar/target/english-grammar-1.0.0.jar runtime/grammar
+Copy-Item grammar/target/lib runtime/grammar -Recurse -Force
+& python build/Prepare-DependencyBackend.py --reuse-training
+if($LASTEXITCODE -ne 0){throw 'Dependency backend training/evaluation failed.'}
 & python build/Prepare-LexicalData.py
 if($LASTEXITCODE -ne 0){throw 'Geniş sözlük verisinin doğrulanması/paketlenmesi başarısız.'}
 $env:ACADEMIC_WORDNET=(Join-Path $root 'artifacts\lexical-data\kenet.sqlite')
@@ -67,7 +74,7 @@ foreach($mode in @('Debug','Release')) {
  if($LASTEXITCODE -ne 0){throw "$mode VSTO derlemesi / manifest imzalama başarısız."}
 }
 $output=Join-Path $root "src\AcademicParaphraser.WordAddin\bin\$Configuration"
-foreach($file in @('AcademicParaphraser.WordAddin.dll','AcademicParaphraser.WordAddin.vsto','AcademicParaphraser.WordAddin.dll.manifest','runtimes\win-x86\native\e_sqlite3.dll','runtimes\win-x64\native\e_sqlite3.dll','runtime\java\bin\java.exe','nlp\turkish-nlp-1.0.0.jar','data\kenet.sqlite','data\KENET-NOTICE.txt','runtime\llama\llama-server.exe','runtime\llama\llama-server-impl.dll')){if(-not(Test-Path (Join-Path $output $file))){throw "Dağıtım çıktısı eksik: $file"}}
+foreach($file in @('AcademicParaphraser.WordAddin.dll','AcademicParaphraser.WordAddin.vsto','AcademicParaphraser.WordAddin.dll.manifest','runtimes\win-x86\native\e_sqlite3.dll','runtimes\win-x64\native\e_sqlite3.dll','runtime\java\bin\java.exe','nlp\turkish-nlp-1.0.0.jar','data\kenet.sqlite','data\KENET-NOTICE.txt','runtime\llama\llama-server.exe','runtime\llama\llama-server-impl.dll','runtime\udpipe\udpipe.exe','runtime\udpipe\tr-boun-ewt.udpipe','runtime\udpipe\en-boun-ewt.udpipe','runtime\udpipe\dependency-model-verification.json','runtime\grammar\english-grammar-1.0.0.jar')){if(-not(Test-Path (Join-Path $output $file))){throw "Dağıtım çıktısı eksik: $file"}}
 $payload=Join-Path $root 'artifacts\payload'
 if(Test-Path $payload){Remove-Item $payload -Recurse -Force}
 Copy-Item $output $payload -Recurse

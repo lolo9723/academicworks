@@ -2,24 +2,30 @@
 
 Bu Windows kurulum paketi geliştirme sürümüdür. Gerçek Word içindeki kurulum, biçim, bağlantı ve geri alma kabulü henüz tamamlanmamıştır. Paket geliştirme yayıncı sertifikası kullanır; kurulumda yayıncı/güven sorusu görülebilir.
 
-## Gelişmiş motoru ilk kez hazırlama
+## Çok aşamalı motor
 
-Kurulumdan sonra Word'de Akademik Parafraz önizleme panelini açın ve **Gelişmiş motoru indir (2,5 GB)** düğmesine basın. Bu işlem yalnızca sabit model dosyasını indirir, belgeyi yüklemez; hesap veya API anahtarı istemez. İndirmenin bitmesi ve SHA256 doğrulaması gerekir. En az 4 GB boş disk alanı bırakın. İptal ederseniz indirme sonraki denemede baştan başlar. Model `%LOCALAPPDATA%\AkademikParafraz\models` dizininde kalır; uygulama güncellemesi modeli silmez. Kaldırınca kişisel verileri temizleme seçeneği modelleri de silebilir.
+1.6.0 varsayılan olarak **Ayarlar > Parafraz motoru > ÇokAşamalı** seçeneğini kullanır. Eğitilmiş küçük çözümleyiciler ve İngilizce dil bilgisi bileşeni pakete dahildir; 2,5 GB model indirmesi gerekmez. Cümleler bütün öbekler üzerinden yeniden kurulur, ardından anlam sinyalleri, özne/nesne ilişkileri ve yeni dil bilgisi sorunları ayrı denetlenir. Otomatik denetim anlam garantisi değildir. Biçim sınırına sığmayan veya kapsam dışındaki dönüşüm elenir. Türkçe dil bilgisi kontrolü sınırlıdır.
+
+Metnin dilini otomatik, Türkçe veya İngilizce seçebilirsiniz. Otomatik tespit kısa/karma metinde yanılabilir. Küçük çözümleyiciler kullanıcının bilgisayarında eğitilmez; hazır eğitimli dosyalar yerel CPU'da çalışır. Metin buluta gönderilmez.
+
+## İsteğe bağlı yerel dil modeli
+
+Kurulumdan sonra Word'de Akademik Parafraz önizleme panelini açın ve **İsteğe bağlı dil modelini indir** düğmesine basın. Bu işlem yalnızca sabit model dosyasını indirir, belgeyi yüklemez; hesap veya API anahtarı istemez. İndirmenin bitmesi ve SHA256 doğrulaması gerekir. En az 4 GB boş disk alanı bırakın. İptal ederseniz indirme sonraki denemede baştan başlar. Model `%LOCALAPPDATA%\AkademikParafraz\models` dizininde kalır; uygulama güncellemesi modeli silmez. Kaldırınca kişisel verileri temizleme seçeneği modelleri de silebilir.
 
 Sonraki üretim internet olmadan yapılabilir. CPU ile üretim yavaş olabilir; diğer ağır uygulamaları kapatın. Seçilen her paragraf en fazla 2.400 karakter olmalıdır. Model bütünlüğü ilk kullanımda okunarak doğrulanır; bu da zaman alabilir. Metin üretimi bilgisayardaki ayrı süreçte yapılır, işlem sonunda model belleği serbest bırakılır.
 
-Ayarlar > **Gelişmiş yerel yeniden yazımı kullan** açık olmalıdır. **Metnin dili** otomatik, Türkçe veya İngilizce seçilebilir. Otomatik tespit kısa/karma metinlerde yanılabilir; dili elle seçin. Gelişmiş modu kapatmak yalnızca eski, sınırlı Türkçe kural motoruna döner. Model bulunamadığında bu geçiş gizlice yapılmaz.
+Bu indirmeyi kullanmak için Ayarlar > **Parafraz motoru > YerelDilModeli** seçilmelidir. **Metnin dili** otomatik, Türkçe veya İngilizce seçilebilir. Otomatik tespit kısa/karma metinlerde yanılabilir; dili elle seçin. **SınırlıKurallar** seçeneği eski Türkçe kural motorudur. Model bulunamadığında bu geçiş gizlice yapılmaz.
 
 ## Kurulum
 
-Windows 10/11 x64 ve masaüstü Word 2016 veya daha yeni bir sürüm gerekir. Word 32 veya 64 bit olabilir. Açık belgelerinizi kaydedip Word'ü kapatın ve `AkademikParafraz-1.5.0-Setup.exe` dosyasını açın. Kurulum eksik .NET Framework 4.8, Word veya Microsoft VSTO Runtime bileşenini bildirirse önce o bileşeni tamamlayın. VSTO Runtime'ın resmi indirmesi: https://www.microsoft.com/en-us/download/details.aspx?id=105522
+Windows 10/11 x64 ve masaüstü Word 2016 veya daha yeni bir sürüm gerekir. Word 32 veya 64 bit olabilir. Açık belgelerinizi kaydedip Word'ü kapatın ve `AkademikParafraz-1.6.0-Setup.exe` dosyasını açın. Kurulum eksik .NET Framework 4.8, Word veya Microsoft VSTO Runtime bileşenini bildirirse önce o bileşeni tamamlayın. VSTO Runtime'ın resmi indirmesi: https://www.microsoft.com/en-us/download/details.aspx?id=105522
 
 Java, NLP motoru ve sözlük pakete dahildir. Visual Studio, SDK, Maven veya ayrıca Java kurmanız gerekmez. Yayıncı sertifikası otomatik güvenilir yapılmaz; kurumsal bilgisayarınız kurulumu engellerse kurumunuzun yazılım yöneticisiyle ilerleyin.
 
 ## Kullanım
 
 1. Word'ü açın ve bir cümle, paragraf veya birkaç paragraf seçin.
-2. İnternet desteği için **AKADEMİK PARAFRAZ > İnternetle Parafraz** komutunu kullanın. Bu komut interneti açar, çevrimdışı modu kapatır ve Güçlü düzeye geçer. İnternetsiz çalışmak için Ayarlar’dan interneti kapatıp normal **Parafraz Et** komutunu kullanın.
+2. İnternet desteği için **AKADEMİK PARAFRAZ > İnternetle Parafraz** komutunu kullanın. Bu komut interneti açar, çevrimdışı modu kapatır ve Güçlü düzeye geçer. Çok aşamalı motorun kuruluş üretimi yereldir; diğer motorların sözlük/yapı desteği ayrıca interneti kullanabilir. İnternetsiz çalışmak için Ayarlar’dan interneti kapatıp normal **Parafraz Et** komutunu kullanın.
 3. Önizlemede öneriyi okuyun; kural modunda birden çok öneri varsa sonraki alternatife geçin.
 4. **Uygula** öneriyi belgeye yazar. **İptal** belgeyi değiştirmez.
 5. Son işlemi **Ctrl+Z** veya eklentinin **Geri Al** komutuyla geri alın.
@@ -28,7 +34,7 @@ Koruma seçenekleri varsayılan olarak açıktır. Bağlantının görünen metn
 
 ## Cümle ve paragraf motorları
 
-1.5.0 gelişmiş mod, cümle kuruluşunu değiştiren tek bir denetimli öneri sunar. Uygun öneri bulunmayan paragraflar korunur. Otomatik denetim kusursuz değildir; özellikle yeni eylem, yorum ve kesinlik değişimlerini önizlemede okuyun. 8 GB Windows ve Word toplamında gerçek kabul henüz yoktur. CPU üzerinde birkaç cümle için bile dakikalar sürebilir.
+1.6.0 gelişmiş mod, cümle kuruluşunu değiştiren tek bir denetimli öneri sunar. Uygun öneri bulunmayan paragraflar korunur. Otomatik denetim kusursuz değildir; özellikle yeni eylem, yorum ve kesinlik değişimlerini önizlemede okuyun. 8 GB Windows ve Word toplamında gerçek kabul henüz yoktur. CPU üzerinde birkaç cümle için bile dakikalar sürebilir.
 
 Sınırlı kural modunda 1.4.0, kelime konumlarını ve bağlama göre çekimleri düzeltir; bulgu cümlelerini, karşıtlıkları ve işlem anlatımını yeniden kurabilir. Olumsuzluk, olasılık ve koşul sinyalleri değişen öneriler elenir. Bu denetim bütün anlam ilişkilerini kanıtlamaz. Tek bir uygun dönüşüm varsa tek alternatif gösterilebilir; kapsam dışındaki cümleler değişmeden kalır. Önizlemedeki cümle sayacı bir kalite puanı değildir. İngilizce çeviri veya kişisel üslup öğrenimi bu sürümde yoktur.
 

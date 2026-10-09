@@ -1,5 +1,7 @@
 # Akademik Parafraz — Academic Paraphraser for Word
 
+**1.6.0 çok aşamalı backend geliştirmesi:** Çekim/bağımlılık çözümleme, kuruluş üretimi, anlam denetimi, ayrı dil bilgisi ve nihai değerlendirme bileşenleri eklendi. Hazır büyük dil modeli zorunlu değildir. [Mimari, kaynaklar, gerçek küçük çözümleyici eğitimi ve sınırlar](docs/Backend-Architecture-1.6.0.md). Gerçek parafraz kalite kabulü ayrıca raporlanır.
+
 **1.5.0 kalite kabulü tamamlanmadı:** Son yerel CPU sınamasında beş farklı paragrafın hiçbiri son kontrollerden geçmedi. 182 teknik testin geçmesi, doğal parafraz kalitesinin sağlandığı anlamına gelmez. [Tam kaynak/deneme/eleme raporu](docs/Local-Quality-1.5.0.md).
 
 Windows masaüstü Microsoft Word için C#/.NET Framework 4.8 ve VSTO mimarisinde Türkçe/İngilizce parafraz projesi. 1.5.0 geliştirmesi, yeni kullanıcı yönlendirmesiyle yerel nicemlenmiş dil modelini cümle çözümleme, Word aralık planlaması ve ayrı anlam denetimine bağlar. Metin bilgisayarda işlenir; ücretli bulut servisi veya API anahtarı gerekmez. Önceki üretken-model yasağı bu yeni çalışma modu için değiştirilmiştir. Ayarlardan sınırlı kural motoru ayrıca seçilebilir.

@@ -62,9 +62,9 @@ namespace AcademicParaphraser.WordHost.UI
         {
             get => s.DefaultStrength; set => s.DefaultStrength = value;
         }
-        [System.ComponentModel.DisplayName("Gelişmiş yerel yeniden yazımı kullan")]
-        [System.ComponentModel.Description("Bir defalık yaklaşık 2,5 GB model indirmesi gerekir. Metin dışarı gönderilmez. Kapatılırsa sınırlı kural motoru kullanılır.")]
-        public bool GelişmişMotor { get => s.UseLocalRewriting; set => s.UseLocalRewriting = value; }
+        [System.ComponentModel.DisplayName("Parafraz motoru")]
+        [System.ComponentModel.Description("Çok aşamalı motor kurulum paketine dahildir. Yerel dil modeli isteğe bağlıdır ve ayrıca yaklaşık 2,5 GB indirilir. Metin bilgisayarda işlenir.")]
+        public ParafrazMotoru Motor { get => s.Backend; set => s.Backend = value; }
         [System.ComponentModel.DisplayName("Metnin dili")]
         public MetinDili Dil { get => s.InputLanguage; set => s.InputLanguage = value; }
         public bool AtıflarıKoru

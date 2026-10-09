@@ -1,4 +1,4 @@
-﻿#ifndef PayloadDir
+#ifndef PayloadDir
  #error PayloadDir must be supplied by Build-Windows.ps1
 #endif
 #ifndef OutputDir
@@ -7,7 +7,7 @@
 [Setup]
 AppId={{482D00C1-39AE-45A9-AB33-1253584ED67B}
 AppName=Akademik Parafraz
-AppVersion=1.5.0
+AppVersion=1.6.0
 AppPublisher=Akademik Parafraz
 DefaultDirName={localappdata}\Programs\AkademikParafraz
 PrivilegesRequired=lowest
@@ -15,7 +15,7 @@ ArchitecturesAllowed=x64compatible
 MinVersion=10.0
 DisableProgramGroupPage=yes
 OutputDir={#OutputDir}
-OutputBaseFilename=AkademikParafraz-1.5.0-Setup
+OutputBaseFilename=AkademikParafraz-1.6.0-Setup
 Compression=lzma2
 SolidCompression=yes
 UninstallDisplayName=Akademik Parafraz
