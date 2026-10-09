@@ -4,7 +4,7 @@ Bu Windows kurulum paketi geliştirme sürümüdür. Gerçek Word içindeki kuru
 
 ## Gelişmiş motoru ilk kez hazırlama
 
-Kurulumdan sonra Word'de Akademik Parafraz önizleme panelini açın ve **Gelişmiş motoru indir (4 GB)** düğmesine basın. Bu işlem yalnızca sabit model dosyasını indirir, belgeyi yüklemez; hesap veya API anahtarı istemez. İndirmenin bitmesi ve SHA256 doğrulaması gerekir. En az 6 GB boş disk alanı bırakın. İptal ederseniz indirme sonraki denemede baştan başlar. Model `%LOCALAPPDATA%\AkademikParafraz\models` dizininde kalır; uygulama güncellemesi modeli silmez. Kaldırınca kişisel verileri temizleme seçeneği modelleri de silebilir.
+Kurulumdan sonra Word'de Akademik Parafraz önizleme panelini açın ve **Gelişmiş motoru indir (2,5 GB)** düğmesine basın. Bu işlem yalnızca sabit model dosyasını indirir, belgeyi yüklemez; hesap veya API anahtarı istemez. İndirmenin bitmesi ve SHA256 doğrulaması gerekir. En az 4 GB boş disk alanı bırakın. İptal ederseniz indirme sonraki denemede baştan başlar. Model `%LOCALAPPDATA%\AkademikParafraz\models` dizininde kalır; uygulama güncellemesi modeli silmez. Kaldırınca kişisel verileri temizleme seçeneği modelleri de silebilir.
 
 Sonraki üretim internet olmadan yapılabilir. CPU ile üretim yavaş olabilir; diğer ağır uygulamaları kapatın. Seçilen her paragraf en fazla 2.400 karakter olmalıdır. Model bütünlüğü ilk kullanımda okunarak doğrulanır; bu da zaman alabilir. Metin üretimi bilgisayardaki ayrı süreçte yapılır, işlem sonunda model belleği serbest bırakılır.
 

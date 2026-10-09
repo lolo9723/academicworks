@@ -25,6 +25,8 @@ namespace AcademicParaphraser.Core.Rewriting
         public string Source { get; }
         public string Language { get; set; } = "tr";
         public IReadOnlyList<SentenceFrame> Analysis { get; set; } = Array.Empty<SentenceFrame>();
+        public string StructuralScaffold { get; set; } = "";
+        public IReadOnlyDictionary<string,string> DictionaryClues { get; set; } = new Dictionary<string,string>();
         public IReadOnlyList<RewriteBlock> Blocks { get; }
         public string MaskedSource => string.Concat(Blocks.Select(b => b.Editable ? b.Text : Marker(b)));
         public static string Marker(RewriteBlock block) => "[[AP_" + block.Id + "]]";
@@ -36,10 +38,10 @@ namespace AcademicParaphraser.Core.Rewriting
         {
             if(!CanCompileNaturalText || target==null || target.Contains("[[AP_") || target.Length>Math.Max(4000,Source.Length*3))
                 throw new ArgumentException("Metin Word biçim sınırlarına kesin olarak eşlenemiyor.");
-            string pattern="\\A"+string.Concat(Blocks.Select(b=>b.Editable ? "(?<"+b.Id+">[^\\r\\n]+?)" : Regex.Escape(b.Text)))+"\\z";
+            string pattern="\\A"+string.Concat(Blocks.Select(b=>b.Editable ? "(?<"+b.Id+">[^\\r\\n]*?)" : Regex.Escape(b.Text)))+"\\z";
             var match=Regex.Match(target,pattern,RegexOptions.None,TimeSpan.FromMilliseconds(200));
             if(!match.Success)throw new ArgumentException("Korunan metin veya sırası değişmiş; Word eşlemesi yapılamadı.");
-            var replacements=Blocks.Where(b=>b.Editable).ToDictionary(b=>b.Id,b=>match.Groups[b.Id].Value.Trim(),StringComparer.Ordinal);
+            var replacements=Blocks.Where(b=>b.Editable).ToDictionary(b=>b.Id,b=>match.Groups[b.Id].Value,StringComparer.Ordinal);
             var compiled=BuildCandidate(replacements,"local-model:natural-paragraph");
             if(!string.Equals(compiled.Text,target,StringComparison.Ordinal))
                 throw new ArgumentException("Yeni metnin boşlukları Word sınırlarına uymuyor.");
@@ -74,7 +76,7 @@ namespace AcademicParaphraser.Core.Rewriting
                 var next = Blocks.SkipWhile(b => b.Id != block.Id).Skip(1).FirstOrDefault(b => !b.Editable);
                 int end = next == null ? masked.Length : masked.IndexOf(Marker(next),cursor,StringComparison.Ordinal);
                 if (end < cursor) throw new ArgumentException("Korunan metin işareti kayboldu.");
-                string value = masked.Substring(cursor,end-cursor).Trim();
+                string value = masked.Substring(cursor,end-cursor);
                 if (value.Contains("[[AP_")) throw new ArgumentException("Bilinmeyen/tekrarlanan koruma işareti bulundu.");
                 values.Add(block.Id,value);cursor=end;
             }
@@ -116,9 +118,9 @@ namespace AcademicParaphraser.Core.Rewriting
                 {
                     int lo = boundaries[i - 1], hi = boundaries[i];
                     if (blocked.Any(s => s.Intersects(lo, hi - lo))) continue;
-                    // Preserve whitespace between a rewritten expression and its fixed neighbour.
-                    while (lo < hi && char.IsWhiteSpace(source[lo])) lo++;
-                    while (hi > lo && char.IsWhiteSpace(source[hi - 1])) hi--;
+                    // Keep the paragraph edges fixed; spaces inside a writable run may move.
+                    if (lo == 0) while (lo < hi && char.IsWhiteSpace(source[lo])) lo++;
+                    if (hi == source.Length) while (hi > lo && char.IsWhiteSpace(source[hi - 1])) hi--;
                     if (hi > lo && source.Substring(lo, hi - lo).Any(char.IsLetter))
                         editable.Add(new TextSpan { Start = lo, Length = hi - lo });
                 }
@@ -164,9 +166,11 @@ namespace AcademicParaphraser.Core.Rewriting
             var edits = new List<TextEdit>();
             foreach (var block in editable)
             {
-                if (!replacements.TryGetValue(block.Id, out var replacement) || string.IsNullOrWhiteSpace(replacement)
+                if (!replacements.TryGetValue(block.Id, out var replacement) || replacement == null
+                    || (string.IsNullOrWhiteSpace(replacement) && editable.Count == 1 && Blocks.All(b => b.Editable))
                     || replacement.Any(char.IsControl) || replacement.Length > Math.Max(1000, block.Text.Length * 3)
-                    || char.IsWhiteSpace(replacement[0]) || char.IsWhiteSpace(replacement[replacement.Length - 1]))
+                    || (replacement.Length > 0 && char.IsWhiteSpace(replacement[0]) && !char.IsWhiteSpace(block.Text[0]))
+                    || (replacement.Length > 0 && char.IsWhiteSpace(replacement[replacement.Length - 1]) && !char.IsWhiteSpace(block.Text[block.Text.Length - 1])))
                     throw new ArgumentException("Yeniden yazım yanıtı Word yapısına uygun değil.");
                 if (!string.Equals(block.Text, replacement, StringComparison.Ordinal))
                     edits.Add(new TextEdit { Start = block.Start, Length = block.Text.Length, Original = block.Text,

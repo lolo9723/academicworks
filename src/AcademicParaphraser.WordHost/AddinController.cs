@@ -55,7 +55,7 @@ namespace AcademicParaphraser.WordHost
             structures = new OnlineStructureSource(repo);
             engine = new TransformationEngine(repo, nlp, knowledge, structures);
             modelStore = new LocalModelStore(Path.Combine(data, "models"));
-            localEngine = new LocalRewriteEngine(repo, nlp, new LocalLlamaModel(Path.Combine(installDirectory, "runtime", "llama", "llama-server.exe"), modelStore), knowledge);
+            localEngine = new LocalRewriteEngine(repo, nlp, new LocalLlamaModel(Path.Combine(installDirectory, "runtime", "llama", "llama-server.exe"), modelStore), knowledge,structures);
             Preview.DownloadRequested += async (s, e) => await DownloadModelAsync();
             Preview.ApplyRequested += (s, e) => Guard(Apply);
             Preview.NextRequested += (s, e) => Guard(() => Next(1));

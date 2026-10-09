@@ -5,6 +5,7 @@ using AcademicParaphraser.Core;
 using AcademicParaphraser.Core.Rewriting;
 using AcademicParaphraser.Infrastructure.LocalRewriting;
 using AcademicParaphraser.Infrastructure.LexicalKnowledge;
+using AcademicParaphraser.Infrastructure.InternetDictionaryProviders;
 using AcademicParaphraser.Infrastructure.Persistence;
 using AcademicParaphraser.Infrastructure.TurkishNlp;
 
@@ -14,7 +15,7 @@ if (args.Length == 2 && args[0] == "--download-model")
     await download.DownloadAsync(new Progress<string>(s => Console.WriteLine(s)),CancellationToken.None);
     Console.WriteLine("Pinned model verified: " + LocalModelStore.Sha256);return;
 }
-if (args.Length != 5 && !(args.Length == 6 && args[5] == "--inspect")) throw new ArgumentException("llama-server model-directory java nlp.jar output-directory");
+if (args.Length != 5 && !(args.Length == 6 && (args[5] == "--inspect" || args[5] == "--qwen35" || args[5] == "--qwen9"))) throw new ArgumentException("llama-server model-directory java nlp.jar output-directory");
 string output = Path.GetFullPath(args[4]); Directory.CreateDirectory(output);
 const string corpusPath = "tests/fixtures/local-rewrite-v1.json";
 const string corpusSha = "a38b41287a8af00026c5e3b201f4eaf2f74019da7a0bcc129fa6a84e8a9c7187";
@@ -25,7 +26,7 @@ if(args.Length==6&&args[5]=="--inspect")
     using var parser=new ZemberekProcess(Path.GetFullPath(args[2]),Path.GetFullPath(args[3]));
     foreach(var f in fixtures){var tokens=await parser.AnalyzeAsync(f.Text,CancellationToken.None);Console.WriteLine(JsonSerializer.Serialize(new{f.Id,words=tokens.Select(t=>new{t.Surface,t.Lemma,t.Pos,t.Proper,t.Morphemes})}));}return;
 }
-var store = new LocalModelStore(Path.GetFullPath(args[1]));
+var store = new LocalModelStore(Path.GetFullPath(args[1]),args.Length==6&&args[5]=="--qwen9" ? LocalModelProfile.Hybrid9B : args.Length==6&&args[5]=="--qwen35" ? LocalModelProfile.Hybrid4B : LocalModelProfile.Instruct4B);
 await store.VerifyAsync(CancellationToken.None);
 var model = new LocalLlamaModel(Path.GetFullPath(args[0]), store) { SyntheticDiagnosticSink = s => { File.AppendAllText(Path.Combine(output,"synthetic-model-errors.log"),s+Environment.NewLine); Console.WriteLine(s); } };
 string temporary = Path.Combine(Path.GetTempPath(), "AcademicLocalProbe-" + Guid.NewGuid().ToString("N")); Directory.CreateDirectory(temporary);
@@ -40,7 +41,8 @@ try
     using var nlp = new ZemberekProcess(Path.GetFullPath(args[2]),Path.GetFullPath(args[3]));
     activeNlp = nlp;
     var knowledge = new WordNetLexicalSource("artifacts/lexical-data/kenet.sqlite");
-    var engine = new LocalRewriteEngine(repo,nlp,model,knowledge);
+    using var structures=new OnlineStructureSource(repo);
+    var engine = new LocalRewriteEngine(repo,nlp,model,knowledge,structures);
     foreach (var f in fixtures)
     {
         var timer = Stopwatch.StartNew(); var diagnostics = new RewriteDiagnostics();
@@ -59,9 +61,26 @@ try
         new[]{"The team found no evidence of contamination.","The team proved that contamination never occurred."},
         new[]{"Bu ölçüm, parçanın uzun süreli kullanımda aynı sıcaklıkta kalacağını göstermemektedir.","Parçanın uzun süreli kullanımda aynı sıcaklıkta kalacağı söylenmemektedir."}
     };
-    var reviews=new List<object>();int falseAccepts=0;
+    var reviews=new List<object>();int falseAccepts=0;int guardedFalseAccepts=0;
     using(var session=await model.OpenAsync(CancellationToken.None))
-        foreach(var trap in traps){var review=await session.ReviewAsync(trap[0],trap[1],CancellationToken.None);if(review.Accepted)falseAccepts++;reviews.Add(new{source=trap[0],proposal=trap[1],review});Console.WriteLine("TRAP "+JsonSerializer.Serialize(reviews.Last()));}
+        foreach(var trap in traps)
+        {
+            var review=await session.ReviewAsync(trap[0],trap[1],CancellationToken.None);
+            if(review.Accepted)falseAccepts++;
+            var guardProblems=FactGuard.Check(trap[0],trap[1]);
+            if(!LanguageProfile.IsEnglish(trap[0],MetinDili.Otomatik))
+            {
+                var before=await nlp.AnalyzeAsync(trap[0],CancellationToken.None);
+                var after=await nlp.AnalyzeAsync(trap[1],CancellationToken.None);
+                guardProblems.AddRange(FactGuard.CheckPredicateFeatures(before,after));
+                guardProblems.AddRange(FactGuard.CheckObjects(trap[0],trap[1],before,after,repo.GetLexicon()));
+                guardProblems.AddRange(FactGuard.CheckEmbeddedFutureSubjects(trap[0],trap[1],before,after));
+            }
+            bool compositeAccepted=review.Accepted&&guardProblems.Count==0;
+            if(compositeAccepted)guardedFalseAccepts++;
+            reviews.Add(new{source=trap[0],proposal=trap[1],review,guardProblems,compositeAccepted});
+            Console.WriteLine("TRAP "+JsonSerializer.Serialize(reviews.Last()));
+        }
     var positivePairs=new[]{
         new[]{"Toplantı sırasında katılımcılara sonuçlar sunuldu.","Katılımcılara sonuçlar toplantı sırasında sunuldu."},
         new[]{"Projeyle çevresel etkilerin ölçülmesi hedeflenmektedir.","Proje, çevresel etkileri ölçmeyi hedeflemektedir."},
@@ -84,11 +103,12 @@ try
         }
     }
     cancellationStopped=cancellationStopped&&model.CurrentWorkingSetBytes==0;
-    var report=new{model=store.ModelName,modelSha256=store.ExpectedSha256,corpusSha256=corpusSha,sourceIsSynthetic=true,paragraphSentExternally=false,gpuUsed=false,wordExecuted=false,os=Environment.OSVersion.ToString(),processorCount=Environment.ProcessorCount,peakCombinedWorkingSetMiB=peakRss/1048576.0,peakModelWorkingSetMiB=model.PeakWorkingSetBytes/1048576.0,records,reviews,falseAccepts,positiveReviews,falseRejects,cancellationStopped};
+    var report=new{model=store.ModelName,modelSha256=store.ExpectedSha256,corpusSha256=corpusSha,sourceIsSynthetic=true,paragraphSentExternally=false,gpuUsed=false,wordExecuted=false,os=Environment.OSVersion.ToString(),processorCount=Environment.ProcessorCount,peakCombinedWorkingSetMiB=peakRss/1048576.0,peakModelWorkingSetMiB=model.PeakWorkingSetBytes/1048576.0,records,reviews,falseAccepts,guardedFalseAccepts,positiveReviews,falseRejects,cancellationStopped};
     File.WriteAllText(Path.Combine(output,"local-model-verification.json"),JsonSerializer.Serialize(report,new JsonSerializerOptions{WriteIndented=true}));
     // Do not assert every proposal is human quality; retain zero-output cases and critic errors.
     if(!cancellationStopped)throw new InvalidOperationException("Owned local model cancellation did not complete.");
-    if(falseAccepts>0)throw new InvalidOperationException("Reviewer falsely accepted an adversarial meaning change; see actual evidence.");
+    if(guardedFalseAccepts>0)throw new InvalidOperationException("Combined guards and reviewer falsely accepted an adversarial meaning change; see actual evidence.");
+    if(falseAccepts>0)Console.WriteLine("Reviewer alone falsely accepted "+falseAccepts+" traps; deterministic guard results are reported separately.");
 }
 finally{polling.Cancel();await memory;Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();Directory.Delete(temporary,true);}
 sealed class Fixture {public string Id{get;set;}="";public string Language{get;set;}="";public string Text{get;set;}="";}

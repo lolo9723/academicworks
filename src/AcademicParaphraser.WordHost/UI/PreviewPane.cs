@@ -15,7 +15,7 @@ namespace AcademicParaphraser.WordHost.UI
         private readonly RichTextBox after = new RichTextBox { ReadOnly = true, Height = 180, Dock = DockStyle.Top };
         private readonly Button apply = new Button { Text = "Uygula", AutoSize = true }, next = new Button { Text = "Sonraki alternatif", AutoSize = true }, cancel = new Button { Text = "İptal", AutoSize = true };
         private readonly ProgressBar progress = new ProgressBar { Style = ProgressBarStyle.Marquee, Height = 8, Visible = false, Dock = DockStyle.Top };
-        private readonly Button download = new Button { Text = "Gelişmiş motoru indir (4 GB)", AutoSize = true };
+        private readonly Button download = new Button { Text = "Gelişmiş motoru indir (2,5 GB)", AutoSize = true };
         public event EventHandler? ApplyRequested, NextRequested, CancelRequested, DownloadRequested;
         public PreviewPane()
         {

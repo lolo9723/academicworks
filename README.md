@@ -22,7 +22,7 @@ Gerçek Windows CI üzerinde Core, Infrastructure, .NET Framework WordHost ve VS
 
 ## 1.5.0 gelişmiş motor
 
-Bir defalık **4 GB** model indirmesi önizleme panelindeki düğmeyle yapılır. Paket CPU çalışma ortamını içerir; model dosyasını içermez. Qwen3.5-9B UD-IQ3_XXS, sabit commit ve SHA256 ile doğrulanır. Model sunucusu yalnızca 127.0.0.1 adresine bağlanır, proxy kullanmaz ve her işlem bittiğinde kapatılır. Üretimden sonra ayrı bir model geçişi yeni bilgi, eksiltme, özne, olumsuzluk, neden ilişkisi ve kesinliği inceler. Otomatik kontrol anlam garantisi değildir. Her paragraf en fazla 2.400 karakter olmalıdır; uzun veya çok parçalı biçim seçimleri atlanabilir. [Teknik sınırlar ve kabul planı](docs/Local-Engine-1.5.0.md).
+Bir defalık **2,5 GB** model indirmesi önizleme panelindeki düğmeyle yapılır. Paket CPU çalışma ortamını içerir; model dosyasını içermez. Qwen3-4B-Instruct-2507 Q4_K_M, sabit commit ve SHA256 ile doğrulanır. Model sunucusu yalnızca 127.0.0.1 adresine bağlanır, proxy kullanmaz ve her işlem bittiğinde kapatılır. Üretimden sonra ayrı bir model geçişi yeni bilgi, eksiltme, özne, olumsuzluk, neden ilişkisi ve kesinliği inceler. Otomatik kontrol anlam garantisi değildir. Her paragraf en fazla 2.400 karakter olmalıdır; uzun veya çok parçalı biçim seçimleri atlanabilir. [Teknik sınırlar ve kabul planı](docs/Local-Engine-1.5.0.md).
 
 ## Word kullanım akışı
 

@@ -20,7 +20,7 @@ namespace AcademicParaphraser.Tests
             Assert.Equal(source, string.Concat(plan.Blocks.Select(b => b.Text)));
             var values = plan.Blocks.Where(b => b.Editable).ToDictionary(b => b.Id, b => b.Text);
             var first = plan.Blocks.First(b => b.Editable);
-            values[first.Id] = "Bu araştırma kapsamında";
+            values[first.Id] = "Bu araştırma kapsamında ";
             var candidate = plan.BuildCandidate(values, "test:rewrite");
             Assert.StartsWith("Bu araştırma kapsamında 24", candidate.Text);
             Assert.Contains("(Alfa, 2022)", candidate.Text);
@@ -96,7 +96,7 @@ namespace AcademicParaphraser.Tests
             const string source="Sensör 42 °C ölçtü.";
             var plan=RewritePlan.Create(source,new[]{new TextSpan{Start=0,Length=source.Length}},new[]{new TextSpan{Start=7,Length=5}});
             var marker=RewritePlan.Marker(plan.Blocks.Single(b=>!b.Editable));
-            var values=plan.ExtractMaskedReplacements("Sıcaklık sensörle "+marker+"olarak ölçüldü.");
+            var values=plan.ExtractMaskedReplacements("Sıcaklık sensörle "+marker+" olarak ölçüldü.");
             Assert.Equal("Sıcaklık sensörle 42 °C olarak ölçüldü.",plan.BuildCandidate(values,"test").Text);
             Assert.Throws<ArgumentException>(()=>plan.ExtractMaskedReplacements("Sıcaklık "+marker+marker+" ölçüldü."));
             Assert.Throws<ArgumentException>(()=>plan.ExtractMaskedReplacements("Sıcaklık 42 °C ölçüldü."));
@@ -112,6 +112,17 @@ namespace AcademicParaphraser.Tests
             Assert.Equal(target,candidate.Text);
             Assert.All(candidate.Edits,e=>Assert.False(new TextSpan{Start=7,Length=5}.Intersects(e.Start,e.Length)));
             Assert.Throws<ArgumentException>(()=>plan.CompileNaturalText("Sıcaklık 42 °F olarak ölçüldü."));
+        }
+        [Fact]
+        public void SpacesAroundProtectedTextCanMoveWithoutEditingTheAnchor()
+        {
+            const string source="Ölçülen sıcaklık 42 °C olarak kaydedildi.";
+            var span=new TextSpan{Start=source.IndexOf("42",StringComparison.Ordinal),Length=5};
+            var plan=RewritePlan.Create(source,new[]{new TextSpan{Start=0,Length=source.Length}},new[]{span});
+            const string target="Kaydedilen sıcaklık 42 °C.";
+            var candidate=plan.BuildCandidate(plan.CompileNaturalText(target),"test");
+            Assert.Equal(target,candidate.Text);
+            Assert.All(candidate.Edits,e=>Assert.False(span.Intersects(e.Start,e.Length)));
         }
         [Fact]
         public void AdjacentWordFormatRunsHaveAnExplicitBoundaryInsteadOfAnAmbiguousSplit()

@@ -43,7 +43,14 @@ namespace AcademicParaphraser.Core.Rewriting
             string passive=@"\b(?:is|are|was|were|been|be)\s+(?:[a-z]+ed|found|shown|seen|known|given|taken|made|written|built)\b";
             if(Regex.Matches(source,passive,RegexOptions.IgnoreCase).Count!=Regex.Matches(target,passive,RegexOptions.IgnoreCase).Count)return true;
             string[] features={"Pass","Inf1","Inf2","Inf3","PastPart","FutPart","PresPart","While","When","AfterDoing","ByDoing"};
-            if(features.Any(f=>before.Count(t=>t.Morphemes.Contains(f))!=after.Count(t=>t.Morphemes.Contains(f))))return true;
+            // A different lexical verb can have different morphological derivation
+            // without reconstructing the sentence (happen vs be experienced). Compare
+            // features within a shared verb root instead of counting all suffixes.
+            var sourceVerbs=before.Where(t=>t.Morphemes.Contains("Verb")&&!t.Morphemes.Contains("Imp")&&!t.RuntimeGuess)
+                .GroupBy(t=>t.Lemma).ToDictionary(g=>g.Key,g=>g.ToList());
+            var targetVerbs=after.Where(t=>t.Morphemes.Contains("Verb")&&!t.Morphemes.Contains("Imp")&&!t.RuntimeGuess)
+                .GroupBy(t=>t.Lemma).ToDictionary(g=>g.Key,g=>g.ToList());
+            if(sourceVerbs.Any(p=>targetVerbs.ContainsKey(p.Key)&&features.Any(f=>p.Value.Count(t=>t.Morphemes.Contains(f))!=targetVerbs[p.Key].Count(t=>t.Morphemes.Contains(f)))))return true;
             var a=Regex.Matches(source.ToLowerInvariant(),@"[\p{L}\p{M}]+").Cast<Match>().Select(m=>m.Value).ToArray();
             var b=Regex.Matches(target.ToLowerInvariant(),@"[\p{L}\p{M}]+").Cast<Match>().Select(m=>m.Value).ToArray();
             var common=a.Where(w=>w.Length>=3&&a.Count(x=>x==w)==1&&b.Count(x=>x==w)==1).ToArray();

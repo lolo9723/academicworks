@@ -88,6 +88,30 @@ namespace AcademicParaphraser.Tests
         {
             Assert.NotEmpty(FactGuard.Check("Bu ölçüm sürekliliği göstermemektedir.","Süreklilik söylenmemektedir."));
         }
+        [Fact]
+        public void NegativeEvidenceMayChangeInflectionButNotBecomeAStatement()
+        {
+            Assert.Empty(FactGuard.Check("Bu veri ilişkiyi göstermemektedir.","İlişkiyi bu veri göstermez."));
+            Assert.NotEmpty(FactGuard.Check("Bu veri ilişkiyi göstermemektedir.","İlişkinin olmadığı söylenmektedir."));
+        }
+        [Fact]
+        public void AgentlessPassiveCannotAcquireAnActor()
+        {
+            const string source="Sıcaklık ölçüldü.";const string target="Cihaz sıcaklığı ölçtü.";
+            var before=new[]{new MorphToken{Start=9,Length=7,Lemma="ölçmek",Pos="Verb",Morphemes=new List<string>{"Verb","Pass","Past"}}};
+            var after=new[]{new MorphToken{Start=15,Length=5,Lemma="ölçmek",Pos="Verb",Morphemes=new List<string>{"Verb","Past"}}};
+            Assert.NotEmpty(FactGuard.CheckObjects(source,target,before,after,Array.Empty<LexiconEntry>()));
+        }
+        [Fact]
+        public void EmbeddedFutureClauseKeepsTheGenitiveSubject()
+        {
+            const string source="Motorun çalışacağını biliyoruz.";const string target="Motor çalışacağını biliyoruz.";
+            MorphToken Noun(string surface,bool gen)=>new MorphToken{Start=0,Length=surface.Length,Lemma="motor",Pos="Noun",Morphemes=gen?new List<string>{"Noun","Gen"}:new List<string>{"Noun"}};
+            MorphToken Verb(string text)=>new MorphToken{Start=text.IndexOf("çalış",StringComparison.Ordinal),Length=12,Lemma="çalışmak",Pos="Noun",Morphemes=new List<string>{"Verb","FutPart"}};
+            var before=new[]{Noun("Motorun",true),Verb(source)};
+            Assert.NotEmpty(FactGuard.CheckEmbeddedFutureSubjects(source,target,before,new[]{Noun("Motor",false),Verb(target)}));
+            Assert.Empty(FactGuard.CheckEmbeddedFutureSubjects(source,source,before,before));
+        }
         [Theory]
         [InlineData("The survey found an association.",true)]
         [InlineData("Bu araştırma ilişkileri incelemektedir.",false)]
@@ -105,6 +129,27 @@ namespace AcademicParaphraser.Tests
             Assert.Empty(FactGuard.CheckPredicateFeatures(new[]{Token("Verb","Fut")},new[]{Token("Verb","Pass","Fut")}));
             Assert.NotEmpty(FactGuard.CheckPredicateFeatures(new[]{Token("Verb","Past")},new[]{Token("Verb","Fut")}));
             Assert.NotEmpty(FactGuard.CheckPredicateFeatures(new[]{Token("Verb","Neg","Past")},new[]{Token("Verb","Past")}));
+            Assert.NotEmpty(FactGuard.CheckPredicateFeatures(new[]{Token("Verb","Neg","Inf2")},new[]{Token("Verb","Neg","FutPart")}));
+            Assert.NotEmpty(FactGuard.CheckPredicateFeatures(new[]{Token("Verb","Neg","Aor")},new[]{Token("Verb","Neg","Neces")}));
+        }
+        [Fact]
+        public void AChangedLexicalVerbDoesNotProveAChangedSentenceStructure()
+        {
+            var before=new[]{new MorphToken{Lemma="yaşamak",Pos="Noun",Morphemes=new List<string>{"Verb","Pass","Neg","PastPart"}}};
+            var after=new[]{new MorphToken{Lemma="gerçekleşmek",Pos="Noun",Morphemes=new List<string>{"Verb","Neg","PastPart"}}};
+            Assert.False(StructuralDiversity.HasSyntaxChange("Kayıtlar olayın yaşanmadığını kanıtlamaz.","Kayıtlar olayın gerçekleşmediğini kanıtlamaz.",before,after));
+        }
+        [Fact]
+        public void AnObjectMayBecomeAPassiveSubjectButCannotDisappearFromTheSamePredicate()
+        {
+            const string source="Heyet raporu inceledi.";
+            MorphToken Verb(string text,string surface)=>new MorphToken{Start=text.IndexOf(surface,StringComparison.Ordinal),Length=surface.Length,Lemma="incelemek",Pos="Verb",Morphemes=new List<string>{"Verb","Past"}};
+            var before=new[]{new MorphToken{Start=6,Length=6,Lemma="rapor",Pos="Noun",Morphemes=new List<string>{"Noun","Acc"}},Verb(source,"inceledi")};
+            const string omitted="Heyet inceledi.";
+            Assert.NotEmpty(FactGuard.CheckObjects(source,omitted,before,new[]{Verb(omitted,"inceledi")},Array.Empty<LexiconEntry>()));
+            const string passive="Rapor heyet tarafından incelendi.";
+            var after=new[]{new MorphToken{Start=0,Length=5,Lemma="rapor",Pos="Noun",Morphemes=new List<string>{"Noun"}},Verb(passive,"incelendi")};
+            Assert.Empty(FactGuard.CheckObjects(source,passive,before,after,Array.Empty<LexiconEntry>()));
         }
         private sealed class Catalog:IRuleCatalog
         {
@@ -128,7 +173,7 @@ namespace AcademicParaphraser.Tests
             public Task<IReadOnlyDictionary<string,string>> RewriteAsync(RewritePlan plan,Strength strength,string feedback,CancellationToken token)
             {
                 Writes++;if(Cancel!=null){Cancel.Cancel();token.ThrowIfCancellationRequested();}
-                IReadOnlyDictionary<string,string> result=InvalidFirst&&Writes==1?new Dictionary<string,string>():plan.Blocks.Where(b=>b.Editable).ToDictionary(b=>b.Id,b=>replacement);
+                IReadOnlyDictionary<string,string> result=InvalidFirst&&Writes==1?new Dictionary<string,string>():plan.CompileNaturalText(replacement);
                 return Task.FromResult(result);
             }
             public Task<MeaningReview> ReviewAsync(string source,string target,CancellationToken token){Reviews++;return Task.FromResult(review);}
