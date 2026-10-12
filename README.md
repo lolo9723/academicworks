@@ -1,5 +1,7 @@
 # Akademik Parafraz — Academic Paraphraser for Word
 
+**1.6.1 bağlantı ve tanılama düzeltmesi:** Türkçe varsayılan motor artık yerel/internet sözlük taramasını çağırır; sonuç yoksa ret ve tarama sayıları görünür. Uzun paragraflar cümle sınırlarından işlenir; değişmeyen metin öneri sayılmaz. Üretim kapsamı hâlâ sınırlıdır. [Doğrulanan sorunlar ve güçlendirme sırası](docs/Backend-Audit-1.6.1.md).
+
 **1.6.0 deneysel çok aşamalı backend:** Çekim/bağımlılık çözümleme, kuruluş üretimi, anlam denetimi, ayrı dil bilgisi ve nihai değerlendirme bileşenleri eklendi. Varsayılan motor üretici büyük dil modeli indirmesi istemez; küçük çözümleyiciler, LanguageTool ve yerel NLI sınıflandırıcısı pakete dahildir. [Mimari ve açık kaynak bileşenleri](docs/Backend-Architecture-1.6.0.md). [Gerçek Linux/Windows sonuçları ve kabul sınırları](docs/Backend-Quality-1.6.0.md). Genel doğal parafraz kalite hedefi henüz karşılanmadı; teknik testler dil kalitesini kanıtlamaz.
 
 **1.5.0 kalite kabulü tamamlanmadı:** Son yerel CPU sınamasında beş farklı paragrafın hiçbiri son kontrollerden geçmedi. 182 teknik testin geçmesi, doğal parafraz kalitesinin sağlandığı anlamına gelmez. [Tam kaynak/deneme/eleme raporu](docs/Local-Quality-1.5.0.md).

@@ -101,6 +101,28 @@ namespace AcademicParaphraser.Core.Backends
     {
         public List<BackendAttempt> Attempts { get; set; } = new List<BackendAttempt>();
         public int Paragraphs { get; set; } public int Proposals { get; set; } public int Accepted { get; set; }
+        public int WorkUnits { get; set; }
+        public int OversizedUnits { get; set; }
+        public int ProtectedUnits { get; set; }
+        public int UnsupportedUnits { get; set; }
+        public int DictionaryScans { get; set; }
+        public int DictionaryUnsupportedUnits { get; set; }
+        public EnrichmentSummary Enrichment { get; set; } = new EnrichmentSummary();
+        public string Describe()
+        {
+            var lines = new List<string> { "İncelenen bölüm: " + WorkUnits + " · üretilen aday: " + Proposals + " · denetimlerden geçen: " + Accepted };
+            if (OversizedUnits > 0) lines.Add(OversizedUnits + " bölüm, bölünemeyen cümlesi 2.400 karakteri aştığı için işlenemedi.");
+            if (ProtectedUnits > 0) lines.Add(ProtectedUnits + " bölümde düzenlenebilir Word alanı bulunamadı.");
+            if (UnsupportedUnits > 0) lines.Add(UnsupportedUnits + " bölümün cümle yapısı mevcut üretim motorunca desteklenmiyor.");
+            foreach (var reason in Attempts.SelectMany(a => a.Evaluation.Evidence).Where(e => !e.Passed)
+                .SelectMany(e => e.Problems).Distinct().Take(3)) lines.Add(reason);
+            if (DictionaryScans > 0) lines.Add("Sözlük: " + Enrichment.RootsChecked + "/" + Enrichment.RootsTotal
+                + " kök incelendi; " + Enrichment.RootsFound + " kökte bilgi bulundu. İnternette aranan: "
+                + Enrichment.OnlineRootsQueried + "; kaynak hatası: " + Enrichment.ProviderErrors + ".");
+            else lines.Add("Bu işlemde sözlük taraması yapılmadı.");
+            if (DictionaryUnsupportedUnits > 0) lines.Add("İngilizce bölümlerde geniş sözlük taraması henüz desteklenmiyor.");
+            return string.Join(Environment.NewLine, lines);
+        }
     }
     public sealed class BackendAttempt
     {

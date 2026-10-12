@@ -66,7 +66,7 @@ namespace AcademicParaphraser.WordHost
             grammarBackend = new SeparateGrammarBackend(Path.Combine(installDirectory,"runtime","java","bin","java.exe"),Path.Combine(installDirectory,"runtime","grammar","english-grammar-1.0.0.jar"));
             string semanticDirectory=Path.Combine(installDirectory,"runtime","semantic");
             semanticBackend=new LocalSemanticBackend(Path.Combine(installDirectory,"runtime","java","bin","java.exe"),Path.Combine(semanticDirectory,"local-semantic-1.0.0.jar"),Path.Combine(semanticDirectory,"model_quantized.onnx"),Path.Combine(semanticDirectory,"tokenizer.json"));
-            multiStageEngine = new MultiStageRewriteEngine(repo,syntaxBackend,grammarBackend,semantic:semanticBackend);
+            multiStageEngine = new MultiStageRewriteEngine(repo,syntaxBackend,grammarBackend,semantic:semanticBackend,knowledge:knowledge);
             Preview.DownloadRequested += async (s, e) => await DownloadModelAsync();
             Preview.ApplyRequested += (s, e) => Guard(Apply);
             Preview.NextRequested += (s, e) => Guard(() => Next(1));
@@ -150,8 +150,9 @@ namespace AcademicParaphraser.WordHost
                 var token = operation.Token;
                 var enrichment = new EnrichmentContext { Progress = new Progress<string>(message => { if (!disposed && busy && !token.IsCancellationRequested) Preview.ShowProgress(message); }) };
                 var diagnostics = new RewriteDiagnostics();
+                var backendDiagnostics = new MultiStageDiagnostics();
                 IReadOnlyList<Candidate> result = settings.Backend == ParafrazMotoru.ÇokAşamalı
-                    ? await Task.Run(() => multiStageEngine.GenerateAsync(current.Text, settings, current.Writable, current.Protected, token, enrichment.Progress), token)
+                    ? await Task.Run(() => multiStageEngine.GenerateAsync(current.Text, settings, current.Writable, current.Protected, token, enrichment.Progress, backendDiagnostics, enrichment), token)
                     : settings.Backend == ParafrazMotoru.YerelDilModeli
                     ? await Task.Run(() => localEngine.GenerateAsync(current.Text, settings, current.Writable, current.Protected, token, enrichment.Progress, diagnostics), token)
                     : await Task.Run(() => engine.GenerateAsync(current.Text, settings, current.Protected, token, enrichment), token);
@@ -159,11 +160,12 @@ namespace AcademicParaphraser.WordHost
                     return;
                 token.ThrowIfCancellationRequested();
                 // Word formatting constraints are checked again after linguistic generation, before any write.
-                candidates = result.Where(c => CandidateIntegrity.IsApplicable(current.Text, c, edit => current.CanEdit(edit) && !current.Protected.Any(p => p.Intersects(edit.Start, edit.Length)))).GroupBy(c => c.Text, StringComparer.Ordinal).Select(g => g.First()).ToList();
+                candidates = result.Where(c => c.Edits.Count > 0 && c.Text != current.Text && CandidateIntegrity.IsApplicable(current.Text, c, edit => current.CanEdit(edit) && !current.Protected.Any(p => p.Intersects(edit.Start, edit.Length)))).GroupBy(c => c.Text, StringComparer.Ordinal).Select(g => g.First()).ToList();
                 alternative = 0;
                 if (candidates.Count == 0)
                     Preview.ShowMessage("Bu seçim için denetimlerden geçen dönüşüm bulunamadı. Metin olduğu gibi bırakıldı." +
-                        (diagnostics.Reasons.Count > 0 ? "\n" + diagnostics.Reasons.Last() : ""));
+                        (settings.Backend == ParafrazMotoru.ÇokAşamalı ? "\n" + backendDiagnostics.Describe()
+                        : diagnostics.Reasons.Count > 0 ? "\n" + diagnostics.Reasons.Last() : ""));
                 else
                     Display();
             }

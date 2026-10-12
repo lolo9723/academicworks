@@ -177,6 +177,99 @@ namespace AcademicParaphraser.Tests
             Assert.Empty(new DependencyConstructionBackend().Generate(context,new UserSettings(),CancellationToken.None));
         }
         private static LinguisticAnalysis Target()=>ConlluReader.Parse("Raporu heyet inceledi.","1\tRaporu\trapor\tNOUN\t_\tCase=Acc\t3\tobj\t_\t_\n2\theyet\theyet\tNOUN\t_\tCase=Nom\t3\tnsubj\t_\t_\n3\tinceledi\tincele\tVERB\t_\tTense=Past|VerbForm=Fin\t0\troot\t_\t_\n4\t.\t.\tPUNCT\t_\t_\t3\tpunct\t_\t_\n","tr");
+        [Fact]
+        public async Task DefaultBackendScansEligibleRootsAndReportsTotalsAcrossParagraphs()
+        {
+            using var parser=new MorphParser();using var grammar=new Grammar();var knowledge=new RecordingKnowledge();
+            string text=Source+"\r"+Source;var diagnostics=new MultiStageDiagnostics();
+            var results=await new MultiStageRewriteEngine(new Catalog(),parser,grammar,knowledge:knowledge)
+                .GenerateAsync(text,new UserSettings{InternetEnabled=true,OfflineMode=false},new[]{new TextSpan{Length=text.Length}},Array.Empty<TextSpan>(),CancellationToken.None,diagnostics:diagnostics);
+            Assert.Equal(2,knowledge.Words.Count);Assert.True(knowledge.OnlineEnabled);
+            Assert.Equal(6,diagnostics.Enrichment.RootsChecked);Assert.Equal(6,diagnostics.Enrichment.RootsTotal);
+            Assert.Equal(2,diagnostics.DictionaryScans);Assert.Equal(2,diagnostics.Paragraphs);
+            var result=Assert.Single(results);Assert.Equal("Raporu heyet inceledi.\rRaporu heyet inceledi.",result.Text);
+            Assert.Same(diagnostics.Enrichment,result.Enrichment);
+        }
+        [Fact]
+        public async Task LookupExcludesProtectedWordsAndParserNamesEvenWhenNamePreservationIsDisabled()
+        {
+            using var parser=new MorphParser{FirstWordIsName=true};using var grammar=new Grammar();var knowledge=new RecordingKnowledge();
+            await new MultiStageRewriteEngine(new Catalog(),parser,grammar,knowledge:knowledge).GenerateAsync(Source,
+                new UserSettings{PreserveNames=false},new[]{new TextSpan{Length=Source.Length}},new[]{new TextSpan{Start=6,Length=6}},CancellationToken.None);
+            var words=Assert.Single(knowledge.Words);Assert.Single(words);Assert.Equal("incele",words[0].Lemma);
+            Assert.False(knowledge.OnlineEnabled);
+        }
+        [Fact]
+        public async Task NoConstructionHasAnExplicitReasonAndStillReportsTheDictionaryScan()
+        {
+            using var parser=new MorphParser();using var grammar=new Grammar();var diagnostics=new MultiStageDiagnostics();
+            var results=await new MultiStageRewriteEngine(new Catalog(),parser,grammar,construction:new EmptyConstruction(),knowledge:new RecordingKnowledge())
+                .GenerateAsync(Source,new UserSettings(),new[]{new TextSpan{Length=Source.Length}},Array.Empty<TextSpan>(),CancellationToken.None,diagnostics:diagnostics);
+            Assert.Empty(results);Assert.Equal(1,diagnostics.UnsupportedUnits);Assert.Equal(0,diagnostics.Proposals);
+            Assert.Contains("desteklenmiyor",diagnostics.Describe());Assert.Contains("3/3",diagnostics.Describe());
+        }
+        [Fact]
+        public async Task AWhollyProtectedSelectionMakesNoDictionaryRequests()
+        {
+            using var parser=new MorphParser();using var grammar=new Grammar();var knowledge=new RecordingKnowledge();var diagnostics=new MultiStageDiagnostics();
+            var results=await new MultiStageRewriteEngine(new Catalog(),parser,grammar,knowledge:knowledge).GenerateAsync(Source,
+                new UserSettings(),new[]{new TextSpan{Length=Source.Length}},new[]{new TextSpan{Length=Source.Length}},CancellationToken.None,diagnostics:diagnostics);
+            Assert.Empty(results);Assert.Empty(knowledge.Words);Assert.Equal(1,diagnostics.ProtectedUnits);
+            Assert.Contains("Word alanı",diagnostics.Describe());
+        }
+        [Fact]
+        public void LongParagraphsAreSplitWithoutChangingOffsetsOrSplittingCitationAndAbbreviation()
+        {
+            const string sentence="Dr. A. Deniz raporu inceledi (Yazar vd., 2024). ";
+            string text=string.Concat(Enumerable.Repeat(sentence,100));
+            var protections=new AcademicParaphraser.Core.CitationProtection.ProtectionDetector().Detect(text,new UserSettings(),Array.Empty<string>(),Array.Empty<LexiconEntry>());
+            var units=BackendWorkUnitPlanner.Plan(text,protections);
+            Assert.True(units.Count>1);Assert.All(units,u=>Assert.InRange(u.Length,1,2400));
+            Assert.All(units,u=>{Assert.StartsWith("Dr. A. Deniz",text.Substring(u.Start,u.Length));Assert.EndsWith(").",text.Substring(u.Start,u.Length).TrimEnd());});
+            Assert.All(protections,p=>Assert.DoesNotContain(units,u=>u.Start>p.Start&&u.Start<p.End));
+            var edits=units.Select(u=>new TextEdit{Start=u.Start,Length=u.Length,Original=text.Substring(u.Start,u.Length),Replacement=text.Substring(u.Start,u.Length)}).ToList();
+            Assert.Equal(text,EditApplication.Apply(text,edits));
+        }
+        [Fact]
+        public async Task AnOversizedUnbrokenSentenceIsReportedWithoutStartingNativeProcesses()
+        {
+            using var parser=new Parser();using var grammar=new Grammar();var diagnostics=new MultiStageDiagnostics();string text=new string('a',2500)+".";
+            var result=await new MultiStageRewriteEngine(new Catalog(),parser,grammar).GenerateAsync(text,new UserSettings(),new[]{new TextSpan{Length=text.Length}},Array.Empty<TextSpan>(),CancellationToken.None,diagnostics:diagnostics);
+            Assert.Empty(result);Assert.Equal(0,parser.Calls);Assert.Equal(1,diagnostics.OversizedUnits);Assert.Contains("2.400",diagnostics.Describe());
+        }
+        [Fact]
+        public async Task CancellingDuringDictionaryLookupDoesNotReturnAPartialRewrite()
+        {
+            using var parser=new MorphParser();using var grammar=new Grammar();using var cancel=new CancellationTokenSource();
+            var knowledge=new RecordingKnowledge{Cancel=cancel};
+            await Assert.ThrowsAnyAsync<OperationCanceledException>(()=>new MultiStageRewriteEngine(new Catalog(),parser,grammar,knowledge:knowledge)
+                .GenerateAsync(Source,new UserSettings(),new[]{new TextSpan{Length=Source.Length}},Array.Empty<TextSpan>(),cancel.Token));
+            Assert.Equal(0,grammar.Calls);
+        }
+        private sealed class EmptyConstruction:IConstructionBackend
+        {
+            public IReadOnlyList<ConstructionProposal> Generate(BackendContext context,UserSettings settings,CancellationToken cancellation)=>Array.Empty<ConstructionProposal>();
+        }
+        private sealed class MorphParser:ILinguisticBackend
+        {
+            public bool FirstWordIsName;public void Dispose(){}
+            public Task<LinguisticAnalysis> AnalyzeAsync(string text,string language,CancellationToken cancellation)
+            {
+                cancellation.ThrowIfCancellationRequested();var result=text==Source?Context().Source:Target();AddMorphology(result);
+                if(FirstWordIsName&&text==Source)result.Sentences[0].Words[0].Pos="PROPN";
+                return Task.FromResult(result);
+            }
+        }
+        private sealed class RecordingKnowledge:ILexicalSource
+        {
+            public List<IReadOnlyList<MorphToken>> Words=new List<IReadOnlyList<MorphToken>>();public bool OnlineEnabled;public CancellationTokenSource? Cancel;
+            public Task<IReadOnlyList<LexiconEntry>> FindAsync(string text,IReadOnlyList<MorphToken> words,UserSettings settings,CancellationToken cancellation,EnrichmentContext? context=null)
+            {
+                Words.Add(words);OnlineEnabled=settings.InternetEnabled&&!settings.OfflineMode;Cancel?.Cancel();cancellation.ThrowIfCancellationRequested();
+                context!.Summary.RootsTotal=words.Count(w=>w.Pos!="Punctuation");context.Summary.RootsChecked=context.Summary.RootsTotal;
+                return Task.FromResult<IReadOnlyList<LexiconEntry>>(Array.Empty<LexiconEntry>());
+            }
+        }
         private sealed class Parser:ILinguisticBackend
         {
             public int Calls;public void Dispose(){}

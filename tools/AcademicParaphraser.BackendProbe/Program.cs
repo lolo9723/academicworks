@@ -7,7 +7,10 @@ using AcademicParaphraser.Infrastructure.Backends;
 using AcademicParaphraser.Infrastructure.Persistence;
 using AcademicParaphraser.Infrastructure.TurkishNlp;
 using AcademicParaphraser.Core.Rewriting;
-if(args.Length!=7)throw new ArgumentException("udpipe model-directory java nlp.jar grammar.jar semantic-directory report-directory");
+using AcademicParaphraser.Infrastructure.LexicalKnowledge;
+using AcademicParaphraser.Infrastructure.InternetDictionaryProviders;
+if(args.Length!=7&&args.Length!=8&&!(args.Length==9&&args[8]=="--online"))throw new ArgumentException("udpipe model-directory java nlp.jar grammar.jar semantic-directory report-directory [wordnet.sqlite [--online]]");
+bool online=args.Length==9;
 string output=Path.GetFullPath(args[6]);Directory.CreateDirectory(output);
 const string fixture="tests/fixtures/local-rewrite-v1.json",fixtureSha="a38b41287a8af00026c5e3b201f4eaf2f74019da7a0bcc129fa6a84e8a9c7187";
 if(Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(fixture))).ToLowerInvariant()!=fixtureSha)throw new InvalidOperationException("Frozen corpus changed.");
@@ -22,13 +25,17 @@ var records=new List<object>();var pairRecords=new List<object>();int falseAccep
 try
 {
  var repo=new LocalRepository(Path.Combine(temporary,"probe.sqlite"),new AesTextProtector(RandomNumberGenerator.GetBytes(32)));
- var engine=new MultiStageRewriteEngine(repo,parser,grammar,semantic:semantic);
+ using var turkish=new TurkishWiktionaryProvider();using var international=new EnglishWiktionaryProvider();using var terms=new WikidataTermProvider();
+ var dictionary=new DictionaryService(repo,new IDictionaryProvider[]{turkish,international,terms});
+ var knowledge=args.Length>=8?new WordNetLexicalSource(Path.GetFullPath(args[7]),dictionary):null;
+ var engine=new MultiStageRewriteEngine(repo,parser,grammar,semantic:semantic,knowledge:knowledge);
  foreach(var f in corpus)
  {
   Console.WriteLine("START "+f.Id);var timer=Stopwatch.StartNew();var diagnostics=new MultiStageDiagnostics();
   var sourceTree=await parser.AnalyzeAsync(f.Text,f.Language,CancellationToken.None);
   if(f.Language=="en")await grammar.RefineVerbLemmasAsync(sourceTree,CancellationToken.None);
-  var results=await engine.GenerateAsync(f.Text,new UserSettings{DefaultStrength=Strength.Strong},new[]{new TextSpan{Start=0,Length=f.Text.Length}},Array.Empty<TextSpan>(),CancellationToken.None,new Progress<string>(s=>Console.WriteLine(f.Id+": "+s)),diagnostics);
+  var results=await engine.GenerateAsync(f.Text,new UserSettings{DefaultStrength=Strength.Strong,InternetEnabled=online,OfflineMode=!online},new[]{new TextSpan{Start=0,Length=f.Text.Length}},Array.Empty<TextSpan>(),CancellationToken.None,new Progress<string>(s=>Console.WriteLine(f.Id+": "+s)),diagnostics);
+  if(knowledge!=null&&f.Language=="tr"&&(diagnostics.DictionaryScans==0||diagnostics.Enrichment.RootsChecked==0))throw new InvalidOperationException("Default backend skipped the requested dictionary scan.");
   var record=new{f.Id,f.Language,original=f.Text,outputs=results.Select(c=>c.Text).ToArray(),rewrittenSentences=results.Select(c=>c.RewrittenSentences).ToArray(),elapsedSeconds=timer.Elapsed.TotalSeconds,sourceTree,diagnostics};records.Add(record);
   Console.WriteLine("OUTPUT "+JsonSerializer.Serialize(record));File.WriteAllText(Path.Combine(output,"backend-partial.json"),JsonSerializer.Serialize(records,options));
  }
@@ -67,7 +74,7 @@ try
  bool semanticCancellationStopped=false;using(var cancel=new CancellationTokenSource())
  {cancel.CancelAfter(10);try{await semantic.CompareAsync(corpus[3].Text+" "+corpus[3].Text,corpus[3].Text+" "+corpus[3].Text,"tr",cancel.Token);}catch(OperationCanceledException){semanticCancellationStopped=true;}}
  semanticCancellationStopped&=semantic.WorkingSetBytes==0;
- var report=new{sourceIsSynthetic=true,generativeModelUsed=false,semanticClassificationModelUsed=true,semanticModelUsedAloneForDocumentApproval=false,paragraphSentExternally=false,userTextUsedForTraining=false,wordExecuted=false,gpuUsed=false,os=Environment.OSVersion.ToString(),corpusSha256=fixtureSha,records,pairRecords,falseAccepts,falseRejects,semanticFalseAccepts,semanticFalseRejects,cancellationStopped,semanticCancellationStopped,peakCombinedWorkingSetMiB=peak/1048576.0,peakParserWorkingSetMiB=parser.PeakWorkingSetBytes/1048576.0,modelProvenance=JsonSerializer.Deserialize<object>(File.ReadAllText(Path.Combine(args[1],"dependency-model-verification.json"))),semanticProvenance=JsonSerializer.Deserialize<object>(File.ReadAllText(Path.Combine(args[5],"semantic-model-verification.json")))};
+ var report=new{sourceIsSynthetic=true,dictionaryScanEnabled=knowledge!=null,dictionaryOnlineEnabled=online,generativeModelUsed=false,semanticClassificationModelUsed=true,semanticModelUsedAloneForDocumentApproval=false,paragraphSentExternally=false,userTextUsedForTraining=false,wordExecuted=false,gpuUsed=false,os=Environment.OSVersion.ToString(),corpusSha256=fixtureSha,records,pairRecords,falseAccepts,falseRejects,semanticFalseAccepts,semanticFalseRejects,cancellationStopped,semanticCancellationStopped,peakCombinedWorkingSetMiB=peak/1048576.0,peakParserWorkingSetMiB=parser.PeakWorkingSetBytes/1048576.0,modelProvenance=JsonSerializer.Deserialize<object>(File.ReadAllText(Path.Combine(args[1],"dependency-model-verification.json"))),semanticProvenance=JsonSerializer.Deserialize<object>(File.ReadAllText(Path.Combine(args[5],"semantic-model-verification.json")))};
  File.WriteAllText(Path.Combine(output,"backend-verification.json"),JsonSerializer.Serialize(report,options));
  if(!cancellationStopped)throw new InvalidOperationException("Parser cancellation left an owned process.");
  if(!semanticCancellationStopped)throw new InvalidOperationException("Semantic cancellation left an owned process.");
