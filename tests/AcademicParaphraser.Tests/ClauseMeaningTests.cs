@@ -82,5 +82,15 @@ namespace AcademicParaphraser.Tests
             public IReadOnlyList<LexiconEntry> GetLexicon()=>Array.Empty<LexiconEntry>();
             public IReadOnlyList<string> GetLockedTerms()=>Array.Empty<string>();
         }
+        [Theory]
+        [InlineData("Rapor yeterli değildir.","Rapor yeterlidir.","olumsuzluk")]
+        [InlineData("Yalnızca kurul raporu inceledi.","Kurul yalnızca raporu inceledi.","Odak parçacığı")]
+        public async Task FalsePositiveSemanticEvidenceCannotOverrideNegationOrFocusScope(string source,string target,string expectedReason)
+        {
+            var before=await Analyze(source);var after=await Analyze(target);
+            var context=new BackendContext{Source=before,Plan=RewritePlan.Create(source,new[]{new TextSpan{Length=source.Length}},Array.Empty<TextSpan>()),SemanticEvidence=new BackendEvidence{Passed=true}};
+            var result=ClauseMeaningIntegrity.Compare(context,after,new[]{0});
+            Assert.False(result.Passed);Assert.Contains(result.Problems,p=>p.Contains(expectedReason));
+        }
     }
 }

@@ -29,6 +29,11 @@ namespace AcademicParaphraser.Core.Backends
             else foreach(int index in changedSentences)
             {
                 var sourcePart=Part(context.Source,index);var targetPart=Part(target,index);
+                int Negations(LinguisticAnalysis a)=>a.Morphology.Count(t=>t.Morphemes.Contains("Neg")||t.Lemma.Equals("değil",StringComparison.OrdinalIgnoreCase)||t.Lemma.Equals("yok",StringComparison.OrdinalIgnoreCase));
+                if(Negations(sourcePart)!=Negations(targetPart))result.Problems.Add("Ek kuruluşta olumsuzluk ifadesi eklendi veya eksildi.");
+                if(Regex.IsMatch(sourcePart.Text,@"\b(?:yalnızca|sadece|bile|dahi)\b",RegexOptions.IgnoreCase|RegexOptions.CultureInvariant)
+                    &&!EquivalentPurpose(sourcePart,targetPart))
+                {result.Problems.Add("Odak parçacığının kapsamı ek kuruluşta bağımsız doğrulanamadı.");continue;}
                 var facts=new DerivationMeaningBackend().CompareFacts(sourcePart,targetPart,context.Lexicon);
                 if(facts.Passed)continue;
                 // A complete, known morphological inventory must agree for movement;
@@ -63,7 +68,7 @@ namespace AcademicParaphraser.Core.Backends
                     if(!source.Morphology.Any(t=>t.Start<=obj.Start&&t.Start+t.Length>=obj.End&&t.Morphemes.Contains("Acc")))return false;
                 if(sentence.Words.Any(w=>new[]{"ccomp","xcomp","advcl","acl"}.Contains(w.Relation.Split(':')[0])))return false;
             }
-            string[] nominalRelations={"amod","nmod","compound","case","det"};
+            string[] nominalRelations={"amod","nmod","compound","case","det","nummod"};
             string[] Edges(LinguisticAnalysis a)=>a.Sentences.SelectMany(s=>s.Words
                 .Where(w=>nominalRelations.Contains(w.Relation.Split(':')[0]))
                 .Select(w=>w.Form.ToLower(Turkish)+"/"+w.Relation+"/"+(s.Words.SingleOrDefault(p=>p.Id==w.Head)?.Form.ToLower(Turkish)??"ROOT")))
