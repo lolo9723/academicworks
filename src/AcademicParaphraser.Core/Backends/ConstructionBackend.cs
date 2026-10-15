@@ -85,6 +85,7 @@ namespace AcademicParaphraser.Core.Backends
             if(root==null||arg==null||arg.Head!=root.Id||s.Words.Count>100||s.Words.Any(w=>w.Pos=="SYM"&&w.Form!="°"&&w.Form!="%"))return null;
             var branch=(source.Language=="en"&&operation.Kind=="en-active-passive"?EnglishNominalConstituents.Patient(s,arg):s.Subtree(arg.Id)).Where(w=>w.Pos!="PUNCT").ToList();
             if(branch.Count==0)return null;
+            if(source.Language=="tr"&&new[]{"ilişkin","dair","yönelik","göre","karşı","karşın","rağmen","doğru","sonra","önce","beri","dolayı","ötürü","itibaren"}.Contains(branch[0].Form.ToLower(Turkish)))return null;
             int lo=branch.Min(w=>w.Start),hi=branch.Max(w=>w.End);
             // A non-projective or overlapping subtree cannot be cut as one phrase.
             if(s.Words.Any(w=>w.Start>=lo&&w.End<=hi&&w.Pos!="PUNCT"&&!branch.Contains(w)))return null;

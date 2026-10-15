@@ -15,6 +15,7 @@ namespace AcademicParaphraser.Core.Backends
             if(replay==null||!string.Equals(replay,proposal.Text,StringComparison.Ordinal)||target.Text!=proposal.Text)
                 evidence.Problems.Add("Kuruluş işlemleri kaynak ve sonuçla bire bir eşleşmiyor.");
             evidence.Problems.AddRange(context.Plan.CheckFixedTextMultiplicity(target.Text));
+            evidence.Problems.AddRange(FactGuard.CheckPostpositionBindings(context.Source.Morphology,target.Morphology));
             var facts=CompareFacts(context.Source,target,context.Lexicon);
             // Only a precisely replayed Turkish, case-marked constituent movement may
             // use the independent morphology + NLI route. Free text, unmarked objects
@@ -33,6 +34,7 @@ namespace AcademicParaphraser.Core.Backends
         {
             var evidence=new BackendEvidence{Stage="independent-fact-graph"};
             evidence.Problems.AddRange(FactGuard.Check(source.Text,target.Text));
+            evidence.Problems.AddRange(FactGuard.CheckPostpositionBindings(source.Morphology,target.Morphology));
             evidence.Problems.AddRange(FactGuard.CheckPredicateFeatures(source.Morphology,target.Morphology));
             evidence.Problems.AddRange(FactGuard.CheckObjects(source.Text,target.Text,source.Morphology,target.Morphology,lexicon));
             evidence.Problems.AddRange(FactGuard.CheckEmbeddedFutureSubjects(source.Text,target.Text,source.Morphology,target.Morphology));

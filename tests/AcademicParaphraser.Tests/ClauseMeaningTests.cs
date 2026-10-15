@@ -92,5 +92,18 @@ namespace AcademicParaphraser.Tests
             var result=ClauseMeaningIntegrity.Compare(context,after,new[]{0});
             Assert.False(result.Passed);Assert.Contains(result.Problems,p=>p.Contains(expectedReason));
         }
+        [Theory]
+        [InlineData("Müfettiş başvuruya ilişkin belgeleri değerlendirdi.","Başvuruya ilişkin belgeleri müfettiş değerlendirdi.",true)]
+        [InlineData("Müfettiş başvuruya ilişkin belgeleri değerlendirdi.","İlişkin belgeleri müfettiş başvuruya değerlendirdi.",false)]
+        public async Task PostpositionComplementsStayAttachedWhenTheirPhraseMoves(string source,string target,bool valid)
+        {
+            var before=await Analyze(source);var after=await Analyze(target);
+            Assert.Equal(valid,FactGuard.CheckPostpositionBindings(before.Morphology,after.Morphology).Count==0);
+            if(!valid)
+            {
+                var context=new BackendContext{Source=before,Plan=RewritePlan.Create(source,new[]{new TextSpan{Length=source.Length}},Array.Empty<TextSpan>()),SemanticEvidence=new BackendEvidence{Passed=true}};
+                Assert.False(ClauseMeaningIntegrity.Compare(context,after,new[]{0}).Passed);
+            }
+        }
     }
 }

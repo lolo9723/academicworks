@@ -150,6 +150,7 @@ namespace AcademicParaphraser.Core.Rewriting
                         if (LanguageProfile.HasClearLanguageChange(candidate.Text, english))
                             problems.Add("Kaynağın dili değiştirildi; aynı dilde yeniden yazılmalı.");
                         IReadOnlyList<MorphToken> after = english ? Array.Empty<MorphToken>() : await nlp.AnalyzeAsync(candidate.Text, cancellation).ConfigureAwait(false);
+                        problems.AddRange(FactGuard.CheckPostpositionBindings(before,after));
                         problems.AddRange(FactGuard.CheckPredicateFeatures(before,after));
                         problems.AddRange(FactGuard.CheckObjects(text,candidate.Text,before,after,lexical));
                         problems.AddRange(FactGuard.CheckEmbeddedFutureSubjects(text,candidate.Text,before,after));
@@ -194,6 +195,24 @@ namespace AcademicParaphraser.Core.Rewriting
     }
     public static class FactGuard
     {
+        public static IReadOnlyList<string> CheckPostpositionBindings(IReadOnlyList<MorphToken> before,IReadOnlyList<MorphToken> after)
+        {
+            var dative=new HashSet<string>(new[]{"ilişkin","dair","yönelik","göre","karşı","karşın","rağmen","doğru"},StringComparer.Ordinal);
+            var ablative=new HashSet<string>(new[]{"sonra","önce","beri","dolayı","ötürü","itibaren"},StringComparer.Ordinal);
+            var culture=System.Globalization.CultureInfo.GetCultureInfo("tr-TR");
+            string[] Bindings(IReadOnlyList<MorphToken> tokens)
+            {
+                var result=new List<string>();var words=tokens.OrderBy(t=>t.Start).ToArray();
+                for(int i=1;i<words.Length;i++)
+                {
+                    string post=words[i].Surface.ToLower(culture);var previous=words[i-1];
+                    if(dative.Contains(post)&&previous.Morphemes.Contains("Dat")||ablative.Contains(post)&&previous.Morphemes.Contains("Abl"))
+                        result.Add(previous.Surface.ToLower(culture)+" "+post);
+                }
+                return result.OrderBy(s=>s,StringComparer.Ordinal).ToArray();
+            }
+            return Bindings(before).SequenceEqual(Bindings(after))?Array.Empty<string>():new[]{"Hâl ekiyle bağlı ilgeç öbeği bölündü veya ilişkisi değişti."};
+        }
         private static readonly Regex Numbers = new Regex(@"\d+(?:[.,:/–\-]\d+)*", RegexOptions.None, TimeSpan.FromMilliseconds(150));
         private static readonly Regex Anchored = new Regex(@"\b\d+(?:[.,]\d+)?\s*(?:%|°[CF]|kN|MPa|GHz|MHz|GB|MB|kg|mg|km|cm|mm|ms|m²|m³|m3|m|s|gün|hafta|ay|yıl|days?|weeks?|months?|years?)(?![\p{L}\p{N}])|\b(?:yalnızca|sadece|henüz|mutlaka|olabilir|muhtemelen|kesinlikle|only|possibly|may|might|must|if|unless)\b", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant, TimeSpan.FromMilliseconds(150));
         private static readonly Regex[] NegativeEvidence = new[] {

@@ -21,6 +21,7 @@ namespace AcademicParaphraser.Core.Backends
             var result=new BackendEvidence{Stage="independent-clause-meaning"};
             result.Problems.AddRange(context.Plan.CheckFixedTextMultiplicity(target.Text));
             result.Problems.AddRange(FactGuard.Check(context.Source.Text,target.Text));
+            result.Problems.AddRange(FactGuard.CheckPostpositionBindings(context.Source.Morphology,target.Morphology));
             result.Problems.AddRange(FactGuard.CheckPredicateFeatures(context.Source.Morphology,target.Morphology));
             result.Problems.AddRange(FactGuard.CheckObjects(context.Source.Text,target.Text,context.Source.Morphology,target.Morphology,context.Lexicon));
             result.Problems.AddRange(FactGuard.CheckEmbeddedFutureSubjects(context.Source.Text,target.Text,context.Source.Morphology,target.Morphology));
