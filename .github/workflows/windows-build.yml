@@ -69,6 +69,19 @@ jobs:
           if($LASTEXITCODE -ne 0){throw 'Actual Windows backend or independent fact graph verification failed.'}
       - name: Verify Windows runtime and deployment
         run: .\build\Verify-WindowsRuntime.ps1 -Payload artifacts\payload
+      - name: Compare both construction backends on twelve broader paragraphs
+        run: |
+          $backend=@('artifacts/payload/runtime/udpipe/udpipe.exe','artifacts/payload/runtime/udpipe','artifacts/payload/runtime/java/bin/java.exe','artifacts/payload/nlp/turkish-nlp-1.0.0.jar','artifacts/payload/runtime/grammar/english-grammar-1.0.0.jar','artifacts/payload/runtime/semantic')
+          dotnet run --project tools/AcademicParaphraser.BackendProbe -c Release -- @backend artifacts/backend-breadth-baseline artifacts/payload/data/kenet.sqlite --breadth --baseline
+          if($LASTEXITCODE -ne 0){throw 'Broader baseline verification failed.'}
+          dotnet run --project tools/AcademicParaphraser.BackendProbe -c Release -- @backend artifacts/backend-breadth-ensemble artifacts/payload/data/kenet.sqlite --breadth
+          if($LASTEXITCODE -ne 0){throw 'Broader ensemble verification failed.'}
+          $baseline=Get-Content artifacts/backend-breadth-baseline/backend-verification.json -Raw | ConvertFrom-Json
+          $ensemble=Get-Content artifacts/backend-breadth-ensemble/backend-verification.json -Raw | ConvertFrom-Json
+          $before=@($baseline.records | Where-Object {$_.outputs.Count -gt 0}).Count
+          $after=@($ensemble.records | Where-Object {$_.outputs.Count -gt 0}).Count
+          if($after -lt $before){throw 'Supplemental producer reduced measured coverage.'}
+          [ordered]@{baselineAccepted=$before;ensembleAccepted=$after;paragraphs=12;humanQualityScore=$false;corpusSha256=$ensemble.corpusSha256} | ConvertTo-Json | Set-Content -Encoding UTF8 artifacts/backend-breadth-comparison.json
       - name: Reproduce SQLite failure under Framework shadow copy
         run: |
           & "$env:WINDIR\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -STA -ExecutionPolicy Bypass -File .\build\Probe-Startup.ps1 -Payload artifacts\payload -ShadowCopy -SkipNativeBootstrap -ReportPath artifacts\shadow-baseline-verification.json
@@ -89,7 +102,7 @@ jobs:
           }
       - name: Verify installer and write SHA256
         run: |
-          $installer=Get-Item artifacts\installer\AkademikParafraz-1.6.1-Setup.exe
+          $installer=Get-Item artifacts\installer\AkademikParafraz-1.7.0-Setup.exe
           if($installer.Length -lt 1000000){throw 'Installer çıktısı beklenenden küçük.'}
           $hash=(Get-FileHash $installer -Algorithm SHA256).Hash.ToLowerInvariant()
           "$hash  $($installer.Name)" | Set-Content -Encoding ASCII "$($installer.FullName).sha256"
@@ -105,10 +118,10 @@ jobs:
           Copy-Item build\Smoke-Word.ps1,build\Verify-Word.cmd,build\Probe-Startup.ps1,build\Tanila.cmd artifacts\installer
           Copy-Item docs\UsersGuide.md artifacts\installer
       - name: Test missing-Word prerequisite
-        run: .\build\Test-InstallerPrerequisites.ps1 -Installer artifacts\installer\AkademikParafraz-1.6.1-Setup.exe
+        run: .\build\Test-InstallerPrerequisites.ps1 -Installer artifacts\installer\AkademikParafraz-1.7.0-Setup.exe
       - name: Create bounded transfer parts
         run: |
-          $source=Get-Item artifacts\installer\AkademikParafraz-1.6.1-Setup.exe
+          $source=Get-Item artifacts\installer\AkademikParafraz-1.7.0-Setup.exe
           New-Item artifacts\transfer -ItemType Directory -Force | Out-Null
           $stream=[IO.File]::OpenRead($source.FullName)
           $buffer=New-Object byte[] (1024*1024)
@@ -388,7 +401,7 @@ jobs:
       - name: Installer artifact
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: AkademikParafraz-1.6.1-Windows-Setup
+          name: AkademikParafraz-1.7.0-Windows-Setup
           path: artifacts/installer/
           if-no-files-found: error
           retention-days: 30
@@ -408,6 +421,7 @@ jobs:
             artifacts/local-quality/*.log
             artifacts/backend-quality/*.json
             artifacts/backend-quality/*.log
+            artifacts/backend-breadth-*/*.json
             artifacts/dependency-models/*.log
             artifacts/dependency-models/*.json
             artifacts/semantic-research/*verification.json

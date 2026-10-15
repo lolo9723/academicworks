@@ -43,7 +43,7 @@ namespace AcademicParaphraser.Infrastructure.Backends
                     return result;
                 }
             }
-            catch(Exception) when(cancellation.IsCancellationRequested){throw new OperationCanceledException(cancellation);}
+            catch(Exception) when(cancellation.IsCancellationRequested){await OwnedProcessTermination.StopAsync(process).ConfigureAwait(false);throw new OperationCanceledException(cancellation);}
             finally{gate.Release();}
         }
         private async Task StartAsync(CancellationToken cancellation)

@@ -104,12 +104,13 @@ namespace AcademicParaphraser.Infrastructure.LexicalKnowledge
                     bool found = senses.Count > 0;
                     // No per-selection three-word or 200-root cutoff. Every eligible unresolved
                     // root is examined; bounded requests, a circuit breaker and user cancel govern time.
-                    if (alternatives.Count == 0 && online != null && settings.InternetEnabled && !settings.OfflineMode)
+                    bool needsOnline = context.DefinitionsOnly ? senses.Count == 0 : alternatives.Count == 0;
+                    if (needsOnline && online != null && settings.InternetEnabled && !settings.OfflineMode)
                     {
                         context.Report("İnternet sözlüğü: " + (summary.RootsChecked + 1) + "/" + roots.Count + " uygun kök · " + word.Lemma);
                         summary.OnlineRootsQueried++;
                         var results = await online.LookupAsync(word.Lemma, settings, cancellation).ConfigureAwait(false);
-                        summary.ProviderErrors += results.Count(r => r.Error.Length > 0 && !r.NotFound);
+                        RecordErrors(summary,results);
                         var usable = results.Where(r => r.Error.Length == 0 && r.Content.Length > 0).ToList();
                         if (usable.Count > 0) { summary.OnlineRootsFound++; found = true; }
                         if (Word(word.Lemma) && oneContext)
@@ -124,7 +125,7 @@ namespace AcademicParaphraser.Infrastructure.LexicalKnowledge
                                 // Truly absent local word: require explicit reciprocal synonyms,
                                 // one meaning and matching POS from the reverse dictionary entry.
                                 var reverse = await online.LookupAsync(value, settings, cancellation).ConfigureAwait(false);
-                                summary.ProviderErrors += reverse.Count(r => r.Error.Length > 0 && !r.NotFound);
+                                RecordErrors(summary,reverse);
                                 sameSense = reverse.Any(r => r.Error.Length == 0 && r.SingleSense && r.PosTags.Count == 1 && r.PosTags[0] == word.Pos && r.Definitions.Count == 1 && Neutral(r.Definitions) && r.Synonyms.Any(v => v.ToLower(Turkish) == word.Lemma.ToLower(Turkish)));
                             }
                             if (sameSense && !alternatives.Contains(value)) alternatives.Add(value);
@@ -139,6 +140,16 @@ namespace AcademicParaphraser.Infrastructure.LexicalKnowledge
             }
             summary.LexicalEntries = entries.Count;
             return entries;
+        }
+        private static void RecordErrors(EnrichmentSummary summary,IReadOnlyList<DictionaryResult> results)
+        {
+            foreach(var result in results.Where(r=>r.Error.Length>0&&!r.NotFound))
+            {
+                if(result.ErrorCode=="CIRCUIT_OPEN"){summary.ProviderSkipped++;continue;}
+                summary.ProviderErrors++;
+                string key=result.Source+": "+(result.ErrorCode.Length==0?"REQUEST_FAILED":result.ErrorCode);
+                summary.ProviderErrorCodes.TryGetValue(key,out int count);summary.ProviderErrorCodes[key]=count+1;
+            }
         }
         private static int ParagraphStart(string text, int position)
         {

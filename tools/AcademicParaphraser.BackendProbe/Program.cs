@@ -9,10 +9,12 @@ using AcademicParaphraser.Infrastructure.TurkishNlp;
 using AcademicParaphraser.Core.Rewriting;
 using AcademicParaphraser.Infrastructure.LexicalKnowledge;
 using AcademicParaphraser.Infrastructure.InternetDictionaryProviders;
-if(args.Length!=7&&args.Length!=8&&!(args.Length==9&&args[8]=="--online"))throw new ArgumentException("udpipe model-directory java nlp.jar grammar.jar semantic-directory report-directory [wordnet.sqlite [--online]]");
-bool online=args.Length==9;
+if(args.Length<7||args.Skip(7).Any(a=>a.StartsWith("--")&&!new[]{"--online","--breadth","--baseline"}.Contains(a))||args.Skip(7).Count(a=>!a.StartsWith("--"))>1)throw new ArgumentException("udpipe model-directory java nlp.jar grammar.jar semantic-directory report-directory [wordnet.sqlite] [--online] [--breadth] [--baseline]");
+bool online=args.Contains("--online"),breadth=args.Contains("--breadth"),baseline=args.Contains("--baseline");
+string? wordnet=args.Skip(7).FirstOrDefault(a=>!a.StartsWith("--"));
 string output=Path.GetFullPath(args[6]);Directory.CreateDirectory(output);
-const string fixture="tests/fixtures/local-rewrite-v1.json",fixtureSha="a38b41287a8af00026c5e3b201f4eaf2f74019da7a0bcc129fa6a84e8a9c7187";
+string fixture=breadth?"tests/fixtures/backend-breadth-v2.json":"tests/fixtures/local-rewrite-v1.json";
+string fixtureSha=breadth?"f92547852c378c8e2c6fe6b2a61bf167df8141f185ccfe777c977e04803fd594":"a38b41287a8af00026c5e3b201f4eaf2f74019da7a0bcc129fa6a84e8a9c7187";
 if(Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(fixture))).ToLowerInvariant()!=fixtureSha)throw new InvalidOperationException("Frozen corpus changed.");
 var options=new JsonSerializerOptions{PropertyNameCaseInsensitive=true,WriteIndented=true};var corpus=JsonSerializer.Deserialize<List<Fixture>>(File.ReadAllText(fixture),options)!;
 string temporary=Path.Combine(Path.GetTempPath(),"AcademicBackendProbe-"+Guid.NewGuid().ToString("N"));Directory.CreateDirectory(temporary);
@@ -21,14 +23,15 @@ using var parser=new UdpipeBackend(Path.GetFullPath(args[0]),Path.GetFullPath(ar
 using var grammar=new SeparateGrammarBackend(Path.GetFullPath(args[2]),Path.GetFullPath(args[4]));
 using var semantic=new LocalSemanticBackend(Path.GetFullPath(args[2]),Path.GetFullPath(Path.Combine(args[5],"local-semantic-1.0.0.jar")),Path.GetFullPath(Path.Combine(args[5],"model_quantized.onnx")),Path.GetFullPath(Path.Combine(args[5],"tokenizer.json")));
 long peak=0;using var poll=new CancellationTokenSource();var monitor=Task.Run(async()=>{while(!poll.IsCancellationRequested){peak=Math.Max(peak,Process.GetCurrentProcess().WorkingSet64+nlp.WorkingSetBytes+parser.WorkingSetBytes+grammar.WorkingSetBytes+semantic.WorkingSetBytes);try{await Task.Delay(100,poll.Token);}catch(OperationCanceledException){}}});
-var records=new List<object>();var pairRecords=new List<object>();int falseAccepts=0,falseRejects=0,semanticFalseAccepts=0,semanticFalseRejects=0;
+var records=new List<object>();var pairRecords=new List<object>();int falseAccepts=0,falseRejects=0,semanticFalseAccepts=0,semanticFalseRejects=0,supplementalFalseAccepts=0,supplementalFalseRejects=0;
 try
 {
  var repo=new LocalRepository(Path.Combine(temporary,"probe.sqlite"),new AesTextProtector(RandomNumberGenerator.GetBytes(32)));
  using var turkish=new TurkishWiktionaryProvider();using var international=new EnglishWiktionaryProvider();using var terms=new WikidataTermProvider();
  var dictionary=new DictionaryService(repo,new IDictionaryProvider[]{turkish,international,terms});
- var knowledge=args.Length>=8?new WordNetLexicalSource(Path.GetFullPath(args[7]),dictionary):null;
- var engine=new MultiStageRewriteEngine(repo,parser,grammar,semantic:semantic,knowledge:knowledge);
+ var knowledge=wordnet!=null?new WordNetLexicalSource(Path.GetFullPath(wordnet),dictionary):null;
+ using var structures=new OnlineStructureSource(repo);
+ var engine=new MultiStageRewriteEngine(repo,parser,grammar,semantic:semantic,knowledge:knowledge,supplemental:baseline?null:new RuleConstructionBackend(repo,nlp,structures));
  foreach(var f in corpus)
  {
   Console.WriteLine("START "+f.Id);var timer=Stopwatch.StartNew();var diagnostics=new MultiStageDiagnostics();
@@ -64,7 +67,10 @@ try
   var review=meaning.CompareFacts(before,after,repo.GetLexicon());if(review.Passed&&!pair.Equivalent)falseAccepts++;if(!review.Passed&&pair.Equivalent)falseRejects++;
   var semanticReview=await semantic.CompareAsync(pair.Source,pair.Target,pair.Language,CancellationToken.None);
   if(semanticReview.Passed&&!pair.Equivalent)semanticFalseAccepts++;if(!semanticReview.Passed&&pair.Equivalent)semanticFalseRejects++;
-  pairRecords.Add(new{pair.Source,pair.Target,pair.Equivalent,review,semanticReview});Console.WriteLine("PAIR "+JsonSerializer.Serialize(pairRecords.Last()));
+  var clauseContext=new BackendContext{Source=before,Plan=RewritePlan.Create(pair.Source,new[]{new TextSpan{Length=pair.Source.Length}},Array.Empty<TextSpan>()),Lexicon=repo.GetLexicon(),SemanticEvidence=semanticReview};
+  var clauseReview=ClauseMeaningIntegrity.Compare(clauseContext,after,Enumerable.Range(0,before.Sentences.Count).ToArray());
+  if(clauseReview.Passed&&!pair.Equivalent)supplementalFalseAccepts++;if(!clauseReview.Passed&&pair.Equivalent)supplementalFalseRejects++;
+  pairRecords.Add(new{pair.Source,pair.Target,pair.Equivalent,review,semanticReview,clauseReview});Console.WriteLine("PAIR "+JsonSerializer.Serialize(pairRecords.Last()));
  }
  bool cancellationStopped=false;using(var cancel=new CancellationTokenSource())
  {
@@ -72,13 +78,14 @@ try
  }
  cancellationStopped&=parser.WorkingSetBytes==0;
  bool semanticCancellationStopped=false;using(var cancel=new CancellationTokenSource())
- {cancel.CancelAfter(10);try{await semantic.CompareAsync(corpus[3].Text+" "+corpus[3].Text,corpus[3].Text+" "+corpus[3].Text,"tr",cancel.Token);}catch(OperationCanceledException){semanticCancellationStopped=true;}}
+ {cancel.CancelAfter(10);try{await semantic.CompareAsync(string.Concat(Enumerable.Repeat("The team reviewed the report. ",24)),string.Concat(Enumerable.Repeat("The group reviewed the report. ",24)),"en",cancel.Token);}catch(OperationCanceledException){semanticCancellationStopped=true;}}
  semanticCancellationStopped&=semantic.WorkingSetBytes==0;
- var report=new{sourceIsSynthetic=true,dictionaryScanEnabled=knowledge!=null,dictionaryOnlineEnabled=online,generativeModelUsed=false,semanticClassificationModelUsed=true,semanticModelUsedAloneForDocumentApproval=false,paragraphSentExternally=false,userTextUsedForTraining=false,wordExecuted=false,gpuUsed=false,os=Environment.OSVersion.ToString(),corpusSha256=fixtureSha,records,pairRecords,falseAccepts,falseRejects,semanticFalseAccepts,semanticFalseRejects,cancellationStopped,semanticCancellationStopped,peakCombinedWorkingSetMiB=peak/1048576.0,peakParserWorkingSetMiB=parser.PeakWorkingSetBytes/1048576.0,modelProvenance=JsonSerializer.Deserialize<object>(File.ReadAllText(Path.Combine(args[1],"dependency-model-verification.json"))),semanticProvenance=JsonSerializer.Deserialize<object>(File.ReadAllText(Path.Combine(args[5],"semantic-model-verification.json")))};
+ var report=new{sourceIsSynthetic=true,supplementalProducerEnabled=!baseline,breadthCorpus=breadth,dictionaryScanEnabled=knowledge!=null,dictionaryOnlineEnabled=online,generativeModelUsed=false,semanticClassificationModelUsed=true,semanticModelUsedAloneForDocumentApproval=false,paragraphSentExternally=false,userTextUsedForTraining=false,wordExecuted=false,gpuUsed=false,os=Environment.OSVersion.ToString(),corpusSha256=fixtureSha,records,pairRecords,falseAccepts,falseRejects,semanticFalseAccepts,semanticFalseRejects,supplementalFalseAccepts,supplementalFalseRejects,cancellationStopped,semanticCancellationStopped,peakCombinedWorkingSetMiB=peak/1048576.0,peakParserWorkingSetMiB=parser.PeakWorkingSetBytes/1048576.0,modelProvenance=JsonSerializer.Deserialize<object>(File.ReadAllText(Path.Combine(args[1],"dependency-model-verification.json"))),semanticProvenance=JsonSerializer.Deserialize<object>(File.ReadAllText(Path.Combine(args[5],"semantic-model-verification.json")))};
  File.WriteAllText(Path.Combine(output,"backend-verification.json"),JsonSerializer.Serialize(report,options));
  if(!cancellationStopped)throw new InvalidOperationException("Parser cancellation left an owned process.");
  if(!semanticCancellationStopped)throw new InvalidOperationException("Semantic cancellation left an owned process.");
  if(falseAccepts>0)throw new InvalidOperationException("Independent fact graph accepted a known meaning change; see evidence.");
+ if(supplementalFalseAccepts>0)throw new InvalidOperationException("Supplemental clause checks accepted a known meaning change; see evidence.");
 }
 finally{poll.Cancel();await monitor;Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();Directory.Delete(temporary,true);}
 sealed record Fixture(string Id,string Language,string Text);

@@ -1,0 +1,14 @@
+[
+  {"id":"recreation-purpose","language":"tr","text":"Bu araştırmanın amacı, çalışanların serbest zaman tercihlerine ilişkin görüşlerini incelemektir."},
+  {"id":"recreation-definition","language":"tr","text":"Rekreasyon, bireylerin serbest zamanlarında gönüllü olarak katıldıkları etkinlikleri kapsar. Katılımın zorunlu olması bu tanımla bağdaşmaz."},
+  {"id":"psychology-evidence","language":"tr","text":"Analiz sonuçları, sosyal desteğin yalnızlık düzeyini azalttığını göstermektedir. Bu ilişki, tek başına nedensellik kanıtı olarak değerlendirilemez."},
+  {"id":"agriculture-method","language":"tr","text":"Bu çalışmada tohumların çimlenme oranları deneysel olarak karşılaştırılmıştır. Sulama miktarı bütün gruplarda aynı tutulmuştur."},
+  {"id":"economics-purpose","language":"tr","text":"Bu incelemenin hedefi, gelirdeki değişimin harcama kararlarıyla ilişkisini açıklamaktır. Kullanılan veriler iki yılın gözlemleriyle sınırlıdır."},
+  {"id":"engineering-procedure","language":"tr","text":"Parçanın dayanıklılığı ölçülürken sıcaklık sabit tutulmuştur. Test sırasında uygulanan kuvvet 18 kN olarak kaydedilmiştir."},
+  {"id":"law-negative","language":"tr","text":"Komisyon, itiraz dilekçesini süre koşulu bakımından incelememiştir. Dosyanın kayda alınması, başvurunun kabul edildiği anlamına gelmez."},
+  {"id":"history-contrast","language":"tr","text":"Mektuplar incelenmiş olmakla birlikte, bazı tarihler kesin olarak belirlenememiştir. Bu belirsizlik, olayın gerçekleşmediğini kanıtlamaz."},
+  {"id":"education-purpose","language":"tr","text":"Bu programın hedefi, öğrencilerin okuma becerilerini geliştirmektir. Programın bütün öğrencilerde aynı sonucu vereceği öne sürülmemiştir."},
+  {"id":"health-observational","language":"tr","text":"Anket verilerinde, uyku süresi ile bildirilen yorgunluk arasında ilişki bulunmuştur. Bu bulgu, kısa uykunun yorgunluğa neden olduğunu kanıtlamaz."},
+  {"id":"english-audit","language":"en","text":"Auditors reviewed the expenditure records. They did not conclude that every payment was improper."},
+  {"id":"english-recreation","language":"en","text":"Participation in community activities was associated with higher reported life satisfaction. The observational design did not establish causation."}
+]

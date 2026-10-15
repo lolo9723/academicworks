@@ -88,6 +88,10 @@ namespace AcademicParaphraser.Core.Backends
     {
         IReadOnlyList<ConstructionProposal> Generate(BackendContext context,UserSettings settings,CancellationToken cancellation);
     }
+    public interface ISupplementalConstructionBackend
+    {
+        Task<IReadOnlyList<Candidate>> GenerateAsync(BackendContext context,UserSettings settings,CancellationToken cancellation,EnrichmentContext enrichment);
+    }
     public interface IMeaningBackend
     {
         BackendEvidence Compare(BackendContext context,LinguisticAnalysis target,ConstructionProposal proposal);
@@ -113,12 +117,14 @@ namespace AcademicParaphraser.Core.Backends
             var lines = new List<string> { "İncelenen bölüm: " + WorkUnits + " · üretilen aday: " + Proposals + " · denetimlerden geçen: " + Accepted };
             if (OversizedUnits > 0) lines.Add(OversizedUnits + " bölüm, bölünemeyen cümlesi 2.400 karakteri aştığı için işlenemedi.");
             if (ProtectedUnits > 0) lines.Add(ProtectedUnits + " bölümde düzenlenebilir Word alanı bulunamadı.");
-            if (UnsupportedUnits > 0) lines.Add(UnsupportedUnits + " bölümün cümle yapısı mevcut üretim motorunca desteklenmiyor.");
+            if (UnsupportedUnits > 0) lines.Add(UnsupportedUnits + " bölümün cümle yapısı öbek taşıma üreticisince desteklenmiyor.");
             foreach (var reason in Attempts.SelectMany(a => a.Evaluation.Evidence).Where(e => !e.Passed)
                 .SelectMany(e => e.Problems).Distinct().Take(3)) lines.Add(reason);
             if (DictionaryScans > 0) lines.Add("Sözlük: " + Enrichment.RootsChecked + "/" + Enrichment.RootsTotal
                 + " kök incelendi; " + Enrichment.RootsFound + " kökte bilgi bulundu. İnternette aranan: "
                 + Enrichment.OnlineRootsQueried + "; kaynak hatası: " + Enrichment.ProviderErrors + ".");
+            foreach(var issue in Enrichment.ProviderErrorCodes.Take(3))lines.Add(issue.Key+" ("+issue.Value+")");
+            if(Enrichment.ProviderSkipped>0)lines.Add("Kaynak geçici olarak kapalı olduğu için atlanan sorgu: "+Enrichment.ProviderSkipped);
             else lines.Add("Bu işlemde sözlük taraması yapılmadı.");
             if (DictionaryUnsupportedUnits > 0) lines.Add("İngilizce bölümlerde geniş sözlük taraması henüz desteklenmiyor.");
             return string.Join(Environment.NewLine, lines);

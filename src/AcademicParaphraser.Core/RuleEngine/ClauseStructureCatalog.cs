@@ -16,6 +16,11 @@ namespace AcademicParaphraser.Core.RuleEngine
                     RequiredText = hint, Family = "cümle kuruluşu", Strength = Strength.Moderate, Confidence = .96,
                     SentenceBound = true, GroupConstraints = constraints.ToList() });
             }
+            foreach(var purpose in new[]{new[]{"amacı","amaçlamaktadır"},new[]{"hedefi","hedeflemektedir"}})
+                Add(@"\b(?<prefix>(?:(?:bu|mevcut|sunulan) )?)(?<owner>\p{L}+) "+purpose[0]+@",? (?<claim>[^.!?;\r\n\a]{2,1000}?) (?<action>\p{L}+(?:maktır|mektir))\b",
+                    "${prefix}${structure:Nominative:owner}, ${claim} ${structure:PurposeAcc:action} "+purpose[1],purpose[0],
+                    new GroupConstraint{Group="owner",Pos="Noun",Required=new List<string>{"Gen"}},
+                    new GroupConstraint{Group="action",Required=new List<string>{"Inf1"}});
             // Keep a manner adverb next to its predicate when moving the reporting
             // scope; do not leave 'deneysel olarak, bu çalışmada' as a dangling phrase.
             Add(@"\b(?<scope>(?:bu|mevcut|sunulan) (?:çalışmada|araştırmada|incelemede)) (?<subject>[^,.!?;\r\n\a]{0,900}?)(?<head>\p{L}+) (?<manner>\p{L}+ olarak) (?<verb>\p{L}+)\b",

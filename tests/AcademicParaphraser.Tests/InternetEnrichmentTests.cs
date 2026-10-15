@@ -87,6 +87,24 @@ namespace AcademicParaphraser.Tests
             Assert.Equal(1, fallback.Calls);
             Assert.Contains(missing, r => r.Source == "fallback" && r.Content.Length > 0 && !r.SingleSense && r.Synonyms.Count == 0);
         }
+        [Fact]
+        public async Task DefinitionContextUsesKnownLocalWordsWithoutRequestingEveryMissingSynonym()
+        {
+            var provider=new Provider();var dictionary=new DictionaryService(repo,new[]{provider});
+            var source=new WordNetLexicalSource(WordNet,dictionary);var context=new EnrichmentContext{DefinitionsOnly=true};
+            await source.FindAsync("",new[]{new MorphToken{Lemma="yöntem",Pos="Noun"},new MorphToken{Lemma="zqmissing",Pos="Noun"}},Online,CancellationToken.None,context);
+            Assert.Equal(new[]{"zqmissing"},provider.Terms);Assert.Equal(2,context.Summary.RootsChecked);
+            Assert.Equal(1,context.Summary.OnlineRootsQueried);
+        }
+        [Fact]
+        public async Task FailedRequestsAndRequestsSkippedByTheCircuitAreCountedSeparately()
+        {
+            var provider=new Provider{Fail=true};var dictionary=new DictionaryService(repo,new[]{provider});
+            var source=new WordNetLexicalSource(WordNet,dictionary);var context=new EnrichmentContext{DefinitionsOnly=true};
+            await source.FindAsync("",new[]{"zqfirst","zqsecond","zqthird","zqfourth"}.Select(s=>new MorphToken{Lemma=s,Pos="Noun"}).ToArray(),Online,CancellationToken.None,context);
+            Assert.Equal(3,provider.Terms.Count);Assert.Equal(3,context.Summary.ProviderErrors);
+            Assert.Equal(1,context.Summary.ProviderSkipped);Assert.Equal(3,context.Summary.ProviderErrorCodes[provider.Name+": TRANSPORT"]);
+        }
         [Theory]
         [InlineData("tr", "parafraz", false)]
         [InlineData("en", "parafraz", true)]

@@ -14,6 +14,8 @@ namespace AcademicParaphraser.Core.Rewriting
         public int OnlineRootsFound { get; set; }
         public int RootsUnresolved { get; set; }
         public int ProviderErrors { get; set; }
+        public int ProviderSkipped { get; set; }
+        public Dictionary<string,int> ProviderErrorCodes { get; set; } = new Dictionary<string,int>();
         public int LexicalEntries { get; set; }
         public int StructureInventory { get; set; }
         public int ApplicableStructures { get; set; }
@@ -23,6 +25,7 @@ namespace AcademicParaphraser.Core.Rewriting
     }
     public sealed class EnrichmentContext
     {
+        public bool DefinitionsOnly { get; set; }
         public EnrichmentSummary Summary { get; } = new EnrichmentSummary();
         public IProgress<string>? Progress { get; set; }
         public void Report(string message) => Progress?.Report(message);

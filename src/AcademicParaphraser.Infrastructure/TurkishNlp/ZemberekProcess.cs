@@ -100,15 +100,15 @@ namespace AcademicParaphraser.Infrastructure.TurkishNlp
         }
         public async Task<string?> TransformStructureAsync(string source, string mode, CancellationToken cancellation)
         {
-            if (mode != "Gen" && mode != "Passive" && mode != "Nominal") throw new ArgumentException("Yapısal çekim türü geçersiz.");
+            if (mode != "Gen" && mode != "Passive" && mode != "Nominal" && mode != "Nominative" && mode != "PurposeAcc") throw new ArgumentException("Yapısal çekim türü geçersiz.");
             var result = await RequestAsync(new { op = "structure", source, mode }, cancellation).ConfigureAwait(false);
             return result.Value<string>("surface");
         }
         public async Task<string?> TransformStructureAsync(MorphToken source, string mode, CancellationToken cancellation)
         {
-            if (mode != "Gen" && mode != "Passive" && mode != "Nominal") throw new ArgumentException("Yapısal çekim türü geçersiz.");
+            if (mode != "Gen" && mode != "Passive" && mode != "Nominal" && mode != "Nominative" && mode != "PurposeAcc") throw new ArgumentException("Yapısal çekim türü geçersiz.");
             if (source.Proper) return null;
-            var result = await RequestAsync(new { op = "structure", source = source.Surface, mode, lemma = source.Lemma, morphemes = source.Morphemes }, cancellation).ConfigureAwait(false);
+            var result = await RequestAsync(new { op = "structure", source = source.Surface, mode, lemma = source.Lemma, morphemes = source.Morphemes, ambiguousPersonal=source.AmbiguousPersonal }, cancellation).ConfigureAwait(false);
             return result.Value<string>("surface");
         }
         private void Kill()

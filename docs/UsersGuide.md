@@ -10,6 +10,8 @@ Metnin dilini otomatik, Türkçe veya İngilizce seçebilirsiniz. Otomatik tespi
 
 1.6.1 sürümünde Türkçe çok aşamalı motora geniş sözlük taraması bağlandı. İnternetle Parafraz seçildiğinde uygun ve koruma dışında kalan kökler mevcut sözlük sağlayıcılarında aranır; paragraf gönderilmez. Bulunan bilgi otomatik eş anlamlı değişimi yapılacağı anlamına gelmez. İngilizce geniş sözlük taraması ve internet yapı bankası bu motora henüz bağlı değildir. Uzun paragraflar mevcut cümle sınırlarından parçalara ayrılır; tek başına 2.400 karakteri aşan bölünemeyen bir cümle gerekçesi gösterilerek atlanır. Sonuç yoksa üretilen aday, ret gerekçeleri ve sözlük sayıları panelde görünür. Bu düzeltmeler yeni, serbest bir parafraz üreticisi eklemez.
 
+1.7.0 sürümü iki yerel kuruluş üreticisini aynı denetim akışında birleştirir. Amaç/hedef anlatımı için ekler gerçek morfolojik üretimle oluşturulur. Anlam, olumsuzluk, eyleyen, sayı, Word sınırları ve yeni dil bilgisi hataları denetlenir. Kapsam hâlâ sınırlıdır; her tanım, karşıtlık veya uzun yan cümle yeniden yazılamaz. Yerel sözlükte tanım varsa sırf eş anlamlı bulunamadığı için internet sorgulanmaz. Kaynak hatalarıyla geçici olarak atlanan sorgular ayrı sayılır.
+
 ## İsteğe bağlı yerel dil modeli
 
 Kurulumdan sonra Word'de Akademik Parafraz önizleme panelini açın ve **İsteğe bağlı dil modelini indir** düğmesine basın. Bu işlem yalnızca sabit model dosyasını indirir, belgeyi yüklemez; hesap veya API anahtarı istemez. İndirmenin bitmesi ve SHA256 doğrulaması gerekir. En az 4 GB boş disk alanı bırakın. İptal ederseniz indirme sonraki denemede baştan başlar. Model `%LOCALAPPDATA%\AkademikParafraz\models` dizininde kalır; uygulama güncellemesi modeli silmez. Kaldırınca kişisel verileri temizleme seçeneği modelleri de silebilir.
@@ -20,7 +22,7 @@ Bu indirmeyi kullanmak için Ayarlar > **Parafraz motoru > YerelDilModeli** seç
 
 ## Kurulum
 
-Windows 10/11 x64 ve masaüstü Word 2016 veya daha yeni bir sürüm gerekir. Word 32 veya 64 bit olabilir. Açık belgelerinizi kaydedip Word'ü kapatın ve `AkademikParafraz-1.6.1-Setup.exe` dosyasını açın. Kurulum eksik .NET Framework 4.8, Word veya Microsoft VSTO Runtime bileşenini bildirirse önce o bileşeni tamamlayın. VSTO Runtime'ın resmi indirmesi: https://www.microsoft.com/en-us/download/details.aspx?id=105522
+Windows 10/11 x64 ve masaüstü Word 2016 veya daha yeni bir sürüm gerekir. Word 32 veya 64 bit olabilir. Açık belgelerinizi kaydedip Word'ü kapatın ve `AkademikParafraz-1.7.0-Setup.exe` dosyasını açın. Kurulum eksik .NET Framework 4.8, Word veya Microsoft VSTO Runtime bileşenini bildirirse önce o bileşeni tamamlayın. VSTO Runtime'ın resmi indirmesi: https://www.microsoft.com/en-us/download/details.aspx?id=105522
 
 Java, NLP motoru ve sözlük pakete dahildir. Visual Studio, SDK, Maven veya ayrıca Java kurmanız gerekmez. Yayıncı sertifikası otomatik güvenilir yapılmaz; kurumsal bilgisayarınız kurulumu engellerse kurumunuzun yazılım yöneticisiyle ilerleyin.
 

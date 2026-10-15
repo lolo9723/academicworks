@@ -21,6 +21,7 @@ namespace AcademicParaphraser.Infrastructure.InternetDictionaryProviders
             get; set;
         }
         public string Error { get; set; } = "";
+        public string ErrorCode { get; set; } = "";
         public List<string> Synonyms { get; set; } = new List<string>();
         public bool SingleSense { get; set; }
         public bool NotFound { get; set; }
@@ -43,7 +44,7 @@ namespace AcademicParaphraser.Infrastructure.InternetDictionaryProviders
         protected WiktionaryProvider(string language)
         {
             this.language = language;
-            http.DefaultRequestHeaders.UserAgent.ParseAdd("AkademikParafraz/1.2 (local Word dictionary; optional single-word lookup)");
+            http.DefaultRequestHeaders.UserAgent.ParseAdd("AkademikParafraz/1.7 (+https://github.com/lolo9723/academicworks; optional single-word dictionary lookup)");
         }
         public async Task<DictionaryResult> LookupAsync(string term, CancellationToken cancellation)
         {
@@ -54,7 +55,9 @@ namespace AcademicParaphraser.Infrastructure.InternetDictionaryProviders
                 timeout.CancelAfter(TimeSpan.FromSeconds(12));
                 using (var response = await http.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, timeout.Token).ConfigureAwait(false))
                 {
-                    response.EnsureSuccessStatusCode();
+                    if(!response.IsSuccessStatusCode)
+                        return new DictionaryResult{Term=term,Source=Name,SourceUrl=source,ErrorCode="HTTP_"+(int)response.StatusCode,
+                            Error="Sözlük kaynağı HTTP "+(int)response.StatusCode+" yanıtı verdi; yerel bilgi kullanılacak."};
                     if (response.Content.Headers.ContentLength > 2000000)
                         throw new InvalidOperationException("Sözlük yanıtı çok büyük.");
                     string json;
@@ -142,7 +145,7 @@ namespace AcademicParaphraser.Infrastructure.InternetDictionaryProviders
                 {
                     if (unavailableUntil.TryGetValue(provider.Name, out var until) && until > DateTime.UtcNow)
                     {
-                        results.Add(new DictionaryResult { Term = term, Source = provider.Name, Error = "Kaynak art arda hata verdi; beş dakika sonra yeniden denenecek." });
+                        results.Add(new DictionaryResult { Term = term, Source = provider.Name, ErrorCode="CIRCUIT_OPEN", Error = "Kaynak art arda hata verdi; beş dakika sonra yeniden denenecek." });
                         continue;
                     }
                     var result = await provider.LookupAsync(term, cancellation).ConfigureAwait(false);
@@ -152,9 +155,9 @@ namespace AcademicParaphraser.Infrastructure.InternetDictionaryProviders
                         repository.Cache(key, JsonConvert.SerializeObject(result), result.NotFound ? TimeSpan.FromHours(1) : TimeSpan.FromDays(30));
                     await Task.Delay(250, cancellation).ConfigureAwait(false);
                 }
-                catch (OperationCanceledException) when (!cancellation.IsCancellationRequested) { Failed(provider.Name); results.Add(new DictionaryResult { Term = term, Source = provider.Name, Error = "Sözlük kaynağı zaman aşımına uğradı; yerel parafraz çalışmaya devam eder." }); }
+                catch (OperationCanceledException) when (!cancellation.IsCancellationRequested) { Failed(provider.Name); results.Add(new DictionaryResult { Term = term, Source = provider.Name, ErrorCode="TIMEOUT", Error = "Sözlük kaynağı zaman aşımına uğradı; yerel parafraz çalışmaya devam eder." }); }
                 catch (OperationCanceledException) { throw; }
-                catch (Exception ex) when (ex is HttpRequestException || ex is IOException || ex is InvalidOperationException || ex is JsonException) { Failed(provider.Name); results.Add(new DictionaryResult { Term = term, Source = provider.Name, Error = "Sözlük kaynağına ulaşılamadı; yerel parafraz çalışmaya devam eder." }); }
+                catch (Exception ex) when (ex is HttpRequestException || ex is IOException || ex is InvalidOperationException || ex is JsonException) { Failed(provider.Name); results.Add(new DictionaryResult { Term = term, Source = provider.Name, ErrorCode=ex is JsonException?"INVALID_RESPONSE":"TRANSPORT", Error = "Sözlük kaynağına ulaşılamadı; yerel parafraz çalışmaya devam eder." }); }
                 finally { limiter.Release(); }
             }
             return results;

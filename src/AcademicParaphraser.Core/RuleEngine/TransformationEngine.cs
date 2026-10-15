@@ -208,7 +208,7 @@ namespace AcademicParaphraser.Core.RuleEngine
         }
         private async Task<string?> ExpandStructuralTargetAsync(string target, Match match, string original, IReadOnlyList<MorphToken> tokens, Dictionary<string, string?> cache, CancellationToken cancellation)
         {
-            var placeholders = Regex.Matches(target, @"\$\{structure:(?<mode>Gen|Passive|Nominal):(?<group>[A-Za-z0-9_]+)\}").Cast<Match>().ToList();
+            var placeholders = Regex.Matches(target, @"\$\{structure:(?<mode>Gen|Passive|Nominal|Nominative|PurposeAcc):(?<group>[A-Za-z0-9_]+)\}").Cast<Match>().ToList();
             foreach (var placeholder in placeholders)
             {
                 if (!(nlp is ITurkishStructuralInflector inflector)) return null;

@@ -66,7 +66,7 @@ namespace AcademicParaphraser.WordHost
             grammarBackend = new SeparateGrammarBackend(Path.Combine(installDirectory,"runtime","java","bin","java.exe"),Path.Combine(installDirectory,"runtime","grammar","english-grammar-1.0.0.jar"));
             string semanticDirectory=Path.Combine(installDirectory,"runtime","semantic");
             semanticBackend=new LocalSemanticBackend(Path.Combine(installDirectory,"runtime","java","bin","java.exe"),Path.Combine(semanticDirectory,"local-semantic-1.0.0.jar"),Path.Combine(semanticDirectory,"model_quantized.onnx"),Path.Combine(semanticDirectory,"tokenizer.json"));
-            multiStageEngine = new MultiStageRewriteEngine(repo,syntaxBackend,grammarBackend,semantic:semanticBackend,knowledge:knowledge);
+            multiStageEngine = new MultiStageRewriteEngine(repo,syntaxBackend,grammarBackend,semantic:semanticBackend,knowledge:knowledge,supplemental:new RuleConstructionBackend(repo,nlp,structures));
             Preview.DownloadRequested += async (s, e) => await DownloadModelAsync();
             Preview.ApplyRequested += (s, e) => Guard(Apply);
             Preview.NextRequested += (s, e) => Guard(() => Next(1));

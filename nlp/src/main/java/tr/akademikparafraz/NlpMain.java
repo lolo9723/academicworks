@@ -62,7 +62,14 @@ public final class NlpMain {
        if(req.has("lemma")&&!item.lemma.equals(req.get("lemma").getAsString()))continue;
        if(req.has("morphemes")){
         List<String> expected=new ArrayList<>();req.getAsJsonArray("morphemes").forEach(m->expected.add(m.getAsString()));
-        if(!a.getMorphemes().stream().map(m->m.id).collect(Collectors.toList()).equals(expected))continue;
+        List<String> actual=a.getMorphemes().stream().map(m->m.id).collect(Collectors.toList());
+        boolean same=actual.equals(expected);
+        if(mode.equals("Nominative")&&req.has("ambiguousPersonal")&&req.get("ambiguousPersonal").getAsBoolean()){
+         Set<String> person=new HashSet<>(Arrays.asList("P1sg","P2sg","P1pl","P2pl"));
+         if(actual.stream().anyMatch(person::contains))continue;
+         same=actual.equals(expected.stream().filter(m->!person.contains(m)).collect(Collectors.toList()));
+        }
+        if(!same)continue;
        }
        List<Morpheme> suffixes=new ArrayList<>(a.getMorphemes().subList(1,a.getMorphemes().size()));
        if(mode.equals("Gen")){
@@ -74,6 +81,17 @@ public final class NlpMain {
         if(cases.contains(last)&&!last.equals("Nom"))continue;
         if(last.equals("Nom"))suffixes.set(suffixes.size()-1,TurkishMorphotactics.gen);
         else suffixes.add(TurkishMorphotactics.gen); // SingleAnalysis omits zero-surface Nom.
+       }else if(mode.equals("Nominative")){
+        if(!a.getPos().name().equals("Noun")||suffixes.isEmpty()||!suffixes.get(suffixes.size()-1).id.equals("Gen"))continue;
+        if(suffixes.stream().anyMatch(m->Arrays.asList("P1sg","P2sg","P1pl","P2pl").contains(m.id)))continue;
+        suffixes.set(suffixes.size()-1,TurkishMorphotactics.nom);
+       }else if(mode.equals("PurposeAcc")){
+        if(!item.primaryPos.name().equals("Verb")||suffixes.stream().noneMatch(m->m.id.equals("Inf1")))continue;
+        List<Morpheme> stem=new ArrayList<>();
+        for(Morpheme m:suffixes){if(m.id.equals("Inf1"))break;stem.add(m);}
+        // Keep causative/passive/negative stem derivations, replace only the
+        // licensed purpose infinitive and its nominal/copular tail.
+        stem.add(TurkishMorphotactics.inf2);stem.add(TurkishMorphotactics.a3sg);stem.add(TurkishMorphotactics.acc);suffixes=stem;
        }else if(mode.equals("Passive")){
         if(!a.getPos().name().equals("Verb")||!item.primaryPos.name().equals("Verb"))continue;
         if(suffixes.stream().anyMatch(m->Arrays.asList("Pass","While","PastPart","FutPart","Inf1","Inf2","Inf3").contains(m.id)))continue;

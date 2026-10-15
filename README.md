@@ -1,5 +1,7 @@
 # Akademik Parafraz — Academic Paraphraser for Word
 
+**1.7.0 geliştirmesi:** Bağımlılık ağacı ve yapısal kural üreticileri aynı Word/anlam/dil bilgisi kontrollerinde birleştirilir. Amaç/hedef cümleleri gerçek çekim üretimiyle dönüştürülür. [Mimari ve gerçek sınama sonuçları](docs/Backend-Ensemble-1.7.0.md). Bu sınırlı, deneysel sürüm genel insan kalitesi garantisi sağlamaz.
+
 **1.6.1 bağlantı ve tanılama düzeltmesi:** Türkçe varsayılan motor artık yerel/internet sözlük taramasını çağırır; sonuç yoksa ret ve tarama sayıları görünür. Uzun paragraflar cümle sınırlarından işlenir; değişmeyen metin öneri sayılmaz. Üretim kapsamı hâlâ sınırlıdır. [Doğrulanan sorunlar ve güçlendirme sırası](docs/Backend-Audit-1.6.1.md).
 
 **1.6.0 deneysel çok aşamalı backend:** Çekim/bağımlılık çözümleme, kuruluş üretimi, anlam denetimi, ayrı dil bilgisi ve nihai değerlendirme bileşenleri eklendi. Varsayılan motor üretici büyük dil modeli indirmesi istemez; küçük çözümleyiciler, LanguageTool ve yerel NLI sınıflandırıcısı pakete dahildir. [Mimari ve açık kaynak bileşenleri](docs/Backend-Architecture-1.6.0.md). [Gerçek Linux/Windows sonuçları ve kabul sınırları](docs/Backend-Quality-1.6.0.md). Genel doğal parafraz kalite hedefi henüz karşılanmadı; teknik testler dil kalitesini kanıtlamaz.
