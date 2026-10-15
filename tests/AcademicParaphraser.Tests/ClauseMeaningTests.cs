@@ -23,6 +23,7 @@ namespace AcademicParaphraser.Tests
         }
         [Theory]
         [InlineData("Bu projenin amacı, enerji tüketimini azaltmaktır.","Bu proje, enerji tüketimini azaltmayı amaçlamaktadır.",true)]
+        [InlineData("Bu çalışmanın amacı, enerji tüketimini azaltmaktır.","Bu çalışma, enerji tüketimini azaltmayı amaçlamaktadır.",true)]
         [InlineData("Bu programın hedefi okuma becerisini geliştirmektir.","Bu program okuma becerisini geliştirmeyi hedeflemektedir.",true)]
         [InlineData("Bu projenin amacı, enerji tüketimini azaltmaktır.","Bu proje, enerji tüketimini artırmayı amaçlamaktadır.",false)]
         [InlineData("Bu projenin amacı, enerji tüketimini azaltmaktır.","Bu program, enerji tüketimini azaltmayı amaçlamaktadır.",false)]
@@ -104,6 +105,15 @@ namespace AcademicParaphraser.Tests
                 var context=new BackendContext{Source=before,Plan=RewritePlan.Create(source,new[]{new TextSpan{Length=source.Length}},Array.Empty<TextSpan>()),SemanticEvidence=new BackendEvidence{Passed=true}};
                 Assert.False(ClauseMeaningIntegrity.Compare(context,after,new[]{0}).Passed);
             }
+        }
+        [Fact]
+        public async Task InitialDeterminerNounIsNotInventedAsANegativeImperative()
+        {
+            var words=await fixture.Nlp.AnalyzeAsync("Bu çalışma, verileri incelemeyi amaçlamaktadır.",CancellationToken.None);
+            var noun=words.Single(w=>w.Surface=="çalışma");Assert.Equal("Noun",noun.Pos);
+            Assert.DoesNotContain("Neg",noun.Morphemes);Assert.DoesNotContain("A2sg",noun.Morphemes);
+            var command=await fixture.Nlp.AnalyzeAsync("Bu, çalışma!",CancellationToken.None);
+            Assert.Contains(command,w=>w.Surface=="çalışma"&&w.Morphemes.Contains("Neg")&&w.Morphemes.Contains("Imp"));
         }
     }
 }

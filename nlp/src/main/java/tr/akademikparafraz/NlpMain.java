@@ -28,8 +28,31 @@ public final class NlpMain {
     if(op.equals("analyze")){
      String text=req.get("text").getAsString();JsonArray tokens=new JsonArray();int cursor=0;
      Locale tr=new Locale("tr","TR");String folded=text.toLowerCase(tr);
-     for(SentenceWordAnalysis entry:morphology.analyzeAndDisambiguate(text)){
+     List<SentenceWordAnalysis> sequence=new ArrayList<>();morphology.analyzeAndDisambiguate(text).forEach(sequence::add);
+     for(int wordIndex=0;wordIndex<sequence.size();wordIndex++){
+      SentenceWordAnalysis entry=sequence.get(wordIndex);
       SingleAnalysis a=entry.bestAnalysis;
+      // A sentence-initial demonstrative/modifier plus noun phrase is not an
+      // unexpressed second-person negative command ("Bu çalışma, ..."). Use
+      // only a unique known, non-personal nominal reading already in the analyzer.
+      if(personal(a)&&wordIndex>0){
+       String previous=sequence.get(wordIndex-1).wordAnalysis.getInput().toLowerCase(tr);
+       boolean boundary=wordIndex==1||sequence.get(wordIndex-2).wordAnalysis.getInput().matches("[.!?]");
+       if(boundary&&Arrays.asList("bu","şu","mevcut","sunulan").contains(previous)){
+        boolean genitive=a.getMorphemes().stream().anyMatch(m->m.id.equals("Gen"));
+        Map<String,SingleAnalysis> nominal=new TreeMap<>();
+        for(SingleAnalysis candidate:entry.wordAnalysis.getAnalysisResults()){
+         DictionaryItem candidateItem=candidate.getDictionaryItem();
+         if(!candidate.getPos().name().equals("Noun")||personal(candidate)||candidateItem.hasAttribute(RootAttribute.Runtime)
+           ||candidateItem.secondaryPos.name().equals("ProperNoun"))continue;
+         boolean hasGen=candidate.getMorphemes().stream().anyMatch(m->m.id.equals("Gen"));
+         boolean otherCase=candidate.getMorphemes().stream().anyMatch(m->Arrays.asList("Acc","Dat","Abl","Loc","Ins","Equ").contains(m.id));
+         if(hasGen!=genitive||otherCase)continue;
+         nominal.put(candidate.formatLexical(),candidate);
+        }
+        if(nominal.size()==1)a=nominal.values().iterator().next();
+       }
+      }
       // Use the actual tokenizer input, not a reconstructed stem/suffix surface.
       // Always find the earliest case-insensitive occurrence: a lowercase exact
       // search first could jump past the initial capitalized occurrence.
